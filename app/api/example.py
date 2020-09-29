@@ -1,9 +1,9 @@
 from flask import Blueprint
 
 
-example = Blueprint('example', __name__)
+examplebp = Blueprint('examplebp', __name__)
 
-# an example route
-@example.route('/ex')
+
+@examplebp.route('/ex')
 def example():
     return 'Hello, World!'

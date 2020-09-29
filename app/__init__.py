@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 
-import app.api as api
+from app.api.example import examplebp
 
 
 def create_app(test_config=None):
@@ -15,6 +15,6 @@ def create_app(test_config=None):
         app.config.from_object('app.config.DevConfig')
 
     # load blueprints
-    app.register_blueprint(api)
+    app.register_blueprint(examplebp)
 
     return app
