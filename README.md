@@ -16,4 +16,3 @@ all of the server is contained within the app folder. the flask server is create
 ## issues
 
 - importing api in `app/__init_.py` doesn't work
-- importing config in `app/__init__.py` doesn't work

@@ -10,9 +10,9 @@ def create_app(test_config=None):
 
     # load the config
     if app.config['ENV'] == 'production':
-        app.config.from_object('config.ProdConfig')
+        app.config.from_object('app.config.ProdConfig')
     else:
-        app.config.from_object('config.DevConfig')
+        app.config.from_object('app.config.DevConfig')
 
     # load blueprints
     app.register_blueprint(api)
