@@ -2,6 +2,32 @@
 functions:
     create_user(name, email, phone_number) - creates a user
     add_phone_number(user_id, phone_number) - adds a new phone number to a user
+
+TODO:
+    functions:
+        general get functions
+        remove phone numbers
+        management of permission levels
+        join team
+        leave team
+        get teams for a user
+        create team
+        edit team
+        remove member from team
+        get members from team
+        create group
+        add player to group
+        remove player from group
+
+    unit test:
+        give admin priv
+        remove admin priv
+        join team
+        leave team
+        view teams
+        create team
+        edit team
+        view an manage team
 '''
 
 
@@ -75,6 +101,27 @@ def add_phone_number(user_id, phone_number):
             (user_id, phone_number)
         )
         result = ('successfully added phone number', 200)
+    except Exception as e:
+        result = (str(e), 500)
+
+    cursor.close()
+    connection.close()
+    return result
+
+
+def remove_phone_number(user_id, phone_number):
+    connection = connect()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute(
+            '''
+            DELETE FROM phones
+            WHERE user_id=%s AND phone_number=%s;
+            ''',
+            (user_id, phone_number)
+        )
+        result = ('successfully removed phone number', 200)
     except Exception as e:
         result = (str(e), 500)
 

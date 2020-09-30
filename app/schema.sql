@@ -6,6 +6,8 @@ DROP TABLE IF EXISTS public.items CASCADE;
 DROP TABLE IF EXISTS public.itemmodifiers CASCADE;
 DROP TABLE IF EXISTS public.itempictures CASCADE;
 DROP TABLE IF EXISTS public.groups CASCADE;
+DROP TABLE IF EXISTS public.groupmessages CASCADE;
+DROP TABLE IF EXISTS public.messages CASCADE;
 DROP TABLE IF EXISTS public.sponsors CASCADE;
 DROP TABLE IF EXISTS public.usersgroups CASCADE;
 DROP TABLE IF EXISTS public.usersteams CASCADE;
@@ -35,6 +37,12 @@ DROP SEQUENCE IF EXISTS public."UsersGroups_user_id_seq";
 DROP SEQUENCE IF EXISTS public."UsersTeams_team_id_seq";
 DROP SEQUENCE IF EXISTS public."UsersTeams_user_id_seq";
 DROP SEQUENCE IF EXISTS public."Users_user_id_seq";
+DROP SEQUENCE IF EXISTS public.groupmessages_gmessage_id_seq;
+DROP SEQUENCE IF EXISTS public.groupmessages_group_id_seq;
+DROP SEQUENCE IF EXISTS public.groupmessages_sender_id_seq;
+DROP SEQUENCE IF EXISTS public.messages_message_id_seq;
+DROP SEQUENCE IF EXISTS public.messages_sender_id_seq;
+DROP SEQUENCE IF EXISTS public.messages_user_id_seq;
 
 
 -- SEQUENCE: public.Files_file_id_seq
@@ -428,6 +436,108 @@ GRANT ALL ON SEQUENCE public."Users_user_id_seq" TO prod;
 GRANT ALL ON SEQUENCE public."Users_user_id_seq" TO test;
 
 
+-- SEQUENCE: public.groupmessages_gmessage_id_seq
+
+CREATE SEQUENCE public.groupmessages_gmessage_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE public.groupmessages_gmessage_id_seq
+    OWNER to test;
+
+GRANT ALL ON SEQUENCE public.groupmessages_gmessage_id_seq TO prod;
+
+GRANT ALL ON SEQUENCE public.groupmessages_gmessage_id_seq TO test;
+
+
+-- SEQUENCE: public.groupmessages_group_id_seq
+
+CREATE SEQUENCE public.groupmessages_group_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE public.groupmessages_group_id_seq
+    OWNER to test;
+
+GRANT ALL ON SEQUENCE public.groupmessages_group_id_seq TO prod;
+
+GRANT ALL ON SEQUENCE public.groupmessages_group_id_seq TO test;
+
+
+-- SEQUENCE: public.groupmessages_sender_id_seq
+
+CREATE SEQUENCE public.groupmessages_sender_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE public.groupmessages_sender_id_seq
+    OWNER to test;
+
+GRANT ALL ON SEQUENCE public.groupmessages_sender_id_seq TO prod;
+
+GRANT ALL ON SEQUENCE public.groupmessages_sender_id_seq TO test;
+
+
+-- SEQUENCE: public.messages_message_id_seq
+
+CREATE SEQUENCE public.messages_message_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE public.messages_message_id_seq
+    OWNER to test;
+
+GRANT ALL ON SEQUENCE public.messages_message_id_seq TO prod;
+
+GRANT ALL ON SEQUENCE public.messages_message_id_seq TO test;
+
+
+-- SEQUENCE: public.messages_sender_id_seq
+
+CREATE SEQUENCE public.messages_sender_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE public.messages_sender_id_seq
+    OWNER to test;
+
+GRANT ALL ON SEQUENCE public.messages_sender_id_seq TO prod;
+
+GRANT ALL ON SEQUENCE public.messages_sender_id_seq TO test;
+
+
+-- SEQUENCE: public.messages_user_id_seq
+
+CREATE SEQUENCE public.messages_user_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE public.messages_user_id_seq
+    OWNER to test;
+
+GRANT ALL ON SEQUENCE public.messages_user_id_seq TO prod;
+
+GRANT ALL ON SEQUENCE public.messages_user_id_seq TO test;
+
+
 -- Table: public.users
 
 CREATE TABLE public.users
@@ -626,6 +736,66 @@ ALTER TABLE public.groups
 GRANT ALL ON TABLE public.groups TO prod;
 
 GRANT ALL ON TABLE public.groups TO test;
+
+
+-- Table: public.groupmessages
+
+CREATE TABLE public.groupmessages
+(
+    gmessage_id integer NOT NULL DEFAULT nextval('groupmessages_gmessage_id_seq'::regclass),
+    group_id integer NOT NULL DEFAULT nextval('groupmessages_group_id_seq'::regclass),
+    sender_id integer NOT NULL DEFAULT nextval('groupmessages_sender_id_seq'::regclass),
+    content text COLLATE pg_catalog."default" NOT NULL,
+    time_sent timestamp without time zone NOT NULL,
+    CONSTRAINT gmessage_id PRIMARY KEY (gmessage_id),
+    CONSTRAINT group_id FOREIGN KEY (group_id)
+        REFERENCES public.groups (group_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT sender_id FOREIGN KEY (sender_id)
+        REFERENCES public.users (user_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.groupmessages
+    OWNER to test;
+
+GRANT ALL ON TABLE public.groupmessages TO prod;
+
+GRANT ALL ON TABLE public.groupmessages TO test;
+
+
+-- Table: public.messages
+
+CREATE TABLE public.messages
+(
+    message_id integer NOT NULL DEFAULT nextval('messages_message_id_seq'::regclass),
+    user_id integer NOT NULL DEFAULT nextval('messages_user_id_seq'::regclass),
+    sender_id integer NOT NULL DEFAULT nextval('messages_sender_id_seq'::regclass),
+    content text COLLATE pg_catalog."default" NOT NULL,
+    time_sent timestamp without time zone NOT NULL,
+    CONSTRAINT message_id PRIMARY KEY (message_id),
+    CONSTRAINT sender_id FOREIGN KEY (sender_id)
+        REFERENCES public.users (user_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT user_id FOREIGN KEY (user_id)
+        REFERENCES public.users (user_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.messages
+    OWNER to test;
+
+GRANT ALL ON TABLE public.messages TO prod;
+
+GRANT ALL ON TABLE public.messages TO test;
 
 
 -- Table: public.sponsors
