@@ -1,3 +1,10 @@
+'''
+functions:
+    create_user(name, email, phone_number) - creates a user
+    add_phone_number(user_id, phone_number) - adds a new phone number to a user
+'''
+
+
 import psycopg2
 from os import environ, path
 from dotenv import load_dotenv
@@ -40,13 +47,34 @@ def create_user(name, email, phone_number):
 
     try:
         cursor.execute(
-            """
+            '''
             INSERT INTO users (name, email, phone_number)
             VALUES (%s, %s, %s);
-            """,
+            ''',
             (name, email, phone_number)
         )
         result = ('successfully created user', 200)
+    except Exception as e:
+        result = (str(e), 500)
+
+    cursor.close()
+    connection.close()
+    return result
+
+
+def add_phone_number(user_id, phone_number):
+    connection = connect()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute(
+            '''
+            INSERT INTO phones (user_id, phone_number)
+            VALUES (%s, %s);
+            ''',
+            (user_id, phone_number)
+        )
+        result = ('successfully added phone number', 200)
     except Exception as e:
         result = (str(e), 500)
 
