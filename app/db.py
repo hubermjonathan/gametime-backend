@@ -52,12 +52,27 @@ def connect():
     return connection
 
 
-def drop_and_create_tables():
+def drop_test_tables():
     connection = connect()
     cursor = connection.cursor()
 
     try:
-        cursor.execute(open('app/schema.sql', 'r').read())
+        cursor.execute(open('app/schemas/test_schema.sql', 'r').read())
+        result = ('successfully dropped and created tables', 200)
+    except Exception as e:
+        result = (str(e), 500)
+
+    cursor.close()
+    connection.close()
+    return result
+
+
+def drop_prod_tables():
+    connection = connect()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute(open('app/schemas/prod_schema.sql', 'r').read())
         result = ('successfully dropped and created tables', 200)
     except Exception as e:
         result = (str(e), 500)

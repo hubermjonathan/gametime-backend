@@ -43,6 +43,7 @@ DROP SEQUENCE IF EXISTS public.groupmessages_sender_id_seq;
 DROP SEQUENCE IF EXISTS public.messages_message_id_seq;
 DROP SEQUENCE IF EXISTS public.messages_sender_id_seq;
 DROP SEQUENCE IF EXISTS public.messages_user_id_seq;
+DROP SEQUENCE IF EXISTS public.teams_owner_seq;
 
 
 -- SEQUENCE: public.Files_file_id_seq
@@ -56,8 +57,6 @@ CREATE SEQUENCE public."Files_file_id_seq"
 
 ALTER SEQUENCE public."Files_file_id_seq"
     OWNER to test;
-
-GRANT ALL ON SEQUENCE public."Files_file_id_seq" TO prod;
 
 GRANT ALL ON SEQUENCE public."Files_file_id_seq" TO test;
 
@@ -74,8 +73,6 @@ CREATE SEQUENCE public."Files_team_id_seq"
 ALTER SEQUENCE public."Files_team_id_seq"
     OWNER to test;
 
-GRANT ALL ON SEQUENCE public."Files_team_id_seq" TO prod;
-
 GRANT ALL ON SEQUENCE public."Files_team_id_seq" TO test;
 
 
@@ -90,8 +87,6 @@ CREATE SEQUENCE public."Files_user_id_seq"
 
 ALTER SEQUENCE public."Files_user_id_seq"
     OWNER to test;
-
-GRANT ALL ON SEQUENCE public."Files_user_id_seq" TO prod;
 
 GRANT ALL ON SEQUENCE public."Files_user_id_seq" TO test;
 
@@ -108,8 +103,6 @@ CREATE SEQUENCE public."Groups_group_id_seq"
 ALTER SEQUENCE public."Groups_group_id_seq"
     OWNER to test;
 
-GRANT ALL ON SEQUENCE public."Groups_group_id_seq" TO prod;
-
 GRANT ALL ON SEQUENCE public."Groups_group_id_seq" TO test;
 
 
@@ -124,8 +117,6 @@ CREATE SEQUENCE public."Groups_owner_seq"
 
 ALTER SEQUENCE public."Groups_owner_seq"
     OWNER to test;
-
-GRANT ALL ON SEQUENCE public."Groups_owner_seq" TO prod;
 
 GRANT ALL ON SEQUENCE public."Groups_owner_seq" TO test;
 
@@ -142,8 +133,6 @@ CREATE SEQUENCE public."Groups_team_id_seq"
 ALTER SEQUENCE public."Groups_team_id_seq"
     OWNER to test;
 
-GRANT ALL ON SEQUENCE public."Groups_team_id_seq" TO prod;
-
 GRANT ALL ON SEQUENCE public."Groups_team_id_seq" TO test;
 
 
@@ -158,8 +147,6 @@ CREATE SEQUENCE public."ItemModifiers_item_id_seq"
 
 ALTER SEQUENCE public."ItemModifiers_item_id_seq"
     OWNER to test;
-
-GRANT ALL ON SEQUENCE public."ItemModifiers_item_id_seq" TO prod;
 
 GRANT ALL ON SEQUENCE public."ItemModifiers_item_id_seq" TO test;
 
@@ -176,8 +163,6 @@ CREATE SEQUENCE public."ItemModifiers_modifier_id_seq"
 ALTER SEQUENCE public."ItemModifiers_modifier_id_seq"
     OWNER to test;
 
-GRANT ALL ON SEQUENCE public."ItemModifiers_modifier_id_seq" TO prod;
-
 GRANT ALL ON SEQUENCE public."ItemModifiers_modifier_id_seq" TO test;
 
 
@@ -192,8 +177,6 @@ CREATE SEQUENCE public."ItemPictures_item_id_seq"
 
 ALTER SEQUENCE public."ItemPictures_item_id_seq"
     OWNER to test;
-
-GRANT ALL ON SEQUENCE public."ItemPictures_item_id_seq" TO prod;
 
 GRANT ALL ON SEQUENCE public."ItemPictures_item_id_seq" TO test;
 
@@ -210,8 +193,6 @@ CREATE SEQUENCE public."ItemPictures_picture_id_seq"
 ALTER SEQUENCE public."ItemPictures_picture_id_seq"
     OWNER to test;
 
-GRANT ALL ON SEQUENCE public."ItemPictures_picture_id_seq" TO prod;
-
 GRANT ALL ON SEQUENCE public."ItemPictures_picture_id_seq" TO test;
 
 
@@ -226,8 +207,6 @@ CREATE SEQUENCE public."Items_item_id_seq"
 
 ALTER SEQUENCE public."Items_item_id_seq"
     OWNER to test;
-
-GRANT ALL ON SEQUENCE public."Items_item_id_seq" TO prod;
 
 GRANT ALL ON SEQUENCE public."Items_item_id_seq" TO test;
 
@@ -244,8 +223,6 @@ CREATE SEQUENCE public."Items_team_id_seq"
 ALTER SEQUENCE public."Items_team_id_seq"
     OWNER to test;
 
-GRANT ALL ON SEQUENCE public."Items_team_id_seq" TO prod;
-
 GRANT ALL ON SEQUENCE public."Items_team_id_seq" TO test;
 
 
@@ -260,8 +237,6 @@ CREATE SEQUENCE public."Phones_phone_id_seq"
 
 ALTER SEQUENCE public."Phones_phone_id_seq"
     OWNER to test;
-
-GRANT ALL ON SEQUENCE public."Phones_phone_id_seq" TO prod;
 
 GRANT ALL ON SEQUENCE public."Phones_phone_id_seq" TO test;
 
@@ -278,8 +253,6 @@ CREATE SEQUENCE public."Phones_user_id_seq"
 ALTER SEQUENCE public."Phones_user_id_seq"
     OWNER to test;
 
-GRANT ALL ON SEQUENCE public."Phones_user_id_seq" TO prod;
-
 GRANT ALL ON SEQUENCE public."Phones_user_id_seq" TO test;
 
 
@@ -294,8 +267,6 @@ CREATE SEQUENCE public."Sponsors_sponsor_id_seq"
 
 ALTER SEQUENCE public."Sponsors_sponsor_id_seq"
     OWNER to test;
-
-GRANT ALL ON SEQUENCE public."Sponsors_sponsor_id_seq" TO prod;
 
 GRANT ALL ON SEQUENCE public."Sponsors_sponsor_id_seq" TO test;
 
@@ -312,8 +283,6 @@ CREATE SEQUENCE public."TeamsSponsors_sponsor_id_seq"
 ALTER SEQUENCE public."TeamsSponsors_sponsor_id_seq"
     OWNER to test;
 
-GRANT ALL ON SEQUENCE public."TeamsSponsors_sponsor_id_seq" TO prod;
-
 GRANT ALL ON SEQUENCE public."TeamsSponsors_sponsor_id_seq" TO test;
 
 
@@ -328,8 +297,6 @@ CREATE SEQUENCE public."TeamsSponsors_team_id_seq"
 
 ALTER SEQUENCE public."TeamsSponsors_team_id_seq"
     OWNER to test;
-
-GRANT ALL ON SEQUENCE public."TeamsSponsors_team_id_seq" TO prod;
 
 GRANT ALL ON SEQUENCE public."TeamsSponsors_team_id_seq" TO test;
 
@@ -346,8 +313,6 @@ CREATE SEQUENCE public."Teams_team_id_seq"
 ALTER SEQUENCE public."Teams_team_id_seq"
     OWNER to test;
 
-GRANT ALL ON SEQUENCE public."Teams_team_id_seq" TO prod;
-
 GRANT ALL ON SEQUENCE public."Teams_team_id_seq" TO test;
 
 
@@ -362,8 +327,6 @@ CREATE SEQUENCE public."UsersGroups_group_id_seq"
 
 ALTER SEQUENCE public."UsersGroups_group_id_seq"
     OWNER to test;
-
-GRANT ALL ON SEQUENCE public."UsersGroups_group_id_seq" TO prod;
 
 GRANT ALL ON SEQUENCE public."UsersGroups_group_id_seq" TO test;
 
@@ -380,8 +343,6 @@ CREATE SEQUENCE public."UsersGroups_user_id_seq"
 ALTER SEQUENCE public."UsersGroups_user_id_seq"
     OWNER to test;
 
-GRANT ALL ON SEQUENCE public."UsersGroups_user_id_seq" TO prod;
-
 GRANT ALL ON SEQUENCE public."UsersGroups_user_id_seq" TO test;
 
 
@@ -396,8 +357,6 @@ CREATE SEQUENCE public."UsersTeams_team_id_seq"
 
 ALTER SEQUENCE public."UsersTeams_team_id_seq"
     OWNER to test;
-
-GRANT ALL ON SEQUENCE public."UsersTeams_team_id_seq" TO prod;
 
 GRANT ALL ON SEQUENCE public."UsersTeams_team_id_seq" TO test;
 
@@ -414,8 +373,6 @@ CREATE SEQUENCE public."UsersTeams_user_id_seq"
 ALTER SEQUENCE public."UsersTeams_user_id_seq"
     OWNER to test;
 
-GRANT ALL ON SEQUENCE public."UsersTeams_user_id_seq" TO prod;
-
 GRANT ALL ON SEQUENCE public."UsersTeams_user_id_seq" TO test;
 
 
@@ -430,8 +387,6 @@ CREATE SEQUENCE public."Users_user_id_seq"
 
 ALTER SEQUENCE public."Users_user_id_seq"
     OWNER to test;
-
-GRANT ALL ON SEQUENCE public."Users_user_id_seq" TO prod;
 
 GRANT ALL ON SEQUENCE public."Users_user_id_seq" TO test;
 
@@ -448,8 +403,6 @@ CREATE SEQUENCE public.groupmessages_gmessage_id_seq
 ALTER SEQUENCE public.groupmessages_gmessage_id_seq
     OWNER to test;
 
-GRANT ALL ON SEQUENCE public.groupmessages_gmessage_id_seq TO prod;
-
 GRANT ALL ON SEQUENCE public.groupmessages_gmessage_id_seq TO test;
 
 
@@ -464,8 +417,6 @@ CREATE SEQUENCE public.groupmessages_group_id_seq
 
 ALTER SEQUENCE public.groupmessages_group_id_seq
     OWNER to test;
-
-GRANT ALL ON SEQUENCE public.groupmessages_group_id_seq TO prod;
 
 GRANT ALL ON SEQUENCE public.groupmessages_group_id_seq TO test;
 
@@ -482,8 +433,6 @@ CREATE SEQUENCE public.groupmessages_sender_id_seq
 ALTER SEQUENCE public.groupmessages_sender_id_seq
     OWNER to test;
 
-GRANT ALL ON SEQUENCE public.groupmessages_sender_id_seq TO prod;
-
 GRANT ALL ON SEQUENCE public.groupmessages_sender_id_seq TO test;
 
 
@@ -498,8 +447,6 @@ CREATE SEQUENCE public.messages_message_id_seq
 
 ALTER SEQUENCE public.messages_message_id_seq
     OWNER to test;
-
-GRANT ALL ON SEQUENCE public.messages_message_id_seq TO prod;
 
 GRANT ALL ON SEQUENCE public.messages_message_id_seq TO test;
 
@@ -516,8 +463,6 @@ CREATE SEQUENCE public.messages_sender_id_seq
 ALTER SEQUENCE public.messages_sender_id_seq
     OWNER to test;
 
-GRANT ALL ON SEQUENCE public.messages_sender_id_seq TO prod;
-
 GRANT ALL ON SEQUENCE public.messages_sender_id_seq TO test;
 
 
@@ -533,9 +478,22 @@ CREATE SEQUENCE public.messages_user_id_seq
 ALTER SEQUENCE public.messages_user_id_seq
     OWNER to test;
 
-GRANT ALL ON SEQUENCE public.messages_user_id_seq TO prod;
-
 GRANT ALL ON SEQUENCE public.messages_user_id_seq TO test;
+
+
+-- SEQUENCE: public.teams_owner_seq
+
+CREATE SEQUENCE public.teams_owner_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE public.teams_owner_seq
+    OWNER TO test;
+
+GRANT ALL ON SEQUENCE public.teams_owner_seq TO test;
 
 
 -- Table: public.users
@@ -554,8 +512,6 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.users
     OWNER to test;
-
-GRANT ALL ON TABLE public.users TO prod;
 
 GRANT ALL ON TABLE public.users TO test;
 
@@ -579,8 +535,6 @@ TABLESPACE pg_default;
 ALTER TABLE public.phones
     OWNER to test;
 
-GRANT ALL ON TABLE public.phones TO prod;
-
 GRANT ALL ON TABLE public.phones TO test;
 
 
@@ -595,15 +549,19 @@ CREATE TABLE public.teams
     fund_desc text COLLATE pg_catalog."default" NOT NULL,
     account_number integer NOT NULL,
     routing_number integer NOT NULL,
-    CONSTRAINT team_id PRIMARY KEY (team_id)
+    owner integer NOT NULL DEFAULT nextval('teams_owner_seq'::regclass),
+    CONSTRAINT team_id PRIMARY KEY (team_id),
+    CONSTRAINT owner FOREIGN KEY (owner)
+        REFERENCES public.users (user_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
 )
 
 TABLESPACE pg_default;
 
 ALTER TABLE public.teams
     OWNER to test;
-
-GRANT ALL ON TABLE public.teams TO prod;
 
 GRANT ALL ON TABLE public.teams TO test;
 
@@ -633,8 +591,6 @@ TABLESPACE pg_default;
 ALTER TABLE public.files
     OWNER to test;
 
-GRANT ALL ON TABLE public.files TO prod;
-
 GRANT ALL ON TABLE public.files TO test;
 
 
@@ -658,8 +614,6 @@ TABLESPACE pg_default;
 ALTER TABLE public.items
     OWNER to test;
 
-GRANT ALL ON TABLE public.items TO prod;
-
 GRANT ALL ON TABLE public.items TO test;
 
 
@@ -681,8 +635,6 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.itemmodifiers
     OWNER to test;
-
-GRANT ALL ON TABLE public.itemmodifiers TO prod;
 
 GRANT ALL ON TABLE public.itemmodifiers TO test;
 
@@ -706,8 +658,6 @@ TABLESPACE pg_default;
 ALTER TABLE public.itempictures
     OWNER to test;
 
-GRANT ALL ON TABLE public.itempictures TO prod;
-
 GRANT ALL ON TABLE public.itempictures TO test;
 
 
@@ -718,22 +668,18 @@ CREATE TABLE public.groups
     group_id integer NOT NULL DEFAULT nextval('"Groups_group_id_seq"'::regclass),
     team_id integer NOT NULL DEFAULT nextval('"Groups_team_id_seq"'::regclass),
     name text COLLATE pg_catalog."default" NOT NULL,
-    owner integer NOT NULL DEFAULT nextval('"Groups_owner_seq"'::regclass),
     size integer NOT NULL,
     CONSTRAINT group_id PRIMARY KEY (group_id),
     CONSTRAINT team_id FOREIGN KEY (team_id)
         REFERENCES public.teams (team_id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
-        NOT VALID
 )
 
 TABLESPACE pg_default;
 
 ALTER TABLE public.groups
     OWNER to test;
-
-GRANT ALL ON TABLE public.groups TO prod;
 
 GRANT ALL ON TABLE public.groups TO test;
 
@@ -763,8 +709,6 @@ TABLESPACE pg_default;
 ALTER TABLE public.groupmessages
     OWNER to test;
 
-GRANT ALL ON TABLE public.groupmessages TO prod;
-
 GRANT ALL ON TABLE public.groupmessages TO test;
 
 
@@ -793,8 +737,6 @@ TABLESPACE pg_default;
 ALTER TABLE public.messages
     OWNER to test;
 
-GRANT ALL ON TABLE public.messages TO prod;
-
 GRANT ALL ON TABLE public.messages TO test;
 
 
@@ -812,8 +754,6 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.sponsors
     OWNER to test;
-
-GRANT ALL ON TABLE public.sponsors TO prod;
 
 GRANT ALL ON TABLE public.sponsors TO test;
 
@@ -838,8 +778,6 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.usersgroups
     OWNER to test;
-
-GRANT ALL ON TABLE public.usersgroups TO prod;
 
 GRANT ALL ON TABLE public.usersgroups TO test;
 
@@ -869,8 +807,6 @@ TABLESPACE pg_default;
 ALTER TABLE public.usersteams
     OWNER to test;
 
-GRANT ALL ON TABLE public.usersteams TO prod;
-
 GRANT ALL ON TABLE public.usersteams TO test;
 
 
@@ -895,7 +831,5 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.teamssponsors
     OWNER to test;
-
-GRANT ALL ON TABLE public.teamssponsors TO prod;
 
 GRANT ALL ON TABLE public.teamssponsors TO test;
