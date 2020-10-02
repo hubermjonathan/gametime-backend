@@ -668,7 +668,6 @@ CREATE TABLE public.groups
     group_id integer NOT NULL DEFAULT nextval('"Groups_group_id_seq"'::regclass),
     team_id integer NOT NULL DEFAULT nextval('"Groups_team_id_seq"'::regclass),
     name text COLLATE pg_catalog."default" NOT NULL,
-    size integer NOT NULL,
     CONSTRAINT group_id PRIMARY KEY (group_id),
     CONSTRAINT team_id FOREIGN KEY (team_id)
         REFERENCES public.teams (team_id) MATCH SIMPLE
