@@ -4,7 +4,7 @@ all functions return a tuple of the format (response message, response code, dat
 
     create_user(name, email, phone_number)
         creates a user
-        returns nothing
+        returns the id of the new user
     add_phone_number(user_id, phone_number)
         adds a new phone number to a user
         returns nothing
@@ -26,11 +26,13 @@ all functions return a tuple of the format (response message, response code, dat
     get_users_teams(user_id)
         retrieves the teams that a user is a member of
         returns an array of tuples of the format (team_id, name)
+    edit_team_name(team_id, name)
+        edits the name of a team
+        returns nothing
 
 TODO:
     functions:
         general get functions
-        edit team
         remove member from team
         get members from team
         create group
@@ -108,12 +110,13 @@ def create_user(name, email, phone_number):
         cursor.execute(
             '''
             INSERT INTO users (name, email, phone_number)
-            VALUES (%s, %s, %s);
+            VALUES (%s, %s, %s)
+            RETURNING user_id;
             ''',
             (name, email, phone_number)
         )
 
-        result = ('successfully created user', 200, [])
+        result = ('successfully created user', 200, cursor.fetchone()[0])
     except Exception as e:
         result = (str(e), 500, [])
 
@@ -185,7 +188,7 @@ def create_team(name, user_id):
 
                 INSERT INTO groups (team_id, name)
                 VALUES (new_team_id, 'All Members');
-            END $$
+            END $$;
             ''',
             (name, user_id, user_id)
         )
@@ -297,6 +300,28 @@ def get_users_teams(user_id):
         )
 
         result = ('successfully retrieved teams', 200, cursor.fetchall())
+    except Exception as e:
+        result = (str(e), 500, [])
+
+    cursor.close()
+    connection.close()
+    return result
+
+
+def edit_team_name(team_id, name):
+    connection = connect()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute(
+            '''
+            UPDATE teams
+            SET name=%s
+            WHERE team_id=%s;
+            ''',
+            (name, team_id)
+        )
+        result = ('successfully edited team name', 200, [])
     except Exception as e:
         result = (str(e), 500, [])
 
