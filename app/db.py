@@ -29,15 +29,17 @@ all functions return a tuple of the format (response message, response code, dat
     edit_team_name(team_id, name)
         edits the name of a team
         returns nothing
+    get_teams_members(team_id)
+        retrieves the members of a team
+        returns an array of tuples of the format (user_id, name, email, phone_number, profile_picture)
 
 TODO:
     functions:
         general get functions
-        remove member from team
-        get members from team
         create group
         add player to group
         remove player from group
+        all of the message storing and retrieving
 
     unit test:
         give admin priv
@@ -322,6 +324,31 @@ def edit_team_name(team_id, name):
             (name, team_id)
         )
         result = ('successfully edited team name', 200, [])
+    except Exception as e:
+        result = (str(e), 500, [])
+
+    cursor.close()
+    connection.close()
+    return result
+
+
+def get_teams_members(team_id):
+    connection = connect()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute(
+            '''
+            SELECT users.*
+            FROM users
+            INNER JOIN usersteams
+            ON users.user_id=usersteams.user_id
+            WHERE usersteams.team_id=%s
+            ''',
+            (team_id,)
+        )
+
+        result = ('successfully retrieved members', 200, cursor.fetchall())
     except Exception as e:
         result = (str(e), 500, [])
 
