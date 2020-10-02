@@ -1,16 +1,23 @@
 '''
 functions:
-    create_user(name, email, phone_number) - creates a user
-    add_phone_number(user_id, phone_number) - adds a new phone number to a user
-    remove_phone_number(user_id, phone_number) - removes an extra phone number from a user
-    create_team(name, user_id) - creates a team, adds the coach, and creates the default group
+    create_user(name, email, phone_number)
+        creates a user
+    add_phone_number(user_id, phone_number)
+        adds a new phone number to a user
+    remove_phone_number(user_id, phone_number)
+        removes an extra phone number from a user
+    create_team(name, user_id)
+        creates a team, adds the coach, and creates the default group
+    join_team(user_id, team_id)
+        adds a user to a team and its default group
+    change_permission_level(user_id, team_id, privelege_level)
+        changes the permission level for a user on a team
+    leave_team(user_id, team_id)
+        removes a user from a team and any groups from that team
 
 TODO:
     functions:
         general get functions
-        management of permission levels
-        join team
-        leave team
         get teams for a user
         edit team
         remove member from team
@@ -94,6 +101,7 @@ def create_user(name, email, phone_number):
             ''',
             (name, email, phone_number)
         )
+
         result = ('successfully created user', 200)
     except Exception as e:
         result = (str(e), 500)
@@ -115,6 +123,7 @@ def add_phone_number(user_id, phone_number):
             ''',
             (user_id, phone_number)
         )
+
         result = ('successfully added phone number', 200)
     except Exception as e:
         result = (str(e), 500)
@@ -136,6 +145,7 @@ def remove_phone_number(user_id, phone_number):
             ''',
             (user_id, phone_number)
         )
+
         result = ('successfully removed phone number', 200)
     except Exception as e:
         result = (str(e), 500)
@@ -162,12 +172,13 @@ def create_team(name, user_id):
                 INSERT INTO usersteams (user_id, team_id, privelege_level, fund_goal, fund_current, fund_desc)
                 VALUES (%s, new_team_id, 0, 0, 0, '');
 
-                INSERT INTO groups (team_id, name, size)
-                VALUES (new_team_id, 'All Members', 0);
+                INSERT INTO groups (team_id, name)
+                VALUES (new_team_id, 'All Members');
             END $$
             ''',
             (name, user_id, user_id)
         )
+
         result = ('successfully created team', 200)
     except Exception as e:
         result = (str(e), 500)
@@ -177,8 +188,7 @@ def create_team(name, user_id):
     return result
 
 
-# TODO: need to add player to group all members
-def join_team(user_id, team_id, privelege_level):
+def join_team(user_id, team_id):
     connection = connect()
     cursor = connection.cursor()
 
@@ -187,9 +197,17 @@ def join_team(user_id, team_id, privelege_level):
             '''
             INSERT INTO usersteams (user_id, team_id, privelege_level, fund_goal, fund_current, fund_desc)
             VALUES (%s, %s, 0, 0, 0, '');
+
+            INSERT INTO usersgroups (user_id, group_id)
+            VALUES (%s, (
+                SELECT group_id
+                FROM groups
+                WHERE team_id=%s AND name='All Members'
+            ));
             ''',
-            (user_id, team_id)
+            (user_id, team_id, user_id, team_id)
         )
+
         result = ('successfully joined team', 200)
     except Exception as e:
         result = (str(e), 500)
@@ -199,29 +217,6 @@ def join_team(user_id, team_id, privelege_level):
     return result
 
 
-# TODO: need to remove member from all groups
-def leave_team(user_id, team_id):
-    connection = connect()
-    cursor = connection.cursor()
-
-    try:
-        cursor.execute(
-            '''
-            DELETE FROM usersteams
-            WHERE user_id=%s AND team_id=%s;
-            ''',
-            (user_id, team_id)
-        )
-        result = ('successfully left team', 200)
-    except Exception as e:
-        result = (str(e), 500)
-
-    cursor.close()
-    connection.close()
-    return result
-
-
-# TODO: need to test
 def change_permission_level(user_id, team_id, privelege_level):
     connection = connect()
     cursor = connection.cursor()
@@ -240,5 +235,47 @@ def change_permission_level(user_id, team_id, privelege_level):
         result = (str(e), 500)
 
     cursor.close()
+    connection.close()
+    return result
+
+
+def leave_team(user_id, team_id):
+    connection = connect()
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute(
+            '''
+            DELETE FROM usersteams
+            WHERE user_id=%s AND team_id=%s;
+            ''',
+            (user_id, team_id)
+        )
+
+        cursor.execute(
+            '''
+            SELECT group_id
+            FROM groups
+            WHERE team_id=%s;
+            ''',
+            (team_id,)
+        )
+
+        for row in cursor:
+            cursor2 = connection.cursor()
+            cursor2.execute(
+                '''
+                DELETE FROM usersgroups
+                WHERE user_id=%s AND group_id=%s;
+                ''',
+                (user_id, row[0])
+            )
+
+        result = ('successfully left team', 200)
+    except Exception as e:
+        result = (str(e), 500)
+
+    cursor.close()
+    cursor2.close()
     connection.close()
     return result
