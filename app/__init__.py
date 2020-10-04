@@ -2,6 +2,7 @@ import os
 from flask import Flask
 
 from app.api.example import examplebp
+from app.api.group import groupbp
 
 
 def create_app(test_config=None):
@@ -16,5 +17,6 @@ def create_app(test_config=None):
 
     # load blueprints
     app.register_blueprint(examplebp)
+    app.register_blueprint(groupbp)
 
     return app
