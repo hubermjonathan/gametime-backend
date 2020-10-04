@@ -32,13 +32,19 @@ all functions return a tuple of the format (response message, response code, dat
     get_teams_members(team_id)
         retrieves the members of a team
         returns an array of tuples of the format (user_id, name, email, phone_number, profile_picture)
+    create_group(name, team_id)
+        creates a new group for a team
+        returns the id of the new group
+    join_group(user_id, group_id)
+        adds a user to a group
+        returns nothing
+    leave_group(user_id, group_id)
+        removes a user from a group
+        returns nothing
 
 TODO:
     functions:
         general get functions
-        create group
-        add player to group
-        remove player from group
         all of the message storing and retrieving
 
     unit test:
@@ -75,40 +81,48 @@ def connect():
 
 
 def drop_test_tables():
-    connection = connect()
-    cursor = connection.cursor()
-
     try:
+        connection = connect()
+        cursor = connection.cursor()
+
         cursor.execute(open('app/schemas/test_schema.sql', 'r').read())
         result = ('successfully dropped and created tables', 200, [])
+
+        cursor.close()
+        connection.close()
+        return result
     except Exception as e:
         result = (str(e), 500, [])
 
-    cursor.close()
-    connection.close()
-    return result
+        cursor.close()
+        connection.close()
+        return result
 
 
 def drop_prod_tables():
-    connection = connect()
-    cursor = connection.cursor()
-
     try:
+        connection = connect()
+        cursor = connection.cursor()
+
         cursor.execute(open('app/schemas/prod_schema.sql', 'r').read())
         result = ('successfully dropped and created tables', 200, [])
+
+        cursor.close()
+        connection.close()
+        return result
     except Exception as e:
         result = (str(e), 500, [])
 
-    cursor.close()
-    connection.close()
-    return result
+        cursor.close()
+        connection.close()
+        return result
 
 
 def create_user(name, email, phone_number):
-    connection = connect()
-    cursor = connection.cursor()
-
     try:
+        connection = connect()
+        cursor = connection.cursor()
+
         cursor.execute(
             '''
             INSERT INTO users (name, email, phone_number)
@@ -119,19 +133,23 @@ def create_user(name, email, phone_number):
         )
 
         result = ('successfully created user', 200, cursor.fetchone()[0])
+
+        cursor.close()
+        connection.close()
+        return result
     except Exception as e:
         result = (str(e), 500, [])
 
-    cursor.close()
-    connection.close()
-    return result
+        cursor.close()
+        connection.close()
+        return result
 
 
 def add_phone_number(user_id, phone_number):
-    connection = connect()
-    cursor = connection.cursor()
-
     try:
+        connection = connect()
+        cursor = connection.cursor()
+
         cursor.execute(
             '''
             INSERT INTO phones (user_id, phone_number)
@@ -141,19 +159,23 @@ def add_phone_number(user_id, phone_number):
         )
 
         result = ('successfully added phone number', 200, [])
+
+        cursor.close()
+        connection.close()
+        return result
     except Exception as e:
         result = (str(e), 500, [])
 
-    cursor.close()
-    connection.close()
-    return result
+        cursor.close()
+        connection.close()
+        return result
 
 
 def remove_phone_number(user_id, phone_number):
-    connection = connect()
-    cursor = connection.cursor()
-
     try:
+        connection = connect()
+        cursor = connection.cursor()
+
         cursor.execute(
             '''
             DELETE FROM phones
@@ -163,19 +185,23 @@ def remove_phone_number(user_id, phone_number):
         )
 
         result = ('successfully removed phone number', 200, [])
+
+        cursor.close()
+        connection.close()
+        return result
     except Exception as e:
         result = (str(e), 500, [])
 
-    cursor.close()
-    connection.close()
-    return result
+        cursor.close()
+        connection.close()
+        return result
 
 
 def create_team(name, user_id):
-    connection = connect()
-    cursor = connection.cursor()
-
     try:
+        connection = connect()
+        cursor = connection.cursor()
+
         cursor.execute(
             '''
             DO $$
@@ -196,19 +222,23 @@ def create_team(name, user_id):
         )
 
         result = ('successfully created team', 200, [])
+
+        cursor.close()
+        connection.close()
+        return result
     except Exception as e:
         result = (str(e), 500, [])
 
-    cursor.close()
-    connection.close()
-    return result
+        cursor.close()
+        connection.close()
+        return result
 
 
 def join_team(user_id, team_id):
-    connection = connect()
-    cursor = connection.cursor()
-
     try:
+        connection = connect()
+        cursor = connection.cursor()
+
         cursor.execute(
             '''
             INSERT INTO usersteams (user_id, team_id, privelege_level, fund_goal, fund_current, fund_desc)
@@ -225,19 +255,23 @@ def join_team(user_id, team_id):
         )
 
         result = ('successfully joined team', 200, [])
+
+        cursor.close()
+        connection.close()
+        return result
     except Exception as e:
         result = (str(e), 500, [])
 
-    cursor.close()
-    connection.close()
-    return result
+        cursor.close()
+        connection.close()
+        return result
 
 
 def change_permission_level(user_id, team_id, privelege_level):
-    connection = connect()
-    cursor = connection.cursor()
-
     try:
+        connection = connect()
+        cursor = connection.cursor()
+
         cursor.execute(
             '''
             UPDATE usersteams
@@ -246,20 +280,25 @@ def change_permission_level(user_id, team_id, privelege_level):
             ''',
             (privelege_level, user_id, team_id)
         )
+
         result = ('successfully changed permission level', 200, [])
+
+        cursor.close()
+        connection.close()
+        return result
     except Exception as e:
         result = (str(e), 500, [])
 
-    cursor.close()
-    connection.close()
-    return result
+        cursor.close()
+        connection.close()
+        return result
 
 
 def leave_team(user_id, team_id):
-    connection = connect()
-    cursor = connection.cursor()
-
     try:
+        connection = connect()
+        cursor = connection.cursor()
+
         cursor.execute(
             '''
             DELETE FROM usersteams
@@ -277,19 +316,23 @@ def leave_team(user_id, team_id):
         )
 
         result = ('successfully left team', 200, [])
+
+        cursor.close()
+        connection.close()
+        return result
     except Exception as e:
         result = (str(e), 500, [])
 
-    cursor.close()
-    connection.close()
-    return result
+        cursor.close()
+        connection.close()
+        return result
 
 
 def get_users_teams(user_id):
-    connection = connect()
-    cursor = connection.cursor()
-
     try:
+        connection = connect()
+        cursor = connection.cursor()
+
         cursor.execute(
             '''
             SELECT teams.team_id, teams.name
@@ -302,19 +345,23 @@ def get_users_teams(user_id):
         )
 
         result = ('successfully retrieved teams', 200, cursor.fetchall())
+
+        cursor.close()
+        connection.close()
+        return result
     except Exception as e:
         result = (str(e), 500, [])
 
-    cursor.close()
-    connection.close()
-    return result
+        cursor.close()
+        connection.close()
+        return result
 
 
 def edit_team_name(team_id, name):
-    connection = connect()
-    cursor = connection.cursor()
-
     try:
+        connection = connect()
+        cursor = connection.cursor()
+
         cursor.execute(
             '''
             UPDATE teams
@@ -323,20 +370,25 @@ def edit_team_name(team_id, name):
             ''',
             (name, team_id)
         )
+
         result = ('successfully edited team name', 200, [])
+
+        cursor.close()
+        connection.close()
+        return result
     except Exception as e:
         result = (str(e), 500, [])
 
-    cursor.close()
-    connection.close()
-    return result
+        cursor.close()
+        connection.close()
+        return result
 
 
 def get_teams_members(team_id):
-    connection = connect()
-    cursor = connection.cursor()
-
     try:
+        connection = connect()
+        cursor = connection.cursor()
+
         cursor.execute(
             '''
             SELECT users.*
@@ -349,9 +401,92 @@ def get_teams_members(team_id):
         )
 
         result = ('successfully retrieved members', 200, cursor.fetchall())
+
+        cursor.close()
+        connection.close()
+        return result
     except Exception as e:
         result = (str(e), 500, [])
 
-    cursor.close()
-    connection.close()
-    return result
+        cursor.close()
+        connection.close()
+        return result
+
+
+def create_group(name, team_id):
+    try:
+        connection = connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            INSERT INTO groups (team_id, name)
+            VALUES (%s, %s)
+            RETURNING group_id;
+            ''',
+            (team_id, name)
+        )
+
+        result = ('successfully created group', 200, cursor.fetchone()[0])
+
+        cursor.close()
+        connection.close()
+        return result
+    except Exception as e:
+        result = (str(e), 500, [])
+
+        cursor.close()
+        connection.close()
+        return result
+
+
+def join_group(user_id, group_id):
+    try:
+        connection = connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            INSERT INTO usersgroups (user_id, group_id)
+            VALUES (%s, %s);
+            ''',
+            (user_id, group_id)
+        )
+
+        result = ('successfully joined group', 200, [])
+
+        cursor.close()
+        connection.close()
+        return result
+    except Exception as e:
+        result = (str(e), 500, [])
+
+        cursor.close()
+        connection.close()
+        return result
+
+
+def leave_group(user_id, group_id):
+    try:
+        connection = connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            DELETE FROM usersgroups
+            WHERE user_id=%s AND group_id=%s;
+            ''',
+            (user_id, group_id)
+        )
+
+        result = ('successfully left group', 200, [])
+
+        cursor.close()
+        connection.close()
+        return result
+    except Exception as e:
+        result = (str(e), 500, [])
+
+        cursor.close()
+        connection.close()
+        return result
