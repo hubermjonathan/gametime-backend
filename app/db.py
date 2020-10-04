@@ -32,11 +32,13 @@ all functions return a tuple of the format (response message, response code, dat
     get_teams_members(team_id)
         retrieves the members of a team
         returns an array of tuples of the format (user_id, name, email, phone_number, profile_picture)
+    create_group(name, team_id)
+        creates a new group for a team
+        returns the id of the new group
 
 TODO:
     functions:
         general get functions
-        create group
         add player to group
         remove player from group
         all of the message storing and retrieving
@@ -395,6 +397,33 @@ def get_teams_members(team_id):
         )
 
         result = ('successfully retrieved members', 200, cursor.fetchall())
+
+        cursor.close()
+        connection.close()
+        return result
+    except Exception as e:
+        result = (str(e), 500, [])
+
+        cursor.close()
+        connection.close()
+        return result
+
+
+def create_group(name, team_id):
+    try:
+        connection = connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            INSERT INTO groups (team_id, name)
+            VALUES (%s, %s)
+            RETURNING group_id;
+            ''',
+            (team_id, name)
+        )
+
+        result = ('successfully created group', 200, cursor.fetchone()[0])
 
         cursor.close()
         connection.close()
