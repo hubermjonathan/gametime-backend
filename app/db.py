@@ -38,11 +38,13 @@ all functions return a tuple of the format (response message, response code, dat
     join_group(user_id, group_id)
         adds a user to a group
         returns nothing
+    leave_group(user_id, group_id)
+        removes a user from a group
+        returns nothing
 
 TODO:
     functions:
         general get functions
-        remove player from group
         all of the message storing and retrieving
 
     unit test:
@@ -452,6 +454,32 @@ def join_group(user_id, group_id):
         )
 
         result = ('successfully joined group', 200, [])
+
+        cursor.close()
+        connection.close()
+        return result
+    except Exception as e:
+        result = (str(e), 500, [])
+
+        cursor.close()
+        connection.close()
+        return result
+
+
+def leave_group(user_id, group_id):
+    try:
+        connection = connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            DELETE FROM usersgroups
+            WHERE user_id=%s AND group_id=%s;
+            ''',
+            (user_id, group_id)
+        )
+
+        result = ('successfully left group', 200, [])
 
         cursor.close()
         connection.close()
