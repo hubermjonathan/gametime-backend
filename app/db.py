@@ -35,11 +35,13 @@ all functions return a tuple of the format (response message, response code, dat
     create_group(name, team_id)
         creates a new group for a team
         returns the id of the new group
+    join_group(user_id, group_id)
+        adds a user to a group
+        returns nothing
 
 TODO:
     functions:
         general get functions
-        add player to group
         remove player from group
         all of the message storing and retrieving
 
@@ -424,6 +426,32 @@ def create_group(name, team_id):
         )
 
         result = ('successfully created group', 200, cursor.fetchone()[0])
+
+        cursor.close()
+        connection.close()
+        return result
+    except Exception as e:
+        result = (str(e), 500, [])
+
+        cursor.close()
+        connection.close()
+        return result
+
+
+def join_group(user_id, group_id):
+    try:
+        connection = connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            INSERT INTO usersgroups (user_id, group_id)
+            VALUES (%s, %s);
+            ''',
+            (user_id, group_id)
+        )
+
+        result = ('successfully joined group', 200, [])
 
         cursor.close()
         connection.close()
