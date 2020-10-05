@@ -2,7 +2,7 @@
 
 ## overview
 
-all of the server is contained within the app folder. the flask server is created and configured in `app/__init__.py`. `app/config.py` contains the environment variables and other configuration options for prod, dev, and testing. `.env` contains the actual environment variables that are imported into the config file and is not included in version control. the `api` folder contains blueprints of each the api functionalities. `db.py` contains helper functions for all of the interaction with the database.
+all of the server is contained within the app folder. the flask server is created and configured in `app/__init__.py`. `app/config.py` contains the environment variables and other configuration options for prod, dev, and testing. `.env` contains the actual environment variables that are imported into the config file and is not included in version control. the `api` folder contains blueprints of each the api functionalities. the `db` folder contains helper functions for all of the interaction with the database.
 
 ## members
 - Jon Huber (huber46@purdue.edu)
