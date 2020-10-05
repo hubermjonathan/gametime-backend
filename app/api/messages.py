@@ -1,10 +1,10 @@
 from flask import Blueprint, jsonify, request, abort
-from .. import db
+from ..db import messages as db
 
-messagebp = Blueprint('messagebp', __name__)
+messagesbp = Blueprint('messagesbp', __name__)
 
 
-@messagebp.route('/sendPlayerMessage', methods=['POST'])
+@messagesbp.route('/sendPlayerMessage', methods=['POST'])
 def send_message():
     if request.method == 'POST':
         body = request.get_json()
@@ -17,7 +17,7 @@ def send_message():
         # return jsonify(data), 500
 
 
-@messagebp.route('/sendGroupMessage', methods=['POST'])
+@messagesbp.route('/sendGroupMessage', methods=['POST'])
 def send_to_group():
     if request.method == 'POST':
         body = request.get_json()
