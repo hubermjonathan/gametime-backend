@@ -35,10 +35,10 @@ all functions return a tuple of the format (response message, response code, dat
     create_group(name, team_id)
         creates a new group for a team
         returns the id of the new group
-    join_group(user_id, group_id)
+    add_to_group(user_id, group_id)
         adds a user to a group
         returns nothing
-    leave_group(user_id, group_id)
+    remove_from_group(user_id, group_id)
         removes a user from a group
         returns nothing
 
@@ -440,18 +440,28 @@ def create_group(name, team_id):
         return result
 
 
-def join_group(user_id, group_id):
+def add_to_group(user_id, group_id):
     try:
         connection = connect()
         cursor = connection.cursor()
 
-        cursor.execute(
-            '''
-            INSERT INTO usersgroups (user_id, group_id)
-            VALUES (%s, %s);
-            ''',
-            (user_id, group_id)
-        )
+        if isinstance(user_id, list):
+            for user in user_id:
+                cursor.execute(
+                    '''
+                    INSERT INTO usersgroups (user_id, group_id)
+                    VALUES (%s, %s);
+                    ''',
+                    (user, group_id)
+                )
+        else:
+            cursor.execute(
+                '''
+                INSERT INTO usersgroups (user_id, group_id)
+                VALUES (%s, %s);
+                ''',
+                (user_id, group_id)
+            )
 
         result = ('successfully joined group', 200, [])
 
@@ -466,18 +476,28 @@ def join_group(user_id, group_id):
         return result
 
 
-def leave_group(user_id, group_id):
+def remove_from_group(user_id, group_id):
     try:
         connection = connect()
         cursor = connection.cursor()
 
-        cursor.execute(
-            '''
-            DELETE FROM usersgroups
-            WHERE user_id=%s AND group_id=%s;
-            ''',
-            (user_id, group_id)
-        )
+        if isinstance(user_id, list):
+            for user in user_id:
+                cursor.execute(
+                    '''
+                    DELETE FROM usersgroups
+                    WHERE user_id=%s AND group_id=%s;
+                    ''',
+                    (user, group_id)
+                )
+        else:
+            cursor.execute(
+                '''
+                DELETE FROM usersgroups
+                WHERE user_id=%s AND group_id=%s;
+                ''',
+                (user_id, group_id)
+            )
 
         result = ('successfully left group', 200, [])
 
