@@ -19,6 +19,6 @@ def create_app(test_config=None):
     # load blueprints
     app.register_blueprint(examplebp)
     app.register_blueprint(groupsbp)
-    # app.register_blueprint(messagesbp)
+    app.register_blueprint(messagesbp)
 
     return app
