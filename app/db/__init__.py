@@ -1,7 +1,22 @@
 '''
+TODO:
+    functions:
+        all of the message storing and retrieving
+
+    unit test:
+        give admin privelege
+        remove admin privelege
+        join team
+        leave team
+        view teams
+        create team
+        edit team
+        view and manage team
+
+
 DOCUMENTATION:
-all functions take in a connection object first
-all functions return a tuple of the format (response message, response code, data)
+    all functions take in a connection object first
+    all functions return a tuple of the format (response message, response code, data)
 
     drop.py:
         drop_test_tables(connection):
@@ -30,6 +45,11 @@ all functions return a tuple of the format (response message, response code, dat
             takes in the user(s) being removed and the group to remove from
             returns nothing
 
+        get_groups_members(connection, group_id):
+            retrieves the members of a group
+            takes in the group to get members from
+            returns an array of tuples of the format (user_id, name, email, phone_number, profile_picture)
+
     teams.py:
         create_team(connection, name, user_id):
             creates a new team
@@ -56,6 +76,11 @@ all functions return a tuple of the format (response message, response code, dat
             takes in the team being modified and the new name
             returns nothing
 
+        get_team(connection, team_id):
+            retrieves general information about a team
+            takes in the team to get
+            returns a tuple of the format (team_id, name, fund_goal, fund_current, fund_desc, account_number, routing_number, owner)
+
         get_teams_members(connection, team_id):
             retrieves the members of a team
             takes in the team to get members from
@@ -66,36 +91,38 @@ all functions return a tuple of the format (response message, response code, dat
             creates a user
             takes in the name, email, and phone number of the new user
             returns the id of the new user
+
         add_phone_number(connection, user_id, phone_number):
             adds a new phone number to a user
             takes in the user to add to and the new phone number to add
             returns nothing
+
         remove_phone_number(connection, user_id, phone_number):
             removes an extra phone number from a user
             takes in the user to remove from and the phone number to remove
             returns nothing
 
-TODO:
-    functions:
-        general get functions
-        all of the message storing and retrieving
+        get_user(connection, user_id):
+            retrieves general information about a user
+            takes in the user to get
+            returns a tuple of the format (user_id, name, email, phone_number, profile_picture)
 
-    unit test:
-        give admin privelege
-        remove admin privelege
-        join team
-        leave team
-        view teams
-        create team
-        edit team
-        view and manage team
+        get_users_teams(connection, user_id):
+            retrieves the teams a user is a member of
+            takes in the user
+            returns an array of tuples of the format (team_id, name)
+
+        get_users_groups(connection, user_id):
+            retrieves the groups a user if a member of
+            takes in the user
+            returns an array of tuples of the format (group_id, name)
 '''
 
 
 from . import drop
-from . import users
-from . import teams
 from . import groups
+from . import teams
+from . import users
 import psycopg2
 from os import environ, path
 from dotenv import load_dotenv

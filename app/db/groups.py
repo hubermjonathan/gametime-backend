@@ -80,3 +80,27 @@ def remove_from_group(connection, user_id, group_id):
         result = (str(e), 500, [])
         cursor.close()
         return result
+
+
+def get_groups_members(connection, group_id):
+    try:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT users.*
+            FROM users
+            INNER JOIN usersgroups
+            ON users.user_id=usersgroups.user_id
+            WHERE usersgroups.group_id=1
+            ''',
+            (group_id,)
+        )
+
+        result = ('successfully retrieved members', 200, cursor.fetchall())
+        cursor.close()
+        return result
+    except Exception as e:
+        result = (str(e), 500, [])
+        cursor.close()
+        return result

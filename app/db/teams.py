@@ -131,6 +131,28 @@ def edit_team_name(connection, team_id, name):
         return result
 
 
+def get_team(connection, team_id):
+    try:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT *
+            FROM teams
+            WHERE team_id=%s
+            ''',
+            (team_id,)
+        )
+
+        result = ('successfully retrieved team', 200, cursor.fetchall())
+        cursor.close()
+        return result
+    except Exception as e:
+        result = (str(e), 500, [])
+        cursor.close()
+        return result
+
+
 def get_teams_members(connection, team_id):
     try:
         cursor = connection.cursor()
