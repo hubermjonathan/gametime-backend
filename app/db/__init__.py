@@ -1,8 +1,5 @@
 '''
 TODO:
-    functions:
-        all of the message storing and retrieving
-
     unit test:
         give admin privelege
         remove admin privelege
@@ -49,6 +46,27 @@ DOCUMENTATION:
             retrieves the members of a group
             takes in the group to get members from
             returns an array of tuples of the format (user_id, name, email, phone_number, profile_picture)
+
+    messages.py:
+        create_message(connection, recipient_id, sender_id, content):
+            creates a new direct message and marks the time sent
+            takes in the recipient, sender, and the content of the message
+            returns the id of the new message
+
+        create_group_message(connection, recipient_id, sender_id, content):
+            creates a new group message and marks the time sent
+            takes in the group, sender, and the content of the message
+            returns the id of the new message
+
+        get_messages(connection, user_id):
+            retrieves all direct messages for a user
+            takes in the user to get messages for
+            returns an array of tuples of the format (message_id, user_id, sender_id, content, time_sent)
+
+        get_group_messages(connection, group_id):
+            retrieves all messages for a group
+            takes in the group to get messages for
+            returns an array of tuples of the format (message_id, group_id, sender_id, content, time_sent)
 
     teams.py:
         create_team(connection, name, user_id):
@@ -121,6 +139,7 @@ DOCUMENTATION:
 
 from . import drop
 from . import groups
+from . import messages
 from . import teams
 from . import users
 import psycopg2
