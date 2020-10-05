@@ -27,11 +27,14 @@ def create_fetch_group():
     if request.method == 'GET':
         group_id = request.args.get('id')
 
-        message, status, data = db.get_groups_members(connection, group_id)
+        message, status, group_info = db.get_groups_members(
+            connection, group_id)
 
         if status != 200:
-            return 'Failed to fetch members of group, database error', status
-        return jsonify(data), 200
+            return message, status
+
+        res = group_info
+        return jsonify(res), 200
 
     # POST, Creates a new group
     if request.method == 'POST':
@@ -46,8 +49,10 @@ def create_fetch_group():
                 connection, member_id, new_group_id)
 
         if status != 200:
-            return 'Failed to create new group, database error', status
-        return jsonify(new_group_id), 200
+            return message, status
+
+        res = new_group_id
+        return jsonify(res), 200
 
 
 @groupsbp.route('/group/addMembers', methods=['PUT'])
@@ -61,8 +66,10 @@ def add_members():
                 connection, member_id, group_id)
 
         if status != 200:
-            return 'Failed to add members to group, database error', status
-        return jsonify(data), status
+            return message, status
+
+        res = f"Successfully added Members: {member_ids} to Group: {group_id}"
+        return jsonify(res), status
 
 
 @groupsbp.route('/group/deleteMembers', methods=['DELETE'])
@@ -76,6 +83,7 @@ def delete_members():
                 connection, member_id, group_id)
 
         if status != 200:
-            return 'Failed to delete members from group, database error', status
+            return message, status
 
-        return jsonify(data), status
+        res = f"Successfully deleted Members: {member_ids} from Group: {group_id}"
+        return jsonify(res), status
