@@ -25,6 +25,7 @@ def disconnect_db(response):
 def create_fetch_group():
     # GET, Returns information about a group
     if request.method == 'GET':
+        # TODO: param validation
         group_id = request.args.get('id')
 
         message, status, group_info = db.get_groups_members(
@@ -38,6 +39,7 @@ def create_fetch_group():
 
     # POST, Creates a new group
     if request.method == 'POST':
+        # TODO: param validation
         body = request.get_json()
         name, team_id, member_ids = body['name'], body['team_id'], body['member_ids']
 
@@ -58,6 +60,7 @@ def create_fetch_group():
 @groupsbp.route('/group/addMembers', methods=['PUT'])
 def add_members():
     if request.method == 'PUT':
+        # TODO: json validation
         body = request.get_json()
         group_id, member_ids = body['group_id'], body['new_members']
 
@@ -75,6 +78,7 @@ def add_members():
 @groupsbp.route('/group/deleteMembers', methods=['DELETE'])
 def delete_members():
     if request.method == 'DELETE':
+        # TODO: json validation
         body = request.get_json()
         group_id, member_ids = body['group_id'], body['remove_members']
 
