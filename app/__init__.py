@@ -2,6 +2,8 @@ import os
 from flask import Flask
 
 from app.api.example import examplebp
+from app.api.groups import groupsbp
+from app.api.messages import messagesbp
 
 
 def create_app(test_config=None):
@@ -16,5 +18,7 @@ def create_app(test_config=None):
 
     # load blueprints
     app.register_blueprint(examplebp)
+    app.register_blueprint(groupsbp)
+    app.register_blueprint(messagesbp)
 
     return app
