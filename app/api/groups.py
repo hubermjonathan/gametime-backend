@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify, request, abort
+from jsonschema import validate
 from ..db import groups as db
 from ..db import connect
+from . import schema
 
 groupsbp = Blueprint('groupsbp', __name__)
 connection = None
@@ -39,8 +41,13 @@ def create_fetch_group():
 
     # POST, Creates a new group
     if request.method == 'POST':
-        # TODO: param validation
         body = request.get_json()
+
+        try:
+            validate(body, schema=schema.fetch_group_schema)
+        except Exception as e:
+            return jsonify(str(e)), 400
+
         name, team_id, member_ids = body['name'], body['team_id'], body['member_ids']
 
         message, status, new_group_id = db.create_group(
@@ -60,8 +67,13 @@ def create_fetch_group():
 @groupsbp.route('/group/addMembers', methods=['PUT'])
 def add_members():
     if request.method == 'PUT':
-        # TODO: json validation
         body = request.get_json()
+
+        try:
+            validate(body, schema=schema.add_members_schema)
+        except Exception as e:
+            return jsonify(str(e)), 400
+
         group_id, member_ids = body['group_id'], body['new_members']
 
         for member_id in member_ids:
@@ -80,6 +92,12 @@ def delete_members():
     if request.method == 'DELETE':
         # TODO: json validation
         body = request.get_json()
+
+        try:
+            validate(body, schema=schema.delete_members_schema)
+        except Exception as e:
+            return jsonify(str(e)), 400
+
         group_id, member_ids = body['group_id'], body['remove_members']
 
         for member_id in member_ids:
