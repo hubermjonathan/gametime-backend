@@ -14,13 +14,13 @@ all functions return a tuple of the format (response message, response code, dat
     create_team(name, user_id)
         creates a team, adds the coach, and creates the default group
         returns nothing
-    join_team(user_id, team_id)
+    add_to_team(user_id, team_id)
         adds a user to a team and its default group
         returns nothing
     change_permission_level(user_id, team_id, privelege_level)
         changes the permission level for a user on a team
         returns nothing
-    leave_team(user_id, team_id)
+    remove_from_team(user_id, team_id)
         removes a user from a team and any groups from that team
         returns nothing
     get_users_teams(user_id)
@@ -234,7 +234,7 @@ def create_team(name, user_id):
         return result
 
 
-def join_team(user_id, team_id):
+def add_to_team(user_id, team_id):
     try:
         connection = connect()
         cursor = connection.cursor()
@@ -294,7 +294,7 @@ def change_permission_level(user_id, team_id, privelege_level):
         return result
 
 
-def leave_team(user_id, team_id):
+def remove_from_team(user_id, team_id):
     try:
         connection = connect()
         cursor = connection.cursor()
