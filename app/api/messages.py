@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify, request, abort
+from jsonschema import validate
 from ..db import messages as db
 from ..db import connect
+from . import schema
 
 messagesbp = Blueprint('messagesbp', __name__)
 connection = None
@@ -25,7 +27,12 @@ def disconnect_db(response):
 def send_message():
     if request.method == 'POST':
         body = request.get_json()
-        # TODO: json validation
+
+        try:
+            validate(body, schema=schema.send_message_schema)
+        except Exception as e:
+            return jsonify(str(e)), 400
+
         sender_id, recipient_id, contents = body['sender_id'], body['recipient_id'], body['message']
 
         # Store the message
@@ -45,7 +52,12 @@ def send_message():
 def send_to_group():
     if request.method == 'POST':
         body = request.get_json()
-        # TODO: json validation
+
+        try:
+            validate(body, schema=schema.send_to_group_schema)
+        except Exception as e:
+            return jsonify(str(e)), 400
+
         sender_id, recipient_id, contents = body['sender_id'], body['group_id'], body['message']
 
         # Store the message

@@ -90,7 +90,6 @@ def add_members():
 @groupsbp.route('/group/deleteMembers', methods=['DELETE'])
 def delete_members():
     if request.method == 'DELETE':
-        # TODO: json validation
         body = request.get_json()
 
         try:
