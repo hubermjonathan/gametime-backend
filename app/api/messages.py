@@ -38,11 +38,10 @@ def send_message():
         # Store the message
         message, status, message_id = db.create_message(
             connection, recipient_id, sender_id, contents)
-
-        # TODO: Send the message via SNS
-
         if status != 200:
             return message, status
+
+        # TODO: Send the message via SNS
 
         res = message_id
         return jsonify(res), 200
@@ -63,11 +62,10 @@ def send_to_group():
         # Store the message
         message, status, message_id = db.create_group_message(
             connection, recipient_id, sender_id, contents)
-
-        # TODO: Send the message via SNS
-
         if status != 200:
             return message, status
+
+        # TODO: Send the message via SNS
 
         res = message_id
         return jsonify(res), 200
