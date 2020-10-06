@@ -32,7 +32,6 @@ def create_fetch_group():
 
         message, status, group_info = db.get_groups_members(
             connection, group_id)
-
         if status != 200:
             return message, status
 
@@ -56,9 +55,8 @@ def create_fetch_group():
         for member_id in member_ids:
             message, status, data, = db.add_to_group(
                 connection, member_id, new_group_id)
-
-        if status != 200:
-            return message, status
+            if status != 200:
+                return message, status
 
         res = new_group_id
         return jsonify(res), 200
@@ -79,9 +77,8 @@ def add_members():
         for member_id in member_ids:
             message, status, data, = db.add_to_group(
                 connection, member_id, group_id)
-
-        if status != 200:
-            return message, status
+            if status != 200:
+                return message, status
 
         res = f"Successfully added Members: {member_ids} to Group: {group_id}"
         return jsonify(res), status
@@ -102,9 +99,8 @@ def delete_members():
         for member_id in member_ids:
             message, status, data = db.remove_from_group(
                 connection, member_id, group_id)
-
-        if status != 200:
-            return message, status
+            if status != 200:
+                return message, status
 
         res = f"Successfully deleted Members: {member_ids} from Group: {group_id}"
         return jsonify(res), status
