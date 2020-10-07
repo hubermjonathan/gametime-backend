@@ -1,9 +1,15 @@
 from flask import Blueprint
 from .. import db
+from flask_cognito import cognito_auth_required, current_user, current_cognito_jwt
 
 
 examplebp = Blueprint('examplebp', __name__)
 
+
+@examplebp.route('/test', methods=['POST'])
+@cognito_auth_required
+def test(): 
+    return "Test", 200
 
 @examplebp.route('/test1')
 def test1():
