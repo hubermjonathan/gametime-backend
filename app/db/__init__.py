@@ -47,6 +47,11 @@ DOCUMENTATION:
             takes in the group to get members from
             returns an array of tuples of the format (user_id, name, email, phone_number, profile_picture)
 
+        get_groups_phone_numbers(connection, group_id):
+            retrieves the phone numbers of members of a group
+            takes in the group to get phone numbers from
+            returns an array of phone numbers
+
     messages.py:
         create_message(connection, recipient_id, sender_id, content):
             creates a new direct message and marks the time sent
