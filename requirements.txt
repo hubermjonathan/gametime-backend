@@ -1,8 +1,12 @@
 astroid==2.4.2
 attrs==20.2.0
 autopep8==1.5.4
+certifi==2020.6.20
+chardet==3.0.4
 click==7.1.2
+cognitojwt==1.2.2
 colorama==0.4.3
+ecdsa==0.14.1
 Flask==1.1.2
 isort==5.5.4
 itsdangerous==1.1.0
@@ -13,6 +17,7 @@ MarkupSafe==1.1.1
 mccabe==0.6.1
 pep8==1.7.1
 psycopg2==2.8.6
+pyasn1==0.4.8
 pycodestyle==2.6.0
 pylint==2.6.0
 pyrsistent==0.17.3
