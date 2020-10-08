@@ -5,6 +5,7 @@ from ..db import users as users
 from ..db import connect
 from . import schema
 import boto3
+from flask_login import login_required
 from os import environ, path
 from dotenv import load_dotenv
 
@@ -58,6 +59,7 @@ def disconnect_db(response):
 
 
 @messagesbp.route('/sendPlayerMessage', methods=['POST'])
+@login_required
 def send_message():
     if request.method == 'POST':
         body = request.get_json()
@@ -91,6 +93,7 @@ def send_message():
 
 
 @messagesbp.route('/sendGroupMessage', methods=['POST'])
+@login_required
 def send_to_group():
     if request.method == 'POST':
         body = request.get_json()

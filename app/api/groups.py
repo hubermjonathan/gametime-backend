@@ -3,6 +3,7 @@ from jsonschema import validate
 from ..db import groups as db
 from ..db import connect
 from . import schema
+from flask_login import login_required
 
 groupsbp = Blueprint('groupsbp', __name__)
 connection = None
@@ -24,6 +25,7 @@ def disconnect_db(response):
 
 
 @groupsbp.route('/group', methods=['GET', 'POST'])
+@login_required
 def create_fetch_group():
     # GET, Returns information about a group
     if request.method == 'GET':
@@ -63,6 +65,7 @@ def create_fetch_group():
 
 
 @groupsbp.route('/group/addMembers', methods=['PUT'])
+@login_required
 def add_members():
     if request.method == 'PUT':
         body = request.get_json()
@@ -85,6 +88,7 @@ def add_members():
 
 
 @groupsbp.route('/group/deleteMembers', methods=['DELETE'])
+@login_required
 def delete_members():
     if request.method == 'DELETE':
         body = request.get_json()
