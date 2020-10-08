@@ -144,6 +144,11 @@ DOCUMENTATION:
             retrieves the groups a user if a member of
             takes in the user
             returns an array of tuples of the format (group_id, name)
+
+        get_users_phone_number(connection, user_id):
+            retrieves the phone number of a user
+            takes in the user
+            returns the phone number
 '''
 
 
