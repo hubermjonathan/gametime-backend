@@ -1,9 +1,16 @@
 from flask import Blueprint
 from .. import db
 
+from flask_login import login_required
+
 
 examplebp = Blueprint('examplebp', __name__)
 
+@examplebp.route('/test', methods=['POST'])
+@login_required
+def test():
+    
+    return 'Test', 200
 
 @examplebp.route('/test1')
 def test1():
