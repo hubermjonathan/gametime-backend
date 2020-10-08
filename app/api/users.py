@@ -32,7 +32,7 @@ def signup():
         body = request.get_json()
 
         try:
-            validate(body, schema=schema.create_user_schema)
+            validate(body, schema=schema.signup_schema)
         except Exception as e:
             return jsonify(str(e)), 400
 
@@ -55,5 +55,37 @@ def signup():
 
         new_user_id = db.create_user(connection, first_name + ' ' + last_name, email, phone)
 
-        res = new_user_id
+        res = r.json()
+        res['user_id'] = new_user_id[2]
+        return jsonify(res), 200
+
+@usersbp.route('/login', methods=['POST'])
+def login():
+    # POST, Creates a new user
+    if request.method == 'POST':
+        body = request.get_json()
+
+        try:
+            validate(body, schema=schema.login_schema)
+        except Exception as e:
+            return jsonify(str(e)), 400
+
+        email, password = body['email'], body['password']
+
+        r = requests.post(
+            'https://1sz21h77li.execute-api.us-east-2.amazonaws.com/Dev/login',
+            data = json.dumps({
+                'email': email,
+                'password': password
+            })
+        )
+    
+        if (r.json()['error'] is not False):
+            res = r.json()
+            return res, r.status_code
+
+        user_id = db.get_user_id(connection, email)
+
+        res = r.json()
+        res['user_id'] = user_id[2]
         return jsonify(res), 200
