@@ -67,7 +67,7 @@ def send_message():
         body = request.get_json()
 
         try:
-            validate(body, schema=schema.send_to_group_schema)
+            validate(body, schema=schema.send_message_schema)
         except Exception as e:
             return jsonify(str(e)), 400
 
@@ -135,7 +135,7 @@ def send_to_team():
         body = request.get_json()
 
         try:
-            validate(body, schema=schema.send_to_group_schema)
+            validate(body, schema=schema.send_to_team_schema)
         except Exception as e:
             return jsonify(str(e)), 400
 

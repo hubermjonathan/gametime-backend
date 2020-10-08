@@ -41,7 +41,7 @@ def create_app(test_config=None):
     def load_user_from_request_header(request):
         try:
             access_token = request.headers["Authorization"]
-            print(access_token)
+            # print(access_token)
             cognito = Cognito(
                 environ.get('COGNITO_REGION'), environ.get('COGNITO_ACCESS'), access_token=access_token, user_pool_region='us-east-2')
 

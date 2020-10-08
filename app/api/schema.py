@@ -44,6 +44,15 @@ send_to_group_schema = {
     }
 }
 
+send_to_team_schema = {
+    'type': 'object',
+    'properties': {
+        'sender_id': {'type': 'number'},
+        'team_id': {'type': 'number'},
+        'message': {'type': 'string'}
+    }
+}
+
 # Users Endpoints
 create_user_schema = {
     'type': 'object',
