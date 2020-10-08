@@ -180,3 +180,40 @@ def get_teams_members(connection, team_id):
         result = (str(e), 500, [])
         cursor.close()
         return result
+
+
+def get_teams_phone_numbers(connection, team_id):
+    try:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT owner
+            FROM teams
+            WHERE team_id=%s;
+            ''',
+            (team_id,)
+        )
+
+        owner_id = cursor.fetchone()[0]
+        cursor.execute(
+            '''
+            SELECT users.phone_number
+            FROM users
+            INNER JOIN usersteams
+            ON users.user_id=usersteams.user_id
+            WHERE usersteams.team_id=%s AND NOT users.user_id=%s;
+            ''',
+            (team_id, owner_id)
+        )
+
+        data = cursor.fetchall()
+        data = [phone_number[0] for phone_number in data]
+
+        result = ('successfully retrieved phone numbers', 200, data)
+        cursor.close()
+        return result
+    except Exception as e:
+        result = (str(e), 500, [])
+        cursor.close()
+        return result
