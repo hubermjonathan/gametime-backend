@@ -109,6 +109,11 @@ DOCUMENTATION:
             takes in the team to get members from
             returns an array of tuples of the format (user_id, name, email, phone_number, profile_picture)
 
+        get_teams_phone_numbers(connection, team_id):
+            retrieves the phone numbers of members of a team
+            takes in the team to get phone numbers from
+            returns an array of phone numbers
+
     users.py:
         create_user(connection, name, email, phone_number):
             creates a user
