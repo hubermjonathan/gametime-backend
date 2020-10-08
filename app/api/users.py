@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request, abort
 from jsonschema import validate
 import requests
+import json
 from ..db import users as db
 from ..db import connect
 from . import schema
@@ -39,19 +40,18 @@ def signup():
 
         r = requests.post(
             'https://1sz21h77li.execute-api.us-east-2.amazonaws.com/Dev/signup',
-            data = str({
-                "phone": "test",
-                "email": "test",
-                "password": "test",
-                "firstname": "test",
-                "lastname": "test"
+            data = json.dumps({
+                'phone': phone,
+                'email': email,
+                'password': password,
+                'firstname': first_name,
+                'lastname': last_name
             })
         )
     
-        if (r.status_code != requests.codes.ok):
-            # res = r.json()
-            # return res, r.status_code
-            print(r.text)
+        if (r.json()['error'] is not False):
+            res = r.json()
+            return res, r.status_code
 
         new_user_id = db.create_user(connection, first_name + ' ' + last_name, email, phone)
 
