@@ -80,8 +80,10 @@ def send_message():
             return message, status
 
         # Fetch the number
-        user_id, name, email, phone_number, profile_picture = users.get_user(
+        message, status, phone_number = users.get_users_phone_number(
             connection, recipient_id)
+        if status != 200:
+            return message, status
 
         # Send to SNS
         res, success = sendsms(phone_number, contents)
