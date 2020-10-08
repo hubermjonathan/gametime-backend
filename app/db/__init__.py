@@ -120,6 +120,11 @@ DOCUMENTATION:
             takes in the name, email, and phone number of the new user
             returns the id of the new user
 
+        get_user_id(connection, email):
+            gets the id of a user
+            takes in the email of the user
+            returns the id of the user
+
         add_phone_number(connection, user_id, phone_number):
             adds a new phone number to a user
             takes in the user to add to and the new phone number to add
