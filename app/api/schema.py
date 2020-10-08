@@ -43,3 +43,15 @@ send_to_group_schema = {
         'message': {'type': 'string'}
     }
 }
+
+# Users Endpoints
+create_user_schema = {
+    'type': 'object',
+    'properties': {
+        'phone': {'type': 'string'},
+        'email': {'type': 'string'},
+        'password': {'type': 'string'},
+        'firstname': {'type': 'string'},
+        'lastname': {'type': 'string'}
+    }
+}

@@ -7,6 +7,7 @@ from warrant import Cognito
 from app.api.example import examplebp
 from app.api.groups import groupsbp
 from app.api.messages import messagesbp
+from app.api.users import usersbp
 
 class User:
 
@@ -49,5 +50,6 @@ def create_app(test_config=None):
     app.register_blueprint(examplebp)
     app.register_blueprint(groupsbp)
     app.register_blueprint(messagesbp)
+    app.register_blueprint(usersbp)
 
     return app
