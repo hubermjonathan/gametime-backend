@@ -130,3 +130,24 @@ def get_users_groups(connection, user_id):
         result = (str(e), 500, [])
         cursor.close()
         return result
+
+def get_users_phone_number(connection, user_id):
+    try:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT phone_number
+            FROM users
+            WHERE user_id=%s
+            ''',
+            (user_id,)
+        )
+
+        result = ('successfully retrieved phone number', 200, cursor.fetchone()[0])
+        cursor.close()
+        return result
+    except Exception as e:
+        result = (str(e), 500, [])
+        cursor.close()
+        return result
