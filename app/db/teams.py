@@ -17,11 +17,16 @@ def create_team(connection, name, user_id):
                 INSERT INTO groups (team_id, name)
                 VALUES (new_team_id, 'All Members');
             END $$;
+
+            SELECT team_id
+            FROM teams
+            WHERE name=%s AND owner=%s
+            ORDER BY team_id DESC;
             ''',
-            (name, user_id, user_id)
+            (name, user_id, user_id, name, user_id)
         )
 
-        result = ('successfully created team', 200, [])
+        result = ('successfully created team', 200, cursor.fetchone()[0])
         cursor.close()
         return result
     except Exception as e:
@@ -169,6 +174,43 @@ def get_teams_members(connection, team_id):
         )
 
         result = ('successfully retrieved members', 200, cursor.fetchall())
+        cursor.close()
+        return result
+    except Exception as e:
+        result = (str(e), 500, [])
+        cursor.close()
+        return result
+
+
+def get_teams_phone_numbers(connection, team_id):
+    try:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT owner
+            FROM teams
+            WHERE team_id=%s;
+            ''',
+            (team_id,)
+        )
+
+        owner_id = cursor.fetchone()[0]
+        cursor.execute(
+            '''
+            SELECT users.phone_number
+            FROM users
+            INNER JOIN usersteams
+            ON users.user_id=usersteams.user_id
+            WHERE usersteams.team_id=%s AND NOT users.user_id=%s;
+            ''',
+            (team_id, owner_id)
+        )
+
+        data = cursor.fetchall()
+        data = [phone_number[0] for phone_number in data]
+
+        result = ('successfully retrieved phone numbers', 200, data)
         cursor.close()
         return result
     except Exception as e:
