@@ -17,11 +17,16 @@ def create_team(connection, name, user_id):
                 INSERT INTO groups (team_id, name)
                 VALUES (new_team_id, 'All Members');
             END $$;
+
+            SELECT team_id
+            FROM teams
+            WHERE name=%s AND owner=%s
+            ORDER BY team_id DESC;
             ''',
-            (name, user_id, user_id)
+            (name, user_id, user_id, name, user_id)
         )
 
-        result = ('successfully created team', 200, [])
+        result = ('successfully created team', 200, cursor.fetchone()[0])
         cursor.close()
         return result
     except Exception as e:

@@ -77,7 +77,7 @@ DOCUMENTATION:
         create_team(connection, name, user_id):
             creates a new team
             takes in the name of the team and the owner of it
-            returns nothing
+            returns the id of the new team
 
         add_to_team(connection, user_id, team_id):
             adds a user to a team
