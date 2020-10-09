@@ -112,3 +112,46 @@ def get_user():
             'profile_picture': user_info[0][4],
         }
         return jsonify(res), 200
+
+
+@login_required
+@usersbp.route('/user/phone/add', methods=['POST'])
+def addPhone():
+    # POST, Add Phone Number to User
+    body = request.get_json()
+
+    user_id = body['id']
+    phone = body['phone']
+
+    message, status, user_info = db.add_phone_number(connection, user_id, phone)
+
+    print("Status\n\n:" ,status)
+
+    return "", status
+
+
+@login_required
+@usersbp.route('/user/phone/remove', methods=['POST'])
+def removePhone():
+    # POST, Remove Phone Number from User
+    body = request.get_json()
+
+    user_id = body['id']
+    phone = body['phone']
+
+    message, status, user_info = db.remove_phone_number(connection, user_id, phone)
+
+    print("Status\n\n:" ,status)
+
+    return "", status
+
+
+@login_required
+@usersbp.route('/user/teams', methods=['GET'])
+def getTeams():
+    # GET, gets all teams user is on
+    user_id = request.args.get('id')
+
+    message, status, user_info = db.get_users_teams(connection, user_id)
+
+    return jsonify(user_info), status
