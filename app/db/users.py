@@ -125,7 +125,7 @@ def get_users_teams(connection, user_id):
 
         cursor.execute(
             '''
-            SELECT teams.team_id, teams.name, usersteams.privelege_level
+            SELECT teams.team_id, teams.name, usersteams.privilege_level
             FROM teams
             INNER JOIN usersteams
             ON teams.team_id=usersteams.team_id

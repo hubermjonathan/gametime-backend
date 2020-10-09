@@ -1,8 +1,8 @@
 '''
 TODO:
     unit test:
-        give admin privelege
-        remove admin privelege
+        give admin privilege
+        remove admin privilege
         join team
         leave team
         view teams
@@ -94,9 +94,9 @@ DOCUMENTATION:
             takes in the user to remove and the team to remove from
             returns nothing
 
-        change_permission_level(connection, user_id, team_id, privelege_level):
+        change_permission_level(connection, user_id, team_id, privilege_level):
             changes the permission level for a user on a team
-            takes in the user being modified, the team they are being modified for, and the new privelege level
+            takes in the user being modified, the team they are being modified for, and the new privilege level
             returns nothing
 
         edit_team_name(connection, team_id, name):

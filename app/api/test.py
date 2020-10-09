@@ -5,11 +5,28 @@ from flask_login import login_required
 
 
 testbp = Blueprint('testbp', __name__)
+connection = None
+connection_pool = None
 
+
+@testbp.before_request
+def connect_db():
+    global connection
+    global connection_pool
+    connection, connection_pool = db.connect()
+
+
+@testbp.after_request
+def disconnect_db(response):
+    global connection
+    global connection_pool
+    if connection:
+        connection_pool.putconn(connection)
+        connection = None
+    return response
 
 @testbp.route('/create_test_data')
 def create_test_data():
-    connection = db.connect()
     result = db.drop.drop_test_tables(connection)
 
     result = db.users.create_user(connection, 'coach1', 'coach1-email1', 'coach1-phone1') # user_id = 1

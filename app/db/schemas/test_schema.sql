@@ -787,7 +787,7 @@ CREATE TABLE public.usersteams
 (
     user_id integer NOT NULL DEFAULT nextval('"UsersTeams_user_id_seq"'::regclass),
     team_id integer NOT NULL DEFAULT nextval('"UsersTeams_team_id_seq"'::regclass),
-    privelege_level integer NOT NULL,
+    privilege_level integer NOT NULL,
     fund_goal integer NOT NULL,
     fund_current integer NOT NULL,
     fund_desc text COLLATE pg_catalog."default" NOT NULL,
