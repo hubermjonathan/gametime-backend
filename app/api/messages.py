@@ -122,10 +122,16 @@ def send_to_group():
         if status != 200:
             return jsonify({'message': 'Failed to fetch numbers'}), status
 
+        failed = False
+        number_failed = 0
         for phone_number in phone_numbers:
             res, success = sendsms(phone_number, contents)
             if not success:
-                return jsonify({'message': 'Failed to send text'}), 500
+                failed = True
+                number_failed += 1
+            
+        if (failed):
+            return jsonify({'message': f'Failed to send {number_failed} text(s)'}), 503
 
         return jsonify({'message': "Success"}), 200
 
@@ -155,9 +161,15 @@ def send_to_team():
         if status != 200:
             return jsonify({'message': 'Failed to fetch numbers'}), status
 
+        failed = False
+        number_failed = 0
         for phone_number in phone_numbers:
             res, success = sendsms(phone_number, contents)
             if not success:
-                return jsonify({'message': 'Failed to send text'}), 500
+                failed = True
+                number_failed += 1
+            
+        if (failed):
+            return jsonify({'message': f'Failed to send {number_failed} text(s)'}), 503
 
         return jsonify({'message': "Success"}), 200
