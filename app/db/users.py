@@ -134,7 +134,15 @@ def get_users_teams(connection, user_id):
             (user_id,)
         )
 
-        result = ('successfully retrieved teams', 200, cursor.fetchall())
+        data = []
+        columns = [desc[0] for desc in cursor.description]
+        for row in cursor.fetchall():
+            formatted_row = {}
+            for i, col in enumerate(columns):
+                formatted_row[col] = row[i]
+            data.append(formatted_row)
+
+        result = ('successfully retrieved teams', 200, data)
         cursor.close()
         return result
     except Exception as e:

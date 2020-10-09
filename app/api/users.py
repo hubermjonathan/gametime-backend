@@ -154,11 +154,9 @@ def getTeams():
     # GET, gets all teams user is on
     user_id = request.args.get('id')
 
-    message, status, user_info = db.get_users_teams(connection, user_id)
+    message, status, teams = db.get_users_teams(connection, user_id)
 
     res = {
-        'team_id': user_info[0],
-        'name': user_info[1],
-        'privilege_level': user_info[2]
+        'teams': teams
     }
     return jsonify(res), 200
