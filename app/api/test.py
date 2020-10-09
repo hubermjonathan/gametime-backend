@@ -2,7 +2,6 @@ from flask import Blueprint, jsonify
 from .. import db
 
 import requests
-import json
 
 from flask_login import login_required
 
@@ -289,76 +288,57 @@ def clear_prod_data():
     create_user('16613104788', 'player1-email1@gmail.com',
                 'TestTest456456', 'player1', 'player1')
     result = db.users.add_phone_number(
-        connection, 3, 'player1-phone2')  # add phone to user 3
-    result = db.users.add_phone_number(
-        connection, 3, 'player1-phone3')  # add phone to user 3
+        connection, 3, '16613104788')  # add phone to user 3
 
     result = db.users.create_user(
-        connection, 'player2', 'player2-email1', 'player2-phone1')  # user_id = 4
+        connection, 'player2', 'player2-email1', '15026156875')  # user_id = 4
     result = db.users.add_phone_number(
-        connection, 4, 'player2-phone2')  # add phone to user 4
-    result = db.users.add_phone_number(
-        connection, 4, 'player2-phone3')  # add phone to user 4
+        connection, 4, '15026156875')  # add phone to user 4
 
     result = db.users.create_user(
-        connection, 'player3', 'player3-email1', 'player3-phone1')  # user_id = 5
+        connection, 'player3', 'player3-email1', '12195751591')  # user_id = 5
     result = db.users.add_phone_number(
-        connection, 5, 'player3-phone2')  # add phone to user 5
-    result = db.users.add_phone_number(
-        connection, 5, 'player3-phone3')  # add phone to user 5
+        connection, 5, '12195751591')  # add phone to user 5
 
     result = db.users.create_user(
-        connection, 'player4', 'player4-email1', 'player4-phone1')  # user_id = 6
+        connection, 'player4', 'player4-email1', '1502294391')  # user_id = 6
     result = db.users.add_phone_number(
-        connection, 6, 'player4-phone2')  # add phone to user 6
-    result = db.users.add_phone_number(
-        connection, 6, 'player4-phone3')  # add phone to user 6
+        connection, 6, '1502294391')  # add phone to user 6
 
     result = db.users.create_user(
-        connection, 'player5', 'player5-email1', 'player5-phone1')  # user_id = 7
+        connection, 'player5', 'player5-email1', '16615478610')  # user_id = 7
     result = db.users.add_phone_number(
-        connection, 7, 'player5-phone2')  # add phone to user 7
-    result = db.users.add_phone_number(
-        connection, 7, 'player5-phone3')  # add phone to user 7
+        connection, 7, '16615478610')  # add phone to user 7
 
     result = db.users.create_user(
-        connection, 'player6', 'player6-email1', 'player6-phone1')  # user_id = 8
+        connection, 'player6', 'player6-email1', '16615478612')  # user_id = 8
     result = db.users.add_phone_number(
-        connection, 8, 'player6-phone2')  # add phone to user 8
-    result = db.users.add_phone_number(
-        connection, 8, 'player6-phone3')  # add phone to user 8
+        connection, 8, '16615478612')  # add phone to user 8
 
     result = db.users.create_user(
-        connection, 'player7', 'player7-email1', 'player7-phone1')  # user_id = 9
+        connection, 'player7', 'player7-email1', '17602125532')  # user_id = 9
     result = db.users.add_phone_number(
-        connection, 9, 'player7-phone2')  # add phone to user 9
-    result = db.users.add_phone_number(
-        connection, 9, 'player7-phone3')  # add phone to user 9
+        connection, 9, '17602125532')  # add phone to user 9
 
     result = db.users.create_user(
-        connection, 'player8', 'player8-email1', 'player8-phone1')  # user_id = 10
+        connection, 'player8', 'player8-email1', '15137202414')  # user_id = 10
     result = db.users.add_phone_number(
-        connection, 10, 'player8-phone2')  # add phone to user 10
-    result = db.users.add_phone_number(
-        connection, 10, 'player8-phone3')  # add phone to user 10
+        connection, 10, '15137202414')  # add phone to user 10
 
     result = db.users.create_user(
-        connection, 'player9', 'player9-email1', '16613104788')  # user_id = 11
+        connection, 'player9', 'player9-email1', '15025515108')  # user_id = 11
     result = db.users.add_phone_number(
-        connection, 11, 'player9-phone2')  # add phone to user 11
-    result = db.users.add_phone_number(
-        connection, 11, 'player9-phone3')  # add phone to user 11
+        connection, 11, '15025515108')  # add phone to user 11
 
     result = db.users.create_user(
-        connection, 'player10', 'player10-email1', 'player10-phone1')  # user_id = 12
+        connection, 'player10', 'player10-email1', '17084204884')  # user_id = 12
     result = db.users.add_phone_number(
-        connection, 12, 'player10-phone2')  # add phone to user 12
-    result = db.users.add_phone_number(
-        connection, 12, 'player10-phone3')  # add phone to user 12
+        connection, 12, '17084204884')  # add phone to user 12
 
     result = db.teams.create_team(connection, 'team1', 1)  # team_id = 1
     result = db.teams.create_team(connection, 'team2', 2)  # team_id = 2
 
+    result = db.teams.add_to_team(connection, 1, 1)  # add player 1 to team 1
     result = db.teams.add_to_team(connection, 3, 1)  # add player 1 to team 1
     result = db.teams.add_to_team(connection, 4, 1)  # add player 2 to team 1
     result = db.teams.add_to_team(connection, 5, 1)  # add player 3 to team 1
@@ -373,7 +353,7 @@ def clear_prod_data():
     result = db.teams.add_to_team(connection, 10, 2)  # add player 8 to team 2
     result = db.teams.add_to_team(connection, 11, 2)  # add player 9 to team 2
     result = db.teams.add_to_team(connection, 12, 2)  # add player 10 to team 2
-
+    result = db.teams.add_to_team(connection, 13, 2)  # add player 10 to team 2
     result = db.teams.change_permission_level(
         connection, 6, 1, 1)  # make player 4 admin on team 1
     result = db.teams.change_permission_level(
