@@ -9,7 +9,7 @@ connection = None
 connection_pool = None
 
 
-def create_user(phone, email. password, first_name, last_name):
+def create_user(phone, email, password, first_name, last_name):
     r = requests.post(
         'https://1sz21h77li.execute-api.us-east-2.amazonaws.com/Dev/signup',
         data=json.dumps({
