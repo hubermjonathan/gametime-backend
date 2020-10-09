@@ -32,19 +32,19 @@ def create_fetch_group():
         # TODO: param validation
         group_id = request.args.get('id')
 
-        message, status, group_info = db.get_groups_members(
+        message, status, group_info = db.get_group(
             connection, group_id)
         if status != 200:
             return jsonify({'message': 'Failed to fetch group members'}), 400
 
         res = {
-            'name': ,
-            'id': ,
-            'description': ,
-            'members': []
+            'group_id': group_info[0],
+            'team_id': group_info[1],
+            'name': group_info[2],
+            'members': [3]
         }
 
-        return jsonify(), 200
+        return jsonify(res), 200
 
     # POST, Creates a new group
     if request.method == 'POST':
