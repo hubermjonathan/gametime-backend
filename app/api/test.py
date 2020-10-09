@@ -128,7 +128,6 @@ def create_test_data():
     result = db.teams.create_team(connection, 'team1', 1)  # team_id = 1
     result = db.teams.create_team(connection, 'team2', 2)  # team_id = 2
 
-    result = db.teams.add_to_team(connection, 3, 1)  # add player 1 to team 1
     result = db.teams.add_to_team(connection, 4, 1)  # add player 2 to team 1
     result = db.teams.add_to_team(connection, 5, 1)  # add player 3 to team 1
     result = db.teams.add_to_team(connection, 6, 1)  # add player 4 to team 1
