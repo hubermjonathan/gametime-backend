@@ -80,7 +80,7 @@ def send_message():
         message, status, message_id = messages.create_message(
             connection, recipient_id, sender_id, contents)
         if status != 200:
-            return message, status
+            return jsonify({'message': 'Failed to send message'}), 400
 
         # Fetch the number
         message, status, phone_number = users.get_users_phone_number(
@@ -91,7 +91,8 @@ def send_message():
         # Send to SNS
         res, success = sendsms(phone_number, contents)
         if not success:
-            return jsonify({'message': 'Failed to send message'}), 400
+            print(res)
+            return jsonify({'message': 'Failed to send message'}), 503
 
         res = message_id
         return jsonify({'player_id': recipient_id, 'message': "Success"}), 200
@@ -114,13 +115,13 @@ def send_to_group():
         message, status, message_id = messages.create_group_message(
             connection, recipient_id, sender_id, contents)
         if status != 200:
-            return jsonify({'message': 'Failed to store message'}), status
+            return jsonify({'message': 'Failed to send message'}), 400
 
         # Fetch the numbers
         message, status, phone_numbers = groups.get_groups_phone_numbers(
             connection, recipient_id)
         if status != 200:
-            return jsonify({'message': 'Failed to fetch numbers'}), status
+            return jsonify({'message': 'Failed to send message'}), 400
 
         failed = False
         number_failed = 0
@@ -129,7 +130,7 @@ def send_to_group():
             if not success:
                 failed = True
                 number_failed += 1
-            
+
         if (failed):
             return jsonify({'message': f'Failed to send {number_failed} text(s)'}), 503
 
@@ -153,13 +154,13 @@ def send_to_team():
         message, status, message_id = messages.create_group_message(
             connection, recipient_id, sender_id, contents)
         if status != 200:
-            return jsonify({'message': 'Failed to store message'}), status
+            return jsonify({'message': 'Failed to send message'}), 400
 
         # Fetch the numbers
         message, status, phone_numbers = teams.get_teams_phone_numbers(
             connection, recipient_id)
         if status != 200:
-            return jsonify({'message': 'Failed to fetch numbers'}), status
+            return jsonify({'message': 'Failed to send message'}), 400
 
         failed = False
         number_failed = 0
@@ -168,7 +169,7 @@ def send_to_team():
             if not success:
                 failed = True
                 number_failed += 1
-            
+
         if (failed):
             return jsonify({'message': f'Failed to send {number_failed} text(s)'}), 503
 

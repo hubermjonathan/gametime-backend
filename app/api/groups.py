@@ -28,7 +28,7 @@ def disconnect_db(response):
 
 
 @groupsbp.route('/group', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def create_fetch_group():
     # GET, Returns information about a group
     if request.method == 'GET':
