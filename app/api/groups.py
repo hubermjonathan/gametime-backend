@@ -28,11 +28,10 @@ def disconnect_db(response):
 
 
 @groupsbp.route('/group', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def create_fetch_group():
     # GET, Returns information about a group
     if request.method == 'GET':
-        # TODO: param validation
         group_id = request.args.get('id')
 
         message, status, group_info = db.get_group(
@@ -111,6 +110,13 @@ def delete_members():
             return jsonify({'message': 'Failed to delete members'}), 400
 
         group_id, member_ids = body['group_id'], body['remove_members']
+
+        if group_id < 0:
+            return jsonify({'message': 'Failed to delete members'}), 400
+
+        for member_id in member_ids:
+            if not isinstance(member_id, int) or member_id < 0:
+                return jsonify({'message': 'Failed to delete members'}), 400
 
         for member_id in member_ids:
             message, status, data = db.remove_from_group(
