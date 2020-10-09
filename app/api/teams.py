@@ -9,19 +9,22 @@ import json
 
 teamsbp = Blueprint('teamsbp', __name__)
 connection = None
+connection_pool = None
 
 
-@teamsbp.before_request
+@groupsbp.before_request
 def connect_db():
     global connection
-    connection = connect()
+    global connection_pool
+    connection, connection_pool = connect()
 
 
-@teamsbp.after_request
+@groupsbp.after_request
 def disconnect_db(response):
     global connection
+    global connection_pool
     if connection:
-        connection.close()
+        connection_pool.putconn(connection)
         connection = None
     return response
 

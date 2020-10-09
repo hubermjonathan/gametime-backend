@@ -12,7 +12,7 @@ from os import environ, path
 from dotenv import load_dotenv
 
 basedir = path.abspath(path.dirname(__file__))
-load_dotenv(path.join(basedir, '.env'))
+load_dotenv(path.join(basedir, '../.env'))
 
 
 AWS = boto3.client(
@@ -43,19 +43,22 @@ def sendsms(phone_number, text):
 
 messagesbp = Blueprint('messagesbp', __name__)
 connection = None
+connection_pool = None
 
 
-@messagesbp.before_request
+@groupsbp.before_request
 def connect_db():
     global connection
-    connection = connect()
+    global connection_pool
+    connection, connection_pool = connect()
 
 
-@messagesbp.after_request
+@groupsbp.after_request
 def disconnect_db(response):
     global connection
+    global connection_pool
     if connection:
-        connection.close()
+        connection_pool.putconn(connection)
         connection = None
     return response
 

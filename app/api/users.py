@@ -9,19 +9,22 @@ from . import schema
 
 usersbp = Blueprint('usersbp', __name__)
 connection = None
+connection_pool = None
 
 
-@usersbp.before_request
+@groupsbp.before_request
 def connect_db():
     global connection
-    connection = connect()
+    global connection_pool
+    connection, connection_pool = connect()
 
 
-@usersbp.after_request
+@groupsbp.after_request
 def disconnect_db(response):
     global connection
+    global connection_pool
     if connection:
-        connection.close()
+        connection_pool.putconn(connection)
         connection = None
     return response
 
