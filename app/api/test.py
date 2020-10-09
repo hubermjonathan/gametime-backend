@@ -277,14 +277,14 @@ def clear_prod_data():
     result = db.drop.drop_prod_tables(connection)
 
     result = db.users.create_user(
-        connection, 'coach1', 'coach1-email1', 'coach1-phone1')  # user_id = 1
+        connection, 'Coach Plue', 'coach1-email1@gmail.com', 'coach1-phone1')  # user_id = 1
     create_user('16613104788', 'coach1-email1',
                 'TestTest123123123', 'coach1', 'coach1')
     result = db.users.create_user(
-        connection, 'coach2', 'coach2-email1', 'coach2-phone1')  # user_id = 2
+        connection, 'Coach Tomas', 'coach2-email1', 'coach2-phone1')  # user_id = 2
 
     result = db.users.create_user(
-        connection, 'player1', 'player1-email1', '12195751591')  # user_id = 3
+        connection, 'Jay Rixie', 'player1-email1@gmail.com', '12195751591')  # user_id = 3
     create_user('16613104788', 'player1-email1@gmail.com',
                 'TestTest456456', 'player1', 'player1')
     result = db.users.add_phone_number(
@@ -301,7 +301,7 @@ def clear_prod_data():
         connection, 5, '12195751591')  # add phone to user 5
 
     result = db.users.create_user(
-        connection, 'player4', 'player4-email1', '1502294391')  # user_id = 6
+        connection, 'Collin', 'player4-email1', '15022994391')  # user_id = 6
     result = db.users.add_phone_number(
         connection, 6, '1502294391')  # add phone to user 6
 
@@ -338,7 +338,6 @@ def clear_prod_data():
     result = db.teams.create_team(connection, 'team1', 1)  # team_id = 1
     result = db.teams.create_team(connection, 'team2', 2)  # team_id = 2
 
-    result = db.teams.add_to_team(connection, 1, 1)  # add player 1 to team 1
     result = db.teams.add_to_team(connection, 3, 1)  # add player 1 to team 1
     result = db.teams.add_to_team(connection, 4, 1)  # add player 2 to team 1
     result = db.teams.add_to_team(connection, 5, 1)  # add player 3 to team 1

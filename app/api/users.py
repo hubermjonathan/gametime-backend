@@ -99,11 +99,19 @@ def login():
 
             res = r.json()
             res['user_id'] = user_id[2]
+            '''
+            SELECT user_id
+            FROM users
+            WHERE email=%s;
+            ''',
+            (email,)
+            print('USER ID\n\n' , user_id)
+            return jsonify(res), 200
         except Exception as e:
             print(str(e))
-            return None
+            return "", 500
 
-        return jsonify(res), 200
+        return "", 500
 
 
 @login_required
@@ -113,19 +121,26 @@ def get_user():
     if request.method == 'GET':
         user_id = request.args.get('id')
 
-        message, status, user_info = db.get_user(connection, user_id)
-        if status != 200:
-            return message, status
+        print('USER ID\n\n', user_id)
 
-        res = {
+        try:
+            message, status, user_info = db.get_user(connection, user_id)
+            if status != 200:
+                return message, status
+
+            res = {
             'user_id': user_info[0],
             'name': user_info[1],
             'email': user_info[2],
             'phone_number': user_info[3],
             'profile_picture': user_info[4],
             'extra_phone_numbers': user_info[5]
-        }
-        return jsonify(res), 200
+            }
+            return jsonify(res), 200
+        except Exception as e:
+            print(e)
+
+        return "", 500
 
 
 @login_required

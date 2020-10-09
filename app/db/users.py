@@ -24,6 +24,18 @@ def get_user_id(connection, email):
     try:
         cursor = connection.cursor()
 
+        print(email)
+
+        cursor.execute( 
+            '''
+            SELECT email
+            FROM users;
+            '''
+        )
+
+        print(cursor.fetchall())
+
+
         cursor.execute(
             '''
             SELECT user_id
@@ -32,6 +44,8 @@ def get_user_id(connection, email):
             ''',
             (email,)
         )
+
+        #print('CURSOR VAL\n\n:' ,cursor.fetchall())
 
         result = ('successfully retrieved user id', 200, cursor.fetchone()[0])
         cursor.close()
