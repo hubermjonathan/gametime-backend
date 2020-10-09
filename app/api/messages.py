@@ -46,14 +46,14 @@ connection = None
 connection_pool = None
 
 
-@groupsbp.before_request
+@messagesbp.before_request
 def connect_db():
     global connection
     global connection_pool
     connection, connection_pool = connect()
 
 
-@groupsbp.after_request
+@messagesbp.after_request
 def disconnect_db(response):
     global connection
     global connection_pool
