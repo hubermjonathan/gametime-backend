@@ -4,6 +4,8 @@ from ..db import teams as db
 from ..db import connect
 from . import schema
 
+import json
+
 teamsbp = Blueprint('teamsbp', __name__)
 connection = None
 
@@ -33,7 +35,11 @@ def createTeam():
 
     ret = db.create_team(connection, name, owner)
 
-    return jsonify(ret[2]), ret[1]
+    res = {
+        'team_id': ret[2]
+    }
+
+    return jsonify(res), ret[1]
 
 @teamsbp.route('/team/edit', methods=['POST'])
 def editTeam():
@@ -63,7 +69,20 @@ def viewTeam():
     team = body['team']
 
     ret = db.get_team(connection, team)
-    return jsonify(ret[2]), ret[1]
+    team = ret[2][0]
+
+    res = {
+        'team_id': team[0],
+        'name': team[1],
+        'fund_goal': team[2],
+        'fund_current': team[3],
+        'fund_desc': team[4],
+        'account_number': team[5],
+        'routing_number': team[6],
+        'owner': team[7]
+    }
+
+    return jsonify(res), ret[1]
 
 @teamsbp.route('/team/view/members', methods=['POST'])
 def viewMembers():
@@ -71,9 +90,24 @@ def viewMembers():
     body = request.get_json()
 
     team = body['team']
-
+    
     ret = db.get_teams_members(connection, team)
-    return jsonify(ret[2]), ret[1]
+
+    users = ret[2]
+
+    usersRet = []
+    for user in users:
+        userRet = {
+            'user_id': user[0],
+            'name': user[1],
+            'email': user[2],
+            'phone_number': user[3],
+            'profile_picture': user[4]
+        }
+
+        usersRet.append(userRet)
+
+    return jsonify(usersRet), ret[1]
 
 @teamsbp.route('/team/permissions', methods=['POST'])
 def editPermissions():
