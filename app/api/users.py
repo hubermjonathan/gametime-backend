@@ -156,4 +156,9 @@ def getTeams():
 
     message, status, user_info = db.get_users_teams(connection, user_id)
 
-    return jsonify(user_info), status
+    res = {
+        'team_id': user_info[0],
+        'name': user_info[1],
+        'privilege_level': user_info[2]
+    }
+    return jsonify(res), 200
