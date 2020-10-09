@@ -28,7 +28,7 @@ def disconnect_db(response):
         connection = None
     return response
 
-
+@login_required
 @teamsbp.route('/team/create', methods=['POST'])
 def createTeam():
     # POST, Creates a new team
@@ -44,6 +44,7 @@ def createTeam():
 
     return jsonify(res), ret[1]
 
+@login_required
 @teamsbp.route('/team/edit', methods=['POST'])
 def editTeam():
     # POST, Edits team attributes
@@ -54,6 +55,7 @@ def editTeam():
     ret = db.edit_team_name(connection, team, name)
     return jsonify(""), ret[1]
 
+@login_required
 @teamsbp.route('/team/remove', methods=['POST'])
 def removeFromTeam():
     # POST, Removes player from team
@@ -64,6 +66,7 @@ def removeFromTeam():
     ret = db.remove_from_team(connection, user, team)
     return "", ret[1]
 
+@login_required
 @teamsbp.route('/team/view/data', methods=['POST'])
 def viewTeam():
     # POST, gets Attributes of Team (TODO make GET)
@@ -87,6 +90,7 @@ def viewTeam():
 
     return jsonify(res), ret[1]
 
+@login_required
 @teamsbp.route('/team/view/members', methods=['POST'])
 def viewMembers():
     # POST, gets Team Members (TODO make GET)
@@ -113,6 +117,7 @@ def viewMembers():
 
     return jsonify(usersRet), ret[1]
 
+@login_required
 @teamsbp.route('/team/permissions', methods=['POST'])
 def editPermissions():
     # POST, edits permissions of player
@@ -125,6 +130,7 @@ def editPermissions():
     ret = db.change_permission_level(connection, user, team, priv)
     return jsonify(ret[2]), ret[1]
 
+@login_required
 @teamsbp.route('/team/join/<id>', methods=['POST'])
 def joinTeam(id):
     # POST, player joins team

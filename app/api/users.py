@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, abort
 from jsonschema import validate
 import requests
 import json
+import re
 from flask_login import login_required
 from ..db import users as db
 from ..db import connect
@@ -40,12 +41,13 @@ def signup():
         except Exception as e:
             return jsonify(str(e)), 400
 
-        phone, email, password, first_name, last_name = body['phone'], body['email'], body['password'], body['firstname'], body['lastname']
+        phone, email, password, first_name, last_name = body['phone'], body[
+            'email'], body['password'], body['firstname'], body['lastname']
         email = email.lower()
 
         r = requests.post(
             'https://1sz21h77li.execute-api.us-east-2.amazonaws.com/Dev/signup',
-            data = json.dumps({
+            data=json.dumps({
                 'phone': phone,
                 'email': email,
                 'password': password,
@@ -53,12 +55,13 @@ def signup():
                 'lastname': last_name
             })
         )
-    
+
         if (r.json()['error'] is not False):
             res = r.json()
             return res, r.status_code
 
-        new_user_id = db.create_user(connection, first_name + ' ' + last_name, email, phone)
+        new_user_id = db.create_user(
+            connection, first_name + ' ' + last_name, email, phone)
 
         res = r.json()
         res['user_id'] = new_user_id[2]
@@ -81,12 +84,12 @@ def login():
 
         r = requests.post(
             'https://1sz21h77li.execute-api.us-east-2.amazonaws.com/Dev/login',
-            data = json.dumps({
+            data=json.dumps({
                 'email': email,
                 'password': password
             })
         )
-    
+
         if (r.json()['error'] is not False):
             res = r.json()
             return res, r.status_code
@@ -129,7 +132,18 @@ def addPhone():
     user_id = body['id']
     phone = body['phone']
 
-    message, status, user_info = db.add_phone_number(connection, user_id, phone)
+    Pattern = re.compile("\1[0-9]{10}")
+    if not Pattern.match(phone):
+        return "phone number invalid", 400
+
+    message, status, user_info = db.check_phone_number_exists(
+        connection, user_id, phone)
+
+    if user_info:
+        return "user already has phone number", 400
+
+    message, status, user_info = db.add_phone_number(
+        connection, user_id, phone)
 
     return "", status
 
@@ -143,7 +157,12 @@ def removePhone():
     user_id = body['id']
     phone = body['phone']
 
-    message, status, user_info = db.remove_phone_number(connection, user_id, phone)
+    Pattern = re.compile("\1[0-9]{10}")
+    if not Pattern.match(phone):
+        return "phone number invalid", 400
+
+    message, status, user_info = db.remove_phone_number(
+        connection, user_id, phone)
 
     return "", status
 
