@@ -132,9 +132,9 @@ def addPhone():
     user_id = body['id']
     phone = body['phone']
 
-    Pattern = re.compile("\1[0-9]{10}")
-    if not Pattern.match(phone):
-        return jsonify({"reason": "phone number invalid"}), 400
+    # Pattern = re.compile("\1[0-9]{10}")
+    # if not Pattern.match(phone):
+    #     return jsonify({"reason": "phone number invalid"}), 400
 
     message, status, user_info = db.check_phone_number_exists(
         connection, user_id, phone)
@@ -163,9 +163,9 @@ def removePhone():
     user_id = body['id']
     phone = body['phone']
 
-    Pattern = re.compile("\1[0-9]{10}")
-    if not Pattern.match(phone):
-        return jsonify({"reason": "phone number invalid"}), 400
+    # Pattern = re.compile("\1[0-9]{10}")
+    # if not Pattern.match(phone):
+    #     return jsonify({"reason": "phone number invalid"}), 400
 
     message, status, user_info = db.remove_phone_number(
         connection, user_id, phone)
