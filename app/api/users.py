@@ -132,16 +132,22 @@ def addPhone():
 
     Pattern = re.compile("\+1[0-9]{10}") 
     if not Pattern.match(phone):
-        return "phone number invalid", 400
+        return jsonify({"reason": "phone number invalid"}), 400
 
     message, status, user_info = db.check_phone_number_exists(connection, user_id, phone)
 
     if user_info:
-        return "user already has phone number", 400
+        return jsonify({"reason": "user already has phone number"}), 400
 
     message, status, user_info = db.add_phone_number(connection, user_id, phone)
 
-    return "", status
+    if status == 500:
+        return jsonify({"reason": "internal server error"}), status
+
+    if status == 200:
+        return jsonify({"reason": "phone number added"}), status
+
+    return jsonify({"reason": "unknown"}), status
 
 
 @login_required
@@ -155,11 +161,17 @@ def removePhone():
 
     Pattern = re.compile("\+1[0-9]{10}") 
     if not Pattern.match(phone):
-        return "phone number invalid", 400
+        return jsonify({"reason": "phone number invalid"}), 400
 
     message, status, user_info = db.remove_phone_number(connection, user_id, phone)
 
-    return "", status
+    if status == 500:
+        return jsonify({"reason": "internal server error"}), status
+
+    if status == 200:
+        return jsonify({"reason": "phone number removed"}), status
+
+    return jsonify({"reason": "unknown"}), status
 
 
 @login_required
