@@ -239,7 +239,8 @@ def get_teams_groups(connection, team_id):
             for i, col in enumerate(columns):
                 formatted_row[col] = row[i]
 
-            cursor.execute(
+            cursor2 = connection.cursor()
+            cursor2.execute(
                 '''
                 SELECT users.*
                 FROM users
@@ -250,9 +251,10 @@ def get_teams_groups(connection, team_id):
                 (row[0],)
             )
 
-            group_members = cursor.fetchall()
+            group_members = cursor2.fetchall()
             formatted_row['members'] = group_members
             data.append(formatted_row)
+            cursor2.close()
 
         result = ('successfully retrieved groups', 200, data)
         cursor.close()

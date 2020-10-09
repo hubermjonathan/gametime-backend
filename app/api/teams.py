@@ -102,7 +102,8 @@ def viewMembers():
             'name': user[1],
             'email': user[2],
             'phone_number': user[3],
-            'profile_picture': user[4]
+            'profile_picture': user[4],
+            'permission_level': user[5]
         }
 
         usersRet.append(userRet)
