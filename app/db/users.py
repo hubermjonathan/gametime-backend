@@ -41,6 +41,26 @@ def get_user_id(connection, email):
         cursor.close()
         return result
 
+def check_phone_number_exists(connection, user_id, phone_number):
+    try:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT * FROM phones
+            WHERE user_id = %s
+            AND phone_number = %s
+            ''',
+            (user_id, phone_number)
+        )
+
+        result = ('checked for duplicates', 200, cursor.fetchall())
+        cursor.close()
+        return result
+    except Exception as e:
+        result = (str(e), 500, [])
+        cursor.close()
+        return result
 
 def add_phone_number(connection, user_id, phone_number):
     try:
