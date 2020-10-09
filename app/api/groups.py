@@ -60,6 +60,9 @@ def create_fetch_group():
 
         name, team_id, member_ids = body['name'], body['team_id'], body['member_ids']
 
+        if not name:
+            return jsonify({'message': 'Failed to create group'}), 400
+
         message, status, new_group_id = db.create_group(
             connection, name, team_id)
         if status != 200:
@@ -113,6 +116,6 @@ def delete_members():
             message, status, data = db.remove_from_group(
                 connection, member_id, group_id)
             if status != 200:
-                return message, status
+                return jsonify({'message': 'Failed to delete member'}), 400
 
         return jsonify({'message': 'Success'}), 200
