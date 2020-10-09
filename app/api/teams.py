@@ -59,9 +59,9 @@ def removeFromTeam():
     # POST, Removes player from team
     body = request.get_json()
 
-    team, player = body['team'], body['player']
+    team, user = body['team'], body['user']
 
-    ret = db.remove_from_team(connection, player, team)
+    ret = db.remove_from_team(connection, user, team)
     return "", ret[1]
 
 @teamsbp.route('/team/view/data', methods=['POST'])

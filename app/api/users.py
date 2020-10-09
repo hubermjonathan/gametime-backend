@@ -41,6 +41,7 @@ def signup():
             return jsonify(str(e)), 400
 
         phone, email, password, first_name, last_name = body['phone'], body['email'], body['password'], body['firstname'], body['lastname']
+        email.lower()
 
         r = requests.post(
             'https://1sz21h77li.execute-api.us-east-2.amazonaws.com/Dev/signup',
@@ -76,6 +77,7 @@ def login():
             return jsonify(str(e)), 400
 
         email, password = body['email'], body['password']
+        email.lower()
 
         r = requests.post(
             'https://1sz21h77li.execute-api.us-east-2.amazonaws.com/Dev/login',
