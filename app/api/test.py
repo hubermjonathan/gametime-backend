@@ -4,15 +4,15 @@ from .. import db
 from flask_login import login_required
 
 
-examplebp = Blueprint('examplebp', __name__)
+testbp = Blueprint('testbp', __name__)
 
-@examplebp.route('/test', methods=['POST'])
+@testbp.route('/create_test_data', methods=['POST'])
 @login_required
 def test():
     
     return 'Test', 200
 
-@examplebp.route('/test1')
+@testbp.route('/test1')
 def test1():
     connection = db.connect()
     result = db.drop.drop_test_tables(connection)
@@ -29,7 +29,7 @@ def test1():
     return result[0], result[1]
 
 
-@examplebp.route('/test2')
+@testbp.route('/test2')
 def test2():
     connection = db.connect()
     result = db.groups.remove_from_group(connection, 2, 2)
@@ -38,7 +38,7 @@ def test2():
     return result[0], result[1]
 
 
-@examplebp.route('/cl')
+@testbp.route('/cl')
 def cl():
     connection = db.connect()
     result = db.drop.drop_test_tables(connection)

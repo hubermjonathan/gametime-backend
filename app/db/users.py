@@ -96,8 +96,21 @@ def get_user(connection, user_id):
             ''',
             (user_id,)
         )
+        user_info = cursor.fetchone()
 
-        result = ('successfully retrieved user', 200, cursor.fetchall())
+        cursor.execute(
+            '''
+            SELECT phone_number
+            FROM phones
+            WHERE user_id=%s
+            ''',
+            (user_id,)
+        )
+        phone_numbers = cursor.fetchall()
+        phone_numbers = [phone[0] for phone in phone_numbers]
+        data = user_info + (phone_numbers,)
+
+        result = ('successfully retrieved user', 200, data)
         cursor.close()
         return result
     except Exception as e:

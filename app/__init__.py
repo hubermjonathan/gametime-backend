@@ -1,7 +1,3 @@
-from app.api.users import usersbp
-from app.api.messages import messagesbp
-from app.api.groups import groupsbp
-from app.api.example import examplebp
 import os
 from flask import Flask
 
@@ -15,7 +11,7 @@ from dotenv import load_dotenv
 basedir = path.abspath(path.dirname(__file__))
 load_dotenv(path.join(basedir, '.env'))
 
-from app.api.example import examplebp
+from app.api.test import testbp
 from app.api.groups import groupsbp
 from app.api.teams import teamsbp
 from app.api.messages import messagesbp
@@ -60,7 +56,7 @@ def create_app(test_config=None):
             return None
 
     # load blueprints
-    app.register_blueprint(examplebp)
+    app.register_blueprint(testbp)
     app.register_blueprint(groupsbp)
     app.register_blueprint(teamsbp)
     app.register_blueprint(messagesbp)

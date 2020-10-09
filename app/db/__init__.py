@@ -143,7 +143,7 @@ DOCUMENTATION:
         get_user(connection, user_id):
             retrieves general information about a user
             takes in the user to get
-            returns a tuple of the format (user_id, name, email, phone_number, profile_picture)
+            returns a tuple of the format (user_id, name, email, phone_number, profile_picture, extra_phone_numbers)
 
         get_users_teams(connection, user_id):
             retrieves the teams a user is a member of

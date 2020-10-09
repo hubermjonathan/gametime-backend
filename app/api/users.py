@@ -105,10 +105,11 @@ def get_user():
             return message, status
 
         res = {
-            'user_id': user_info[0][0],
-            'name': user_info[0][1],
-            'email': user_info[0][2],
-            'phone_number': user_info[0][3],
-            'profile_picture': user_info[0][4],
+            'user_id': user_info[0],
+            'name': user_info[1],
+            'email': user_info[2],
+            'phone_number': user_info[3],
+            'profile_picture': user_info[4],
+            'extra_phone_numbers': user_info[5]
         }
         return jsonify(res), 200
