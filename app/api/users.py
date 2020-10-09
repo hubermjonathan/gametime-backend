@@ -72,32 +72,37 @@ def signup():
 def login():
     # POST, Logs a user in
     if request.method == 'POST':
-        body = request.get_json()
-
         try:
-            validate(body, schema=schema.login_schema)
-        except Exception as e:
-            return jsonify(str(e)), 400
+            body = request.get_json()
 
-        email, password = body['email'], body['password']
-        email = email.lower()
+            try:
+                validate(body, schema=schema.login_schema)
+            except Exception as e:
+                return jsonify(str(e)), 400
 
-        r = requests.post(
-            'https://1sz21h77li.execute-api.us-east-2.amazonaws.com/Dev/login',
-            data=json.dumps({
-                'email': email,
-                'password': password
-            })
-        )
+            email, password = body['email'], body['password']
+            email = email.lower()
 
-        if (r.json()['error'] is not False):
+            r = requests.post(
+                'https://1sz21h77li.execute-api.us-east-2.amazonaws.com/Dev/login',
+                data=json.dumps({
+                    'email': email,
+                    'password': password
+                })
+            )
+
+            if (r.json()['error'] is not False):
+                res = r.json()
+                return res, r.status_code
+
+            user_id = db.get_user_id(connection, email)
+
             res = r.json()
-            return res, r.status_code
+            res['user_id'] = user_id[2]
+        except Exception as e:
+            print(str(e))
+            return None
 
-        user_id = db.get_user_id(connection, email)
-
-        res = r.json()
-        res['user_id'] = user_id[2]
         return jsonify(res), 200
 
 
