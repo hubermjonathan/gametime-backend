@@ -95,7 +95,7 @@ def send_message():
 
 
 @messagesbp.route('/sendGroupMessage', methods=['POST'])
-# @login_required
+@login_required
 def send_to_group():
     if request.method == 'POST':
         body = request.get_json()
