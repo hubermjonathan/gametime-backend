@@ -1,10 +1,13 @@
 from flask import Blueprint, jsonify, request, abort
 from jsonschema import validate
-from ..db import messages as messages
-from ..db import users as users
+from ..db import messages
+from ..db import users
+from ..db import teams
+from ..db import groups
 from ..db import connect
 from . import schema
 import boto3
+from flask_login import login_required
 from os import environ, path
 from dotenv import load_dotenv
 
@@ -58,14 +61,15 @@ def disconnect_db(response):
 
 
 @messagesbp.route('/sendPlayerMessage', methods=['POST'])
+@login_required
 def send_message():
     if request.method == 'POST':
         body = request.get_json()
 
         try:
-            validate(body, schema=schema.send_to_group_schema)
-        except Exception as e:
-            return jsonify(str(e)), 400
+            validate(body, schema=schema.send_message_schema)
+        except:
+            return jsonify({'message': 'Bad Request'}), 400
 
         sender_id, recipient_id, contents = body['sender_id'], body['recipient_id'], body['message']
 
@@ -76,29 +80,30 @@ def send_message():
             return message, status
 
         # Fetch the number
-        user_id, name, email, phone_number, profile_picture = users.get_user(
-            connection, recipient_id)[3]
+        message, status, phone_number = users.get_users_phone_number(
+            connection, recipient_id)
         if status != 200:
             return message, status
 
         # Send to SNS
         res, success = sendsms(phone_number, contents)
         if not success:
-            return jsonify("Failed to send SMS message"), 500
+            return jsonify({'message': 'Failed to send message'}), 400
 
         res = message_id
-        return jsonify(res), 200
+        return jsonify({'player_id': recipient_id, 'message': "Success"}), 200
 
 
 @messagesbp.route('/sendGroupMessage', methods=['POST'])
+@login_required
 def send_to_group():
     if request.method == 'POST':
         body = request.get_json()
 
         try:
             validate(body, schema=schema.send_to_group_schema)
-        except Exception as e:
-            return jsonify(str(e)), 400
+        except:
+            return jsonify({'message': 'Bad Request'}), 400
 
         sender_id, recipient_id, contents = body['sender_id'], body['group_id'], body['message']
 
@@ -106,19 +111,50 @@ def send_to_group():
         message, status, message_id = messages.create_group_message(
             connection, recipient_id, sender_id, contents)
         if status != 200:
-            return message, status
+            return jsonify({'message': 'Failed to store message'}), status
 
         # Fetch the numbers
-        phone_numbers = users.get_user(
-            connection, recipient_id)[3]
+        message, status, phone_numbers = groups.get_groups_phone_numbers(
+            connection, recipient_id)
         if status != 200:
-            return message, status
+            return jsonify({'message': 'Failed to fetch numbers'}), status
 
-        # TODO: Send the message via SNS
         for phone_number in phone_numbers:
             res, success = sendsms(phone_number, contents)
             if not success:
-                return jsonify("Failed to send SMS message"), 500
+                return jsonify({'message': 'Failed to send text'}), 500
 
-        res = message_id
-        return jsonify(res), 200
+        return jsonify({'message': "Success"}), 200
+
+
+@messagesbp.route('/sendTeamMessage', methods=['POST'])
+@login_required
+def send_to_team():
+    if request.method == 'POST':
+        body = request.get_json()
+
+        try:
+            validate(body, schema=schema.send_to_team_schema)
+        except:
+            return jsonify({'message': 'Bad Request'}), 400
+
+        sender_id, recipient_id, contents = body['sender_id'], body['team_id'], body['message']
+
+        # Store the message
+        message, status, message_id = messages.create_group_message(
+            connection, recipient_id, sender_id, contents)
+        if status != 200:
+            return jsonify({'message': 'Failed to store message'}), status
+
+        # Fetch the numbers
+        message, status, phone_numbers = teams.get_teams_phone_numbers(
+            connection, recipient_id)
+        if status != 200:
+            return jsonify({'message': 'Failed to fetch numbers'}), status
+
+        for phone_number in phone_numbers:
+            res, success = sendsms(phone_number, contents)
+            if not success:
+                return jsonify({'message': 'Failed to send text'}), 500
+
+        return jsonify({'message': "Success"}), 200

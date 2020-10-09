@@ -3,6 +3,7 @@ from jsonschema import validate
 from ..db import groups as db
 from ..db import connect
 from . import schema
+from flask_login import login_required
 
 groupsbp = Blueprint('groupsbp', __name__)
 connection = None
@@ -24,18 +25,25 @@ def disconnect_db(response):
 
 
 @groupsbp.route('/group', methods=['GET', 'POST'])
+@login_required
 def create_fetch_group():
     # GET, Returns information about a group
     if request.method == 'GET':
         # TODO: param validation
         group_id = request.args.get('id')
 
-        message, status, group_info = db.get_groups_members(
+        message, status, group_info = db.get_group(
             connection, group_id)
         if status != 200:
-            return message, status
+            return jsonify({'message': 'Failed to fetch group members'}), 400
 
-        res = group_info
+        res = {
+            'group_id': group_info[0],
+            'team_id': group_info[1],
+            'name': group_info[2],
+            'members': [3]
+        }
+
         return jsonify(res), 200
 
     # POST, Creates a new group
@@ -51,26 +59,28 @@ def create_fetch_group():
 
         message, status, new_group_id = db.create_group(
             connection, name, team_id)
+        if status != 200:
+            return jsonify({'message': 'Failed to create group'}), 400
 
         for member_id in member_ids:
             message, status, data, = db.add_to_group(
                 connection, member_id, new_group_id)
             if status != 200:
-                return message, status
+                return jsonify({'message': 'Failed to create group'}), 400
 
-        res = new_group_id
-        return jsonify(res), 200
+        return jsonify({'message': 'Success'}), 200
 
 
 @groupsbp.route('/group/addMembers', methods=['PUT'])
+@login_required
 def add_members():
     if request.method == 'PUT':
         body = request.get_json()
 
         try:
             validate(body, schema=schema.add_members_schema)
-        except Exception as e:
-            return jsonify(str(e)), 400
+        except:
+            return jsonify({'message': 'Failed to add member'}), 400
 
         group_id, member_ids = body['group_id'], body['new_members']
 
@@ -78,21 +88,21 @@ def add_members():
             message, status, data, = db.add_to_group(
                 connection, member_id, group_id)
             if status != 200:
-                return message, status
+                return jsonify({'message': 'Failed to add member'}), 400
 
-        res = f"Successfully added Members: {member_ids} to Group: {group_id}"
-        return jsonify(res), status
+        return jsonify({'message': 'Success'}), 200
 
 
 @groupsbp.route('/group/deleteMembers', methods=['DELETE'])
+@login_required
 def delete_members():
     if request.method == 'DELETE':
         body = request.get_json()
 
         try:
             validate(body, schema=schema.delete_members_schema)
-        except Exception as e:
-            return jsonify(str(e)), 400
+        except:
+            return jsonify({'message': 'Failed to delete members'}), 400
 
         group_id, member_ids = body['group_id'], body['remove_members']
 
@@ -102,5 +112,4 @@ def delete_members():
             if status != 200:
                 return message, status
 
-        res = f"Successfully deleted Members: {member_ids} from Group: {group_id}"
-        return jsonify(res), status
+        return jsonify({'message': 'Success'}), 200

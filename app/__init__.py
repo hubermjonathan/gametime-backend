@@ -1,8 +1,19 @@
+from app.api.users import usersbp
+from app.api.messages import messagesbp
+from app.api.groups import groupsbp
+from app.api.example import examplebp
 import os
 from flask import Flask
 
 from flask_login import LoginManager, current_user, login_required
 from warrant import Cognito
+
+from os import environ, path
+from dotenv import load_dotenv
+
+
+basedir = path.abspath(path.dirname(__file__))
+load_dotenv(path.join(basedir, '.env'))
 
 from app.api.example import examplebp
 from app.api.groups import groupsbp
@@ -35,9 +46,10 @@ def create_app(test_config=None):
     def load_user_from_request_header(request):
         try:
             access_token = request.headers["Authorization"]
-            print(access_token)
-            cognito = Cognito('us-east-2_jaQKKpd5Q', '5hnntk0cimpssub89b2ge6n5s3', access_token=access_token)
-            
+            # print(access_token)
+            cognito = Cognito(
+                environ.get('COGNITO_REGION'), environ.get('COGNITO_ACCESS'), access_token=access_token, user_pool_region='us-east-2')
+
             username = cognito.get_user()._metadata.get("username")
             if username is None:
                 return None
