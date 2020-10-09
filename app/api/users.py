@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, abort
 from jsonschema import validate
 import requests
 import json
+import re
 from flask_login import login_required
 from ..db import users as db
 from ..db import connect
@@ -129,6 +130,15 @@ def addPhone():
     user_id = body['id']
     phone = body['phone']
 
+    Pattern = re.compile("\+1[0-9]{10}") 
+    if not Pattern.match(phone):
+        return "phone number invalid", 400
+
+    message, status, user_info = db.check_phone_number_exists(connection, user_id, phone)
+
+    if user_info:
+        return "user already has phone number", 400
+
     message, status, user_info = db.add_phone_number(connection, user_id, phone)
 
     return "", status
@@ -142,6 +152,10 @@ def removePhone():
 
     user_id = body['id']
     phone = body['phone']
+
+    Pattern = re.compile("\+1[0-9]{10}") 
+    if not Pattern.match(phone):
+        return "phone number invalid", 400
 
     message, status, user_info = db.remove_phone_number(connection, user_id, phone)
 
