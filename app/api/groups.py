@@ -41,7 +41,7 @@ def create_fetch_group():
             'group_id': group_info[0],
             'team_id': group_info[1],
             'name': group_info[2],
-            'members': [3]
+            'members': group_info[3]
         }
 
         return jsonify(res), 200
