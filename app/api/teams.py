@@ -28,7 +28,6 @@ def disconnect_db(response):
 
 @teamsbp.route('/team/create', methods=['POST'])
 def createTeam():
-    print("Test\n\n\n", request)
     # POST, Creates a new team
     body = request.get_json()
 

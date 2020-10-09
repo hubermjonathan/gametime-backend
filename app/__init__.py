@@ -29,12 +29,6 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
 
-    # load the config
-    if app.config['ENV'] == 'production':
-        app.config.from_object('app.config.ProdConfig')
-    else:
-        app.config.from_object('app.config.DevConfig')
-
     login_manager = LoginManager()
     login_manager.init_app(app)
 
@@ -42,7 +36,6 @@ def create_app(test_config=None):
     def load_user_from_request_header(request):
         try:
             access_token = request.headers["Authorization"]
-            print(access_token)
             cognito = Cognito(
                 environ.get('COGNITO_REGION'), environ.get('COGNITO_ACCESS'), access_token=access_token, user_pool_region='us-east-2')
 

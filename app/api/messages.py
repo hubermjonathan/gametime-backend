@@ -121,7 +121,6 @@ def send_to_group():
 
         for phone_number in phone_numbers:
             res, success = sendsms(phone_number, contents)
-            print(res)
             if not success:
                 return jsonify({'message': 'Failed to send text'}), 500
 

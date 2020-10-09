@@ -126,8 +126,6 @@ def addPhone():
 
     message, status, user_info = db.add_phone_number(connection, user_id, phone)
 
-    print("Status\n\n:" ,status)
-
     return "", status
 
 
@@ -141,8 +139,6 @@ def removePhone():
     phone = body['phone']
 
     message, status, user_info = db.remove_phone_number(connection, user_id, phone)
-
-    print("Status\n\n:" ,status)
 
     return "", status
 

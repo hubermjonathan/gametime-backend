@@ -254,7 +254,6 @@ def get_teams_groups(connection, team_id):
             formatted_row['members'] = group_members
             data.append(formatted_row)
 
-        print(data)
         result = ('successfully retrieved groups', 200, data)
         cursor.close()
         return result
