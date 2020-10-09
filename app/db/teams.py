@@ -12,7 +12,7 @@ def create_team(connection, name, user_id):
                 RETURNING team_id INTO new_team_id;
 
                 INSERT INTO usersteams (user_id, team_id, privelege_level, fund_goal, fund_current, fund_desc)
-                VALUES (%s, new_team_id, 0, 0, 0, '');
+                VALUES (%s, new_team_id, 2, 0, 0, '');
 
                 INSERT INTO groups (team_id, name)
                 VALUES (new_team_id, 'All Members');
@@ -211,6 +211,51 @@ def get_teams_phone_numbers(connection, team_id):
         data = [phone_number[0] for phone_number in data]
 
         result = ('successfully retrieved phone numbers', 200, data)
+        cursor.close()
+        return result
+    except Exception as e:
+        result = (str(e), 500, [])
+        cursor.close()
+        return result
+
+
+def get_teams_groups(connection, team_id):
+    try:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT *
+            FROM groups
+            WHERE team_id=%s
+            ''',
+            (team_id,)
+        )
+
+        data = []
+        columns = [desc[0] for desc in cursor.description]
+        for row in cursor.fetchall():
+            formatted_row = {}
+            for i, col in enumerate(columns):
+                formatted_row[col] = row[i]
+
+            cursor.execute(
+                '''
+                SELECT users.*
+                FROM users
+                INNER JOIN usersgroups
+                ON users.user_id=usersgroups.user_id
+                WHERE usersgroups.group_id=%s
+                ''',
+                (row[0],)
+            )
+
+            group_members = cursor.fetchall()
+            formatted_row['members'] = group_members
+            data.append(formatted_row)
+
+        print(data)
+        result = ('successfully retrieved groups', 200, data)
         cursor.close()
         return result
     except Exception as e:

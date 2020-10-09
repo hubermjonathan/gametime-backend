@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request, abort
 from jsonschema import validate
+from flask_login import login_required
 from ..db import teams as db
 from ..db import connect
 from . import schema
@@ -84,3 +85,20 @@ def joinTeam(id):
 
     ret = db.add_to_team(connection, user, id)
     return jsonify(ret[2]), ret[1]
+
+
+@login_required
+@teamsbp.route('/team/view/groups', methods=['GET'])
+def get_teams_groups():
+    # GET, Gets groups from a team
+    if request.method == 'GET':
+        team_id = request.args.get('id')
+
+        message, status, groups = db.get_teams_groups(connection, team_id)
+        if status != 200:
+            return message, status
+
+        res = {
+            'groups': groups
+        }
+        return jsonify(res), 200

@@ -119,6 +119,11 @@ DOCUMENTATION:
             takes in the team to get phone numbers from
             returns an array of phone numbers
 
+        get_teams_groups(connection, team_id):
+            retrieves the groups for a team
+            takes in the team
+            returns an array of groups with members
+
     users.py:
         create_user(connection, name, email, phone_number):
             creates a user
