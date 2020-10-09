@@ -10,11 +10,14 @@ def create_team(connection, name, user_id):
                 INSERT INTO teams (name, fund_goal, fund_current, fund_desc, account_number, routing_number, owner)
                 VALUES (%s, 0, 0, '', 0, 0, %s)
                 RETURNING team_id INTO new_team_id;
+
                 INSERT INTO usersteams (user_id, team_id, privelege_level, fund_goal, fund_current, fund_desc)
                 VALUES (%s, new_team_id, 0, 0, 0, '');
+
                 INSERT INTO groups (team_id, name)
                 VALUES (new_team_id, 'All Members');
             END $$;
+
             SELECT team_id
             FROM teams
             WHERE name=%s AND owner=%s
@@ -40,6 +43,7 @@ def add_to_team(connection, user_id, team_id):
             '''
             INSERT INTO usersteams (user_id, team_id, privelege_level, fund_goal, fund_current, fund_desc)
             VALUES (%s, %s, 0, 0, 0, '');
+
             INSERT INTO usersgroups (user_id, group_id)
             VALUES (%s, (
                 SELECT group_id
@@ -67,6 +71,7 @@ def remove_from_team(connection, user_id, team_id):
             '''
             DELETE FROM usersteams
             WHERE user_id=%s AND team_id=%s;
+
             DELETE FROM usersgroups
             USING (
                 SELECT group_id
@@ -159,7 +164,7 @@ def get_teams_members(connection, team_id):
 
         cursor.execute(
             '''
-            SELECT users.*
+            SELECT users.*, usersteams.privelege_level
             FROM users
             INNER JOIN usersteams
             ON users.user_id=usersteams.user_id

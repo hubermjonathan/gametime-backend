@@ -20,6 +20,28 @@ def create_user(connection, name, email, phone_number):
         return result
 
 
+def get_user_id(connection, email):
+    try:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT user_id
+            FROM users
+            WHERE email=%s;
+            ''',
+            (email,)
+        )
+
+        result = ('successfully retrieved user id', 200, cursor.fetchone()[0])
+        cursor.close()
+        return result
+    except Exception as e:
+        result = (str(e), 500, [])
+        cursor.close()
+        return result
+
+
 def add_phone_number(connection, user_id, phone_number):
     try:
         cursor = connection.cursor()
@@ -124,6 +146,27 @@ def get_users_groups(connection, user_id):
         )
 
         result = ('successfully retrieved groups', 200, cursor.fetchall())
+        cursor.close()
+        return result
+    except Exception as e:
+        result = (str(e), 500, [])
+        cursor.close()
+        return result
+
+def get_users_phone_number(connection, user_id):
+    try:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT phone_number
+            FROM users
+            WHERE user_id=%s
+            ''',
+            (user_id,)
+        )
+
+        result = ('successfully retrieved phone number', 200, cursor.fetchone()[0])
         cursor.close()
         return result
     except Exception as e:

@@ -131,3 +131,40 @@ def get_groups_phone_numbers(connection, group_id):
         result = (str(e), 500, [])
         cursor.close()
         return result
+
+
+def get_group(connection, group_id):
+    try:
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT *
+            FROM groups
+            WHERE group_id=%s
+            ''',
+            (group_id,)
+        )
+        group_info = cursor.fetchone()
+
+        cursor.execute(
+            '''
+            SELECT users.*
+            FROM users
+            INNER JOIN usersgroups
+            ON users.user_id=usersgroups.user_id
+            WHERE usersgroups.group_id=%s
+            ''',
+            (group_id,)
+        )
+        group_members = cursor.fetchall()
+        group_members_ids = [user[0] for user in group_members]
+        data = group_info + (group_members_ids,)
+
+        result = ('successfully retrieved group', 200, data)
+        cursor.close()
+        return result
+    except Exception as e:
+        result = (str(e), 500, [])
+        cursor.close()
+        return result

@@ -1,8 +1,42 @@
 from flask import Blueprint, jsonify, request, abort
 from jsonschema import validate
-from ..db import messages as db
+from ..db import messages as messages
+from ..db import users as users
 from ..db import connect
 from . import schema
+import boto3
+from os import environ, path
+from dotenv import load_dotenv
+
+basedir = path.abspath(path.dirname(__file__))
+load_dotenv(path.join(basedir, '.env'))
+
+
+AWS = boto3.client(
+    'sns',
+    aws_access_key_id=environ.get('AWS_ACCESS_KEY'),
+    aws_secret_access_key=environ.get('AWS_SECRET_ACCESS_KEY'),
+    region_name='us-east-1'
+)
+
+
+def sendsms(phone_number, text):
+    try:
+        response = AWS.publish(
+            PhoneNumber=phone_number,
+            Message=text,
+            MessageAttributes={
+                'AWS.SNS.SMS.SenderID':
+                {
+                    'DataType': 'String',
+                    'StringValue': 'GameTime'
+                }
+            }
+        )
+        return response, True
+    except Exception as e:
+        return str(e), False
+
 
 messagesbp = Blueprint('messagesbp', __name__)
 connection = None
@@ -29,19 +63,28 @@ def send_message():
         body = request.get_json()
 
         try:
-            validate(body, schema=schema.send_message_schema)
+            validate(body, schema=schema.send_to_group_schema)
         except Exception as e:
             return jsonify(str(e)), 400
 
         sender_id, recipient_id, contents = body['sender_id'], body['recipient_id'], body['message']
 
         # Store the message
-        message, status, message_id = db.create_message(
+        message, status, message_id = messages.create_message(
             connection, recipient_id, sender_id, contents)
         if status != 200:
             return message, status
 
-        # TODO: Send the message via SNS
+        # Fetch the number
+        user_id, name, email, phone_number, profile_picture = users.get_user(
+            connection, recipient_id)[3]
+        if status != 200:
+            return message, status
+
+        # Send to SNS
+        res, success = sendsms(phone_number, contents)
+        if not success:
+            return jsonify("Failed to send SMS message"), 500
 
         res = message_id
         return jsonify(res), 200
@@ -60,12 +103,22 @@ def send_to_group():
         sender_id, recipient_id, contents = body['sender_id'], body['group_id'], body['message']
 
         # Store the message
-        message, status, message_id = db.create_group_message(
+        message, status, message_id = messages.create_group_message(
             connection, recipient_id, sender_id, contents)
         if status != 200:
             return message, status
 
+        # Fetch the numbers
+        phone_numbers = users.get_user(
+            connection, recipient_id)[3]
+        if status != 200:
+            return message, status
+
         # TODO: Send the message via SNS
+        for phone_number in phone_numbers:
+            res, success = sendsms(phone_number, contents)
+            if not success:
+                return jsonify("Failed to send SMS message"), 500
 
         res = message_id
         return jsonify(res), 200

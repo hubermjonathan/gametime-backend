@@ -43,3 +43,23 @@ send_to_group_schema = {
         'message': {'type': 'string'}
     }
 }
+
+# Users Endpoints
+signup_schema = {
+    'type': 'object',
+    'properties': {
+        'phone': {'type': 'string'},
+        'email': {'type': 'string'},
+        'password': {'type': 'string'},
+        'firstname': {'type': 'string'},
+        'lastname': {'type': 'string'}
+    }
+}
+
+login_schema = {
+    'type': 'object',
+    'properties': {
+        'email': {'type': 'string'},
+        'password': {'type': 'string'},
+    }
+}

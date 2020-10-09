@@ -52,6 +52,11 @@ DOCUMENTATION:
             takes in the group to get phone numbers from
             returns an array of phone numbers
 
+        get_group(connection, group_id):
+            retrieves general info about a group
+            takes in the group
+            returns a tuple of the format (group_id, team_id, name, member_ids)
+
     messages.py:
         create_message(connection, recipient_id, sender_id, content):
             creates a new direct message and marks the time sent
@@ -77,7 +82,7 @@ DOCUMENTATION:
         create_team(connection, name, user_id):
             creates a new team
             takes in the name of the team and the owner of it
-            returns nothing
+            returns the id of the new team
 
         add_to_team(connection, user_id, team_id):
             adds a user to a team
@@ -109,11 +114,21 @@ DOCUMENTATION:
             takes in the team to get members from
             returns an array of tuples of the format (user_id, name, email, phone_number, profile_picture)
 
+        get_teams_phone_numbers(connection, team_id):
+            retrieves the phone numbers of members of a team
+            takes in the team to get phone numbers from
+            returns an array of phone numbers
+
     users.py:
         create_user(connection, name, email, phone_number):
             creates a user
             takes in the name, email, and phone number of the new user
             returns the id of the new user
+
+        get_user_id(connection, email):
+            gets the id of a user
+            takes in the email of the user
+            returns the id of the user
 
         add_phone_number(connection, user_id, phone_number):
             adds a new phone number to a user
@@ -139,6 +154,11 @@ DOCUMENTATION:
             retrieves the groups a user if a member of
             takes in the user
             returns an array of tuples of the format (group_id, name)
+
+        get_users_phone_number(connection, user_id):
+            retrieves the phone number of a user
+            takes in the user
+            returns the phone number
 '''
 
 
