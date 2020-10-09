@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify
 from .. import db
 
+import requests
+
 from flask_login import login_required
 
 
@@ -44,14 +46,16 @@ def create_test_data():
     result = db.drop.drop_test_tables(connection)
 
     result = db.users.create_user(
-        connection, 'coach1', 'coach1-email1', 'coach1-phone1')  # user_id = 1
-    create_user('16613104788', 'coach1-email1',
+        connection, 'coach1', 'coach1-email1@gmail.com', 'coach1-phone1')  # user_id = 1
+    create_user('16613104788', 'coach1-email1@gmail.com',
                 'TestTest123123123', 'coach1', 'coach1')
     result = db.users.create_user(
         connection, 'coach2', 'coach2-email1', 'coach2-phone1')  # user_id = 2
 
     result = db.users.create_user(
-        connection, 'player1', 'player1-email1', '12195751591')  # user_id = 3
+        connection, 'player1', 'player1-email1@gmail.com', '12195751591')  # user_id = 3
+    create_user('16613104788', 'player1-email1@gmail.com',
+                'TestTest456456', 'player1', 'player1')
     result = db.users.add_phone_number(
         connection, 3, 'player1-phone2')  # add phone to user 3
     result = db.users.add_phone_number(
@@ -281,6 +285,8 @@ def clear_prod_data():
 
     result = db.users.create_user(
         connection, 'player1', 'player1-email1', '12195751591')  # user_id = 3
+    create_user('16613104788', 'player1-email1@gmail.com',
+                'TestTest456456', 'player1', 'player1')
     result = db.users.add_phone_number(
         connection, 3, 'player1-phone2')  # add phone to user 3
     result = db.users.add_phone_number(
