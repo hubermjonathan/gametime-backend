@@ -5,7 +5,7 @@ from app.api.groups import groupsbp
 from app.api.test import testbp
 import os
 from flask import Flask
-
+from flask_cors import CORS
 from flask_login import LoginManager, current_user, login_required
 from warrant import Cognito
 
@@ -28,6 +28,7 @@ class User:
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
+    CORS(app)
 
     login_manager = LoginManager()
     login_manager.init_app(app)
