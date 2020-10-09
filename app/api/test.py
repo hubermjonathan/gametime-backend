@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify
 from .. import db
 
 import requests
+import json
 
 from flask_login import login_required
 
@@ -353,7 +354,7 @@ def clear_prod_data():
     result = db.teams.add_to_team(connection, 10, 2)  # add player 8 to team 2
     result = db.teams.add_to_team(connection, 11, 2)  # add player 9 to team 2
     result = db.teams.add_to_team(connection, 12, 2)  # add player 10 to team 2
-
+    result = db.teams.add_to_team(connection, 13, 2)  # add player 10 to team 2
     result = db.teams.change_permission_level(
         connection, 6, 1, 1)  # make player 4 admin on team 1
     result = db.teams.change_permission_level(
