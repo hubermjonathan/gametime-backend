@@ -54,7 +54,7 @@ send_to_team_schema = {
 }
 
 # Users Endpoints
-create_user_schema = {
+signup_schema = {
     'type': 'object',
     'properties': {
         'phone': {'type': 'string'},
@@ -62,5 +62,13 @@ create_user_schema = {
         'password': {'type': 'string'},
         'firstname': {'type': 'string'},
         'lastname': {'type': 'string'}
+    }
+}
+
+login_schema = {
+    'type': 'object',
+    'properties': {
+        'email': {'type': 'string'},
+        'password': {'type': 'string'},
     }
 }

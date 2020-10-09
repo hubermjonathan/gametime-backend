@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, abort
 from jsonschema import validate
 import requests
 import json
+from flask_login import login_required
 from ..db import users as db
 from ..db import connect
 from . import schema
@@ -32,7 +33,7 @@ def signup():
         body = request.get_json()
 
         try:
-            validate(body, schema=schema.create_user_schema)
+            validate(body, schema=schema.signup_schema)
         except Exception as e:
             return jsonify(str(e)), 400
 
@@ -55,5 +56,59 @@ def signup():
 
         new_user_id = db.create_user(connection, first_name + ' ' + last_name, email, phone)
 
-        res = new_user_id
+        res = r.json()
+        res['user_id'] = new_user_id[2]
+        return jsonify(res), 200
+
+
+@usersbp.route('/login', methods=['POST'])
+def login():
+    # POST, Logs a user in
+    if request.method == 'POST':
+        body = request.get_json()
+
+        try:
+            validate(body, schema=schema.login_schema)
+        except Exception as e:
+            return jsonify(str(e)), 400
+
+        email, password = body['email'], body['password']
+
+        r = requests.post(
+            'https://1sz21h77li.execute-api.us-east-2.amazonaws.com/Dev/login',
+            data = json.dumps({
+                'email': email,
+                'password': password
+            })
+        )
+    
+        if (r.json()['error'] is not False):
+            res = r.json()
+            return res, r.status_code
+
+        user_id = db.get_user_id(connection, email)
+
+        res = r.json()
+        res['user_id'] = user_id[2]
+        return jsonify(res), 200
+
+
+@login_required
+@usersbp.route('/user', methods=['GET'])
+def get_user():
+    # GET, Gets info about a user
+    if request.method == 'GET':
+        user_id = request.args.get('id')
+
+        message, status, user_info = db.get_user(connection, user_id)
+        if status != 200:
+            return message, status
+
+        res = {
+            'user_id': user_info[0][0],
+            'name': user_info[0][1],
+            'email': user_info[0][2],
+            'phone_number': user_info[0][3],
+            'profile_picture': user_info[0][4],
+        }
         return jsonify(res), 200
