@@ -31,10 +31,9 @@ def createTeam():
 
     name, owner = body['name'], body['owner']
 
-    new_team_id = db.create_team(connection, name, owner)
+    ret = db.create_team(connection, name, owner)
 
-    res = new_team_id
-    return jsonify(res), 200
+    return jsonify(ret[2]), ret[1]
 
 @teamsbp.route('/team/edit', methods=['POST'])
 def editTeam():
@@ -43,10 +42,8 @@ def editTeam():
 
     team, name = body['team'], body['name']
 
-    return db.edit_team_name(connection, team, name)
-
-    res = new_team_id
-    return jsonify(res), 200
+    ret = db.edit_team_name(connection, team, name)
+    return jsonify(""), ret[1]
 
 @teamsbp.route('/team/remove', methods=['POST'])
 def removeFromTeam():
@@ -55,19 +52,35 @@ def removeFromTeam():
 
     team, player = body['team'], body['player']
 
-    return db.edit_team_name(connection, team, player)
+    ret = db.remove_from_team(connection, player, team)
+    return "", ret[1]
 
-@teamsbp.route('/team/view', methods=['POST'])
+@teamsbp.route('/team/view/data', methods=['POST'])
 def viewTeam():
     # POST, Creates a new team
     body = request.get_json()
 
     team = body['team']
 
-    text, status, data = db.get_team(connection, team)
-    text2, status2, data2 = db.get_teams_members(connection, team)
+    ret = db.get_team(connection, team)
+    return jsonify(ret[2]), ret[1]
 
-    print(data[0])
-    print(data2[0])
+@teamsbp.route('/team/view/members', methods=['POST'])
+def viewMembers():
+    # POST, Creates a new team
+    body = request.get_json()
 
-    return ('successfully retrieved team data and members',200,[data[0], data2[0]])
+    team = body['team']
+
+    ret = db.get_teams_members(connection, team)
+    return jsonify(ret[2]), ret[1]
+
+@teamsbp.route('/team/join/<id>', methods=['POST'])
+def joinTeam(id):
+    # POST, Creates a new team
+    body = request.get_json()
+
+    user = body['user']
+
+    ret = db.add_to_team(connection, user, id)
+    return jsonify(ret[2]), ret[1]
