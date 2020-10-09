@@ -55,7 +55,7 @@ DOCUMENTATION:
         get_group(connection, group_id):
             retrieves general info about a group
             takes in the group
-            returns a tuple of the format (group_id, team_id, name)
+            returns a tuple of the format (group_id, team_id, name, member_ids)
 
     messages.py:
         create_message(connection, recipient_id, sender_id, content):
