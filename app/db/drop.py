@@ -4,21 +4,21 @@ def drop_test_tables(connection):
 
         cursor.execute(open('app/db/schemas/test_schema.sql', 'r').read())
 
-        data = {
+        return_data = {
             'data': None
         }
 
-        result = ('successfully dropped and created test tables', 200, data)
+        res = ('successfully dropped and created test tables', 200, return_data)
         cursor.close()
-        return result
+        return res
     except Exception as e:
-        data = {
+        return_data = {
             'data': None
         }
 
-        result = (str(e), 500, data)
+        res = (str(e), 500, return_data)
         cursor.close()
-        return result
+        return res
 
 
 def drop_prod_tables(connection):
@@ -27,18 +27,18 @@ def drop_prod_tables(connection):
 
         cursor.execute(open('app/db/schemas/prod_schema.sql', 'r').read())
 
-        data = {
+        return_data = {
             'data': None
         }
 
-        result = ('successfully dropped and created prod tables', 200, data)
+        res = ('successfully dropped and created prod tables', 200, return_data)
         cursor.close()
-        return result
+        return res
     except Exception as e:
-        data = {
+        return_data = {
             'data': None
         }
 
-        result = (str(e), 500, data)
+        res = (str(e), 500, return_data)
         cursor.close()
-        return result
+        return res
