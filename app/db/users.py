@@ -26,7 +26,7 @@ def get_user_id(connection, email):
 
         print(email)
 
-        cursor.execute( 
+        cursor.execute(
             '''
             SELECT email
             FROM users;
@@ -34,7 +34,6 @@ def get_user_id(connection, email):
         )
 
         print(cursor.fetchall())
-
 
         cursor.execute(
             '''
@@ -54,6 +53,7 @@ def get_user_id(connection, email):
         result = (str(e), 500, [])
         cursor.close()
         return result
+
 
 def check_phone_number_exists(connection, user_id, phone_number):
     try:
@@ -75,6 +75,7 @@ def check_phone_number_exists(connection, user_id, phone_number):
         result = (str(e), 500, [])
         cursor.close()
         return result
+
 
 def add_phone_number(connection, user_id, phone_number):
     try:
@@ -159,7 +160,7 @@ def get_users_teams(connection, user_id):
 
         cursor.execute(
             '''
-            SELECT teams.team_id, teams.name, usersteams.privilege_level
+            SELECT teams.team_id, teams.name, usersteams.permission_level
             FROM teams
             INNER JOIN usersteams
             ON teams.team_id=usersteams.team_id
@@ -208,6 +209,7 @@ def get_users_groups(connection, user_id):
         cursor.close()
         return result
 
+
 def get_users_phone_number(connection, user_id):
     try:
         cursor = connection.cursor()
@@ -221,7 +223,8 @@ def get_users_phone_number(connection, user_id):
             (user_id,)
         )
 
-        result = ('successfully retrieved phone number', 200, cursor.fetchone()[0])
+        result = ('successfully retrieved phone number',
+                  200, cursor.fetchone()[0])
         cursor.close()
         return result
     except Exception as e:

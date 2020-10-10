@@ -11,7 +11,7 @@ def create_team(connection, name, user_id):
                 VALUES (%s, 0, 0, '', 0, 0, %s)
                 RETURNING team_id INTO new_team_id;
 
-                INSERT INTO usersteams (user_id, team_id, privilege_level, fund_goal, fund_current, fund_desc)
+                INSERT INTO usersteams (user_id, team_id, permission_level, fund_goal, fund_current, fund_desc)
                 VALUES (%s, new_team_id, 2, 0, 0, '');
 
                 INSERT INTO groups (team_id, name)
@@ -41,7 +41,7 @@ def add_to_team(connection, user_id, team_id):
 
         cursor.execute(
             '''
-            INSERT INTO usersteams (user_id, team_id, privilege_level, fund_goal, fund_current, fund_desc)
+            INSERT INTO usersteams (user_id, team_id, permission_level, fund_goal, fund_current, fund_desc)
             VALUES (%s, %s, 0, 0, 0, '');
 
             INSERT INTO usersgroups (user_id, group_id)
@@ -92,17 +92,17 @@ def remove_from_team(connection, user_id, team_id):
         return result
 
 
-def change_permission_level(connection, user_id, team_id, privilege_level):
+def change_permission_level(connection, user_id, team_id, permission_level):
     try:
         cursor = connection.cursor()
 
         cursor.execute(
             '''
             UPDATE usersteams
-            SET privilege_level=%s
+            SET permission_level=%s
             WHERE user_id=%s AND team_id=%s;
             ''',
-            (privilege_level, user_id, team_id)
+            (permission_level, user_id, team_id)
         )
 
         result = ('successfully changed permission level', 200, [])
@@ -164,7 +164,7 @@ def get_teams_members(connection, team_id):
 
         cursor.execute(
             '''
-            SELECT users.*, usersteams.privilege_level
+            SELECT users.*, usersteams.permission_level
             FROM users
             INNER JOIN usersteams
             ON users.user_id=usersteams.user_id
