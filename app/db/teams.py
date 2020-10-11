@@ -30,9 +30,9 @@ def create_team(connection, name, user_id):
         cursor.close()
         return result
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        res = (str(e), True, {})
+        return res
 
 
 def add_to_team(connection, user_id, team_id):
@@ -58,9 +58,9 @@ def add_to_team(connection, user_id, team_id):
         cursor.close()
         return result
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        res = (str(e), True, {})
+        return res
 
 
 def remove_from_team(connection, user_id, team_id):
@@ -87,9 +87,9 @@ def remove_from_team(connection, user_id, team_id):
         cursor.close()
         return result
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        res = (str(e), True, {})
+        return res
 
 
 def change_permission_level(connection, user_id, team_id, permission_level):
@@ -109,9 +109,9 @@ def change_permission_level(connection, user_id, team_id, permission_level):
         cursor.close()
         return result
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        res = (str(e), True, {})
+        return res
 
 
 def edit_team_name(connection, team_id, name):
@@ -131,9 +131,9 @@ def edit_team_name(connection, team_id, name):
         cursor.close()
         return result
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        res = (str(e), True, {})
+        return res
 
 
 def get_team(connection, team_id):
@@ -153,9 +153,9 @@ def get_team(connection, team_id):
         cursor.close()
         return result
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        res = (str(e), True, {})
+        return res
 
 
 def get_teams_members(connection, team_id):
@@ -177,9 +177,9 @@ def get_teams_members(connection, team_id):
         cursor.close()
         return result
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        res = (str(e), True, {})
+        return res
 
 
 def get_teams_phone_numbers(connection, team_id):
@@ -214,9 +214,9 @@ def get_teams_phone_numbers(connection, team_id):
         cursor.close()
         return result
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        res = (str(e), True, {})
+        return res
 
 
 def get_teams_groups(connection, team_id):
@@ -260,6 +260,6 @@ def get_teams_groups(connection, team_id):
         cursor.close()
         return result
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        res = (str(e), True, {})
+        return res

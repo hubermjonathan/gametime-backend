@@ -146,7 +146,7 @@ def get_groups_phone_numbers(connection, group_id):
 
         return_data = runner.get_data(cursor, 'phone_numbers')
 
-        res = ('successfully retrieved group', False, return_data)
+        res = ('successfully retrieved phone numbers', False, return_data)
         return res
     except Exception as e:
         cursor.close()

@@ -18,9 +18,9 @@ def create_message(connection, recipient_id, sender_id, content):
         cursor.close()
         return result
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        res = (str(e), True, {})
+        return res
 
 
 def create_group_message(connection, recipient_id, sender_id, content):
@@ -41,9 +41,9 @@ def create_group_message(connection, recipient_id, sender_id, content):
         cursor.close()
         return result
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        res = (str(e), True, {})
+        return res
 
 
 def get_messages(connection, user_id):
@@ -65,9 +65,9 @@ def get_messages(connection, user_id):
         cursor.close()
         return result
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        res = (str(e), True, {})
+        return res
 
 
 def get_group_messages(connection, group_id):
@@ -89,6 +89,6 @@ def get_group_messages(connection, group_id):
         cursor.close()
         return result
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        res = (str(e), True, {})
+        return res
