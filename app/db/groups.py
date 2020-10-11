@@ -1,4 +1,7 @@
-def create_group(connection, name, team_id):
+from ..db import runner
+
+
+def create_group(connection, new_group_name, parent_team_id):
     try:
         cursor = connection.cursor()
 
@@ -8,19 +11,20 @@ def create_group(connection, name, team_id):
             VALUES (%s, %s)
             RETURNING group_id;
             ''',
-            (team_id, name)
+            (parent_team_id, new_group_name)
         )
 
-        result = ('successfully created group', 200, cursor.fetchone()[0])
-        cursor.close()
-        return result
+        return_data = runner.get_data(cursor)
+
+        res = ('successfully created group', 200, return_data)
+        return res
     except Exception as e:
         result = (str(e), 500, [])
         cursor.close()
         return result
 
 
-def add_to_group(connection, user_id, group_id):
+def add_user_to_group(connection, user_id, group_id):
     try:
         cursor = connection.cursor()
 
@@ -42,16 +46,17 @@ def add_to_group(connection, user_id, group_id):
                 (user_id, group_id)
             )
 
-        result = ('successfully joined group', 200, [])
-        cursor.close()
-        return result
+        return_data = runner.get_data(cursor)
+
+        res = ('successfully added user(s) to group', 200, return_data)
+        return res
     except Exception as e:
         result = (str(e), 500, [])
         cursor.close()
         return result
 
 
-def remove_from_group(connection, user_id, group_id):
+def remove_user_from_group(connection, user_id, group_id):
     try:
         cursor = connection.cursor()
 
@@ -73,9 +78,10 @@ def remove_from_group(connection, user_id, group_id):
                 (user_id, group_id)
             )
 
-        result = ('successfully left group', 200, [])
-        cursor.close()
-        return result
+        return_data = runner.get_data(cursor)
+
+        res = ('successfully removed user(s) from group', 200, return_data)
+        return res
     except Exception as e:
         result = (str(e), 500, [])
         cursor.close()
