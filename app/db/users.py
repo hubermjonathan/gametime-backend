@@ -1,3 +1,6 @@
+from ..db import runner
+
+
 def create_user(connection, name, email, phone_number):
     try:
         cursor = connection.cursor()
@@ -11,9 +14,11 @@ def create_user(connection, name, email, phone_number):
             (name, email, phone_number)
         )
 
-        result = ('successfully created user', 200, cursor.fetchone()[0])
+        return_data = runner.get_data(cursor)
         cursor.close()
-        return result
+
+        res = ('successfully created user', False, return_data)
+        return res
     except Exception as e:
         cursor.close()
         res = (str(e), True, {})
@@ -28,14 +33,19 @@ def get_user_id(connection, email):
             '''
             SELECT user_id
             FROM users
-            WHERE email=%s;
+            WHERE email=%s
+            ORDER BY user_id
+            DESC
+            LIMIT 1;
             ''',
             (email,)
         )
 
-        result = ('successfully retrieved user id', 200, cursor.fetchone()[0])
+        return_data = runner.get_data(cursor)
         cursor.close()
-        return result
+
+        res = ('successfully retrieved user id', False, return_data)
+        return res
     except Exception as e:
         cursor.close()
         res = (str(e), True, {})
@@ -48,17 +58,18 @@ def check_if_user_has_phone_number(connection, user_id, phone_number):
 
         cursor.execute(
             '''
-            SELECT * FROM phones
-            WHERE user_id = %s
-            AND phone_number = %s;
+            SELECT COUNT(*) as exists
+            FROM phones
+            WHERE user_id=%s AND phone_number=%s;
             ''',
             (user_id, phone_number)
         )
 
-        result = ('successfully checked users phone numbers',
-                  200, cursor.fetchall())
+        return_data = runner.get_data(cursor)
         cursor.close()
-        return result
+
+        res = ('successfully checked users phone numbers', False, return_data)
+        return res
     except Exception as e:
         cursor.close()
         res = (str(e), True, {})
@@ -77,9 +88,11 @@ def add_phone_number_to_user(connection, phone_number, user_id):
             (user_id, phone_number)
         )
 
-        result = ('successfully added phone number to user', 200, [])
+        return_data = runner.get_data(cursor)
         cursor.close()
-        return result
+
+        res = ('successfully added phone number to user', False, return_data)
+        return res
     except Exception as e:
         cursor.close()
         res = (str(e), True, {})
@@ -98,9 +111,11 @@ def remove_phone_number_from_user(connection, phone_number, user_id):
             (user_id, phone_number)
         )
 
-        result = ('successfully removed phone number from user', 200, [])
+        return_data = runner.get_data(cursor)
         cursor.close()
-        return result
+
+        res = ('successfully removed phone number from user', False, return_data)
+        return res
     except Exception as e:
         cursor.close()
         res = (str(e), True, {})
@@ -119,7 +134,7 @@ def get_user(connection, user_id):
             ''',
             (user_id,)
         )
-        user_info = cursor.fetchone()
+        user_info = runner.get_data(cursor)
 
         cursor.execute(
             '''
@@ -129,22 +144,7 @@ def get_user(connection, user_id):
             ''',
             (user_id,)
         )
-        phone_numbers = cursor.fetchall()
-        phone_numbers = [phone[0] for phone in phone_numbers]
-        data = user_info + (phone_numbers,)
-
-        result = ('successfully retrieved user', 200, data)
-        cursor.close()
-        return result
-    except Exception as e:
-        cursor.close()
-        res = (str(e), True, {})
-        return res
-
-
-def get_users_teams(connection, user_id):
-    try:
-        cursor = connection.cursor()
+        phone_numbers = runner.get_data(cursor, 'extra_phone_numbers')
 
         cursor.execute(
             '''
@@ -156,27 +156,7 @@ def get_users_teams(connection, user_id):
             ''',
             (user_id,)
         )
-
-        data = []
-        columns = [desc[0] for desc in cursor.description]
-        for row in cursor.fetchall():
-            formatted_row = {}
-            for i, col in enumerate(columns):
-                formatted_row[col] = row[i]
-            data.append(formatted_row)
-
-        result = ('successfully retrieved users teams', 200, data)
-        cursor.close()
-        return result
-    except Exception as e:
-        cursor.close()
-        res = (str(e), True, {})
-        return res
-
-
-def get_users_groups(connection, user_id):
-    try:
-        cursor = connection.cursor()
+        teams = runner.get_data(cursor, 'teams')
 
         cursor.execute(
             '''
@@ -188,34 +168,16 @@ def get_users_groups(connection, user_id):
             ''',
             (user_id,)
         )
+        groups = runner.get_data(cursor, 'groups')
 
-        result = ('successfully retrieved users groups',
-                  200, cursor.fetchall())
+        return_data = user_info
+        return_data.update(phone_numbers)
+        return_data.update(teams)
+        return_data.update(groups)
         cursor.close()
-        return result
-    except Exception as e:
-        cursor.close()
-        res = (str(e), True, {})
+
+        res = ('successfully retrieved user', False, return_data)
         return res
-
-
-def get_users_phone_number(connection, user_id):
-    try:
-        cursor = connection.cursor()
-
-        cursor.execute(
-            '''
-            SELECT phone_number
-            FROM users
-            WHERE user_id=%s;
-            ''',
-            (user_id,)
-        )
-
-        result = ('successfully retrieved users phone number',
-                  200, cursor.fetchone()[0])
-        cursor.close()
-        return result
     except Exception as e:
         cursor.close()
         res = (str(e), True, {})
