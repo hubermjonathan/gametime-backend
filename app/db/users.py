@@ -1,4 +1,4 @@
-def create_user(connection, new_user_name, new_user_email, new_user_phone_number):
+def create_user(connection, name, email, phone_number):
     try:
         cursor = connection.cursor()
 
@@ -8,7 +8,7 @@ def create_user(connection, new_user_name, new_user_email, new_user_phone_number
             VALUES (%s, %s, %s)
             RETURNING user_id;
             ''',
-            (new_user_name, new_user_email, new_user_phone_number)
+            (name, email, phone_number)
         )
 
         result = ('successfully created user', 200, cursor.fetchone()[0])

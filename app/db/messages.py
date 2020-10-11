@@ -18,7 +18,7 @@ def create_direct_message(connection, recipient_user_id, sender_user_id, message
         return_data = runner.get_data(cursor)
         cursor.close()
 
-        res = ('successfully created direct message', 200, return_data)
+        res = ('successfully created direct message', False, return_data)
         return res
     except Exception as e:
         cursor.close()
@@ -42,7 +42,7 @@ def create_group_message(connection, recipient_group_id, sender_user_id, message
         return_data = runner.get_data(cursor)
         cursor.close()
 
-        res = ('successfully created group message', 200, return_data)
+        res = ('successfully created group message', False, return_data)
         return res
     except Exception as e:
         cursor.close()
@@ -68,7 +68,7 @@ def get_users_direct_messages(connection, user_id):
         return_data = runner.get_data(cursor, 'messages')
         cursor.close()
 
-        res = ('successfully retrieved direct messages', 200, return_data)
+        res = ('successfully retrieved direct messages', False, return_data)
         return res
     except Exception as e:
         cursor.close()
@@ -94,7 +94,7 @@ def get_groups_messages(connection, group_id):
         return_data = runner.get_data(cursor, 'messages')
         cursor.close()
 
-        res = ('successfully retrieved group messages', 200, return_data)
+        res = ('successfully retrieved group messages', False, return_data)
         return res
     except Exception as e:
         cursor.close()

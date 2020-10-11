@@ -1,4 +1,4 @@
-def create_team(connection, new_team_name, owner_user_id):
+def create_team(connection, name, owner_user_id):
     try:
         cursor = connection.cursor()
 
@@ -23,8 +23,7 @@ def create_team(connection, new_team_name, owner_user_id):
             WHERE name=%s AND owner=%s
             ORDER BY team_id DESC;
             ''',
-            (new_team_name, owner_user_id,
-             owner_user_id, new_team_name, owner_user_id)
+            (name, owner_user_id, owner_user_id, name, owner_user_id)
         )
 
         result = ('successfully created team', 200, cursor.fetchone()[0])

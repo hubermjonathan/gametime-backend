@@ -1,7 +1,7 @@
 from ..db import runner
 
 
-def create_group(connection, new_group_name, parent_team_id):
+def create_group(connection, name, parent_team_id):
     try:
         cursor = connection.cursor()
 
@@ -11,7 +11,7 @@ def create_group(connection, new_group_name, parent_team_id):
             VALUES (%s, %s)
             RETURNING group_id;
             ''',
-            (parent_team_id, new_group_name)
+            (parent_team_id, name)
         )
 
         return_data = runner.get_data(cursor)
