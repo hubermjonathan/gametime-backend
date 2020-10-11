@@ -151,7 +151,7 @@ def get_user(connection, user_id):
             SELECT teams.team_id, teams.name, usersteams.permission_level
             FROM teams
             INNER JOIN usersteams
-            ON teams.team_id=usersteams.team_id
+            USING (team_id)
             WHERE user_id=%s;
             ''',
             (user_id,)
@@ -163,7 +163,7 @@ def get_user(connection, user_id):
             SELECT groups.group_id, groups.name
             FROM groups
             INNER JOIN usersgroups
-            ON groups.group_id=usersgroups.group_id
+            USING (group_id)
             WHERE user_id=%s;
             ''',
             (user_id,)

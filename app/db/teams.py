@@ -170,7 +170,7 @@ def get_team(connection, team_id):
             SELECT users.*, usersteams.permission_level
             FROM users
             INNER JOIN usersteams
-            ON users.user_id=usersteams.user_id
+            USING (user_id)
             WHERE usersteams.team_id=%s;
             ''',
             (team_id,)
@@ -237,7 +237,7 @@ def get_teams_groups(connection, team_id):
                 SELECT users.*
                 FROM users
                 INNER JOIN usersgroups
-                ON users.user_id=usersgroups.user_id
+                USING (user_id)
                 WHERE usersgroups.group_id=%s;
                 ''',
                 (row['group_id'],)

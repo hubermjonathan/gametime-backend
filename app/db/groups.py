@@ -110,7 +110,7 @@ def get_group(connection, group_id):
             SELECT users.*
             FROM users
             INNER JOIN usersgroups
-            ON users.user_id=usersgroups.user_id
+           	USING (user_id)
             WHERE usersgroups.group_id=%s;
             ''',
             (group_id,)
@@ -138,7 +138,7 @@ def get_groups_phone_numbers(connection, group_id):
             SELECT users.phone_number
             FROM users
             INNER JOIN usersgroups
-            ON users.user_id=usersgroups.user_id
+            USING (user_id)
             WHERE usersgroups.group_id=%s;
             ''',
             (group_id,)
