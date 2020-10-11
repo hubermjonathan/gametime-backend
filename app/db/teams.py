@@ -1,3 +1,6 @@
+from ..db import runner
+
+
 def create_team(connection, name, owner_user_id):
     try:
         cursor = connection.cursor()
@@ -21,14 +24,17 @@ def create_team(connection, name, owner_user_id):
             SELECT team_id
             FROM teams
             WHERE name=%s AND owner=%s
-            ORDER BY team_id DESC;
+            ORDER BY team_id DESC
+            LIMIT 1;
             ''',
             (name, owner_user_id, owner_user_id, name, owner_user_id)
         )
 
-        result = ('successfully created team', 200, cursor.fetchone()[0])
+        return_data = runner.get_data(cursor)
         cursor.close()
-        return result
+
+        res = ('successfully created team', False, return_data)
+        return res
     except Exception as e:
         cursor.close()
         res = (str(e), True, {})
@@ -54,9 +60,11 @@ def add_user_to_team(connection, user_id, team_id):
             (user_id, team_id, user_id, team_id)
         )
 
-        result = ('successfully added user to team', 200, [])
+        return_data = runner.get_data(cursor)
         cursor.close()
-        return result
+
+        res = ('successfully added user to team', False, return_data)
+        return res
     except Exception as e:
         cursor.close()
         res = (str(e), True, {})
@@ -83,9 +91,11 @@ def remove_user_from_team(connection, user_id, team_id):
             (user_id, team_id, team_id, user_id)
         )
 
-        result = ('successfully removed user from team', 200, [])
+        return_data = runner.get_data(cursor)
         cursor.close()
-        return result
+
+        res = ('successfully removed user from team', False, return_data)
+        return res
     except Exception as e:
         cursor.close()
         res = (str(e), True, {})
@@ -105,9 +115,12 @@ def change_users_permission_level_for_team(connection, user_id, team_id, permiss
             (permission_level, user_id, team_id)
         )
 
-        result = ('successfully changed users permission level for team', 200, [])
+        return_data = runner.get_data(cursor)
         cursor.close()
-        return result
+
+        res = ('successfully changed users permission level for team',
+               False, return_data)
+        return res
     except Exception as e:
         cursor.close()
         res = (str(e), True, {})
@@ -127,9 +140,11 @@ def edit_teams_name(connection, team_id, new_team_name):
             (new_team_name, team_id)
         )
 
-        result = ('successfully edited teams name', 200, [])
+        return_data = runner.get_data(cursor)
         cursor.close()
-        return result
+
+        res = ('successfully edited teams name', False, return_data)
+        return res
     except Exception as e:
         cursor.close()
         res = (str(e), True, {})
@@ -148,19 +163,7 @@ def get_team(connection, team_id):
             ''',
             (team_id,)
         )
-
-        result = ('successfully retrieved team', 200, cursor.fetchall())
-        cursor.close()
-        return result
-    except Exception as e:
-        cursor.close()
-        res = (str(e), True, {})
-        return res
-
-
-def get_teams_users(connection, team_id):
-    try:
-        cursor = connection.cursor()
+        team_info = runner.get_data(cursor)
 
         cursor.execute(
             '''
@@ -172,10 +175,14 @@ def get_teams_users(connection, team_id):
             ''',
             (team_id,)
         )
+        users = runner.get_data(cursor, 'users')
 
-        result = ('successfully retrieved teams users', 200, cursor.fetchall())
+        return_data = team_info
+        return_data.update(users)
         cursor.close()
-        return result
+
+        res = ('successfully retrieved team', False, return_data)
+        return res
     except Exception as e:
         cursor.close()
         res = (str(e), True, {})
@@ -199,12 +206,11 @@ def get_teams_phone_numbers(connection, team_id):
             (team_id,)
         )
 
-        data = cursor.fetchall()
-        data = [phone_number[0] for phone_number in data]
-
-        result = ('successfully retrieved teams phone numbers', 200, data)
+        return_data = runner.get_data(cursor, 'phone_numbers')
         cursor.close()
-        return result
+
+        res = ('successfully retrieved teams phone numbers', False, return_data)
+        return res
     except Exception as e:
         cursor.close()
         res = (str(e), True, {})
@@ -224,15 +230,9 @@ def get_teams_groups(connection, team_id):
             (team_id,)
         )
 
-        data = []
-        columns = [desc[0] for desc in cursor.description]
-        for row in cursor.fetchall():
-            formatted_row = {}
-            for i, col in enumerate(columns):
-                formatted_row[col] = row[i]
-
-            cursor2 = connection.cursor()
-            cursor2.execute(
+        groups = []
+        for row in runner.get_data(cursor, 'groups')['groups']:
+            cursor.execute(
                 '''
                 SELECT users.*
                 FROM users
@@ -240,17 +240,21 @@ def get_teams_groups(connection, team_id):
                 ON users.user_id=usersgroups.user_id
                 WHERE usersgroups.group_id=%s;
                 ''',
-                (row[0],)
+                (row['group_id'],)
             )
 
-            group_members = cursor2.fetchall()
-            formatted_row['members'] = group_members
-            data.append(formatted_row)
-            cursor2.close()
+            users = runner.get_data(cursor, 'users')
+            users = {'users': []} if 'users' not in users else users
+            row.update(users)
+            groups.append(row)
 
-        result = ('successfully retrieved teams groups', 200, data)
+        return_data = {
+            'groups': groups
+        }
         cursor.close()
-        return result
+
+        res = ('successfully retrieved teams groups', False, return_data)
+        return res
     except Exception as e:
         cursor.close()
         res = (str(e), True, {})
