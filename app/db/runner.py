@@ -7,7 +7,7 @@ def get_data(cursor, key_name='results'):
 
     if (len(results) == 0):
         return {}
-    elif (len(results) == 1):
+    elif (len(results) == 1 and key_name == 'results'):
         data = {}
         for i, col in enumerate(columns):
             data[col] = results[0][i]
