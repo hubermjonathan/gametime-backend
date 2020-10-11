@@ -15,12 +15,13 @@ def create_group(connection, new_group_name, parent_team_id):
         )
 
         return_data = runner.get_data(cursor)
+        cursor.close()
 
         res = ('successfully created group', False, return_data)
         return res
     except Exception as e:
-        return_data = runner.get_data(cursor)
-        res = (str(e), True, return_data)
+        cursor.close()
+        res = (str(e), True, {})
         return res
 
 
@@ -47,12 +48,13 @@ def add_user_to_group(connection, user_id, group_id):
             )
 
         return_data = runner.get_data(cursor)
+        cursor.close()
 
         res = ('successfully added user(s) to group', False, return_data)
         return res
     except Exception as e:
-        return_data = runner.get_data(cursor)
-        res = (str(e), True, return_data)
+        cursor.close()
+        res = (str(e), True, {})
         return res
 
 
@@ -79,18 +81,29 @@ def remove_user_from_group(connection, user_id, group_id):
             )
 
         return_data = runner.get_data(cursor)
+        cursor.close()
 
         res = ('successfully removed user(s) from group', False, return_data)
         return res
     except Exception as e:
-        return_data = runner.get_data(cursor)
-        res = (str(e), True, return_data)
+        cursor.close()
+        res = (str(e), True, {})
         return res
 
 
-def get_groups_members(connection, group_id):
+def get_group(connection, group_id):
     try:
         cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT *
+            FROM groups
+            WHERE group_id=%s;
+            ''',
+            (group_id,)
+        )
+        group_info = runner.get_data(cursor)
 
         cursor.execute(
             '''
@@ -98,18 +111,22 @@ def get_groups_members(connection, group_id):
             FROM users
             INNER JOIN usersgroups
             ON users.user_id=usersgroups.user_id
-            WHERE usersgroups.group_id=%s
+            WHERE usersgroups.group_id=%s;
             ''',
             (group_id,)
         )
+        users = runner.get_data(cursor, 'users')
 
-        result = ('successfully retrieved members', 200, cursor.fetchall())
+        return_data = group_info
+        return_data.update(users)
         cursor.close()
-        return result
+
+        res = ('successfully retrieved group', False, return_data)
+        return res
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        res = (str(e), True, {})
+        return res
 
 
 def get_groups_phone_numbers(connection, group_id):
@@ -122,55 +139,16 @@ def get_groups_phone_numbers(connection, group_id):
             FROM users
             INNER JOIN usersgroups
             ON users.user_id=usersgroups.user_id
-            WHERE usersgroups.group_id=%s
+            WHERE usersgroups.group_id=%s;
             ''',
             (group_id,)
         )
 
-        data = cursor.fetchall()
-        data = [phone_number[0] for phone_number in data]
+        return_data = runner.get_data(cursor, 'phone_numbers')
 
-        result = ('successfully retrieved phone numbers', 200, data)
-        cursor.close()
-        return result
+        res = ('successfully retrieved group', False, return_data)
+        return res
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
-
-
-def get_group(connection, group_id):
-    try:
-        cursor = connection.cursor()
-
-        cursor.execute(
-            '''
-            SELECT *
-            FROM groups
-            WHERE group_id=%s
-            ''',
-            (group_id,)
-        )
-        group_info = cursor.fetchone()
-
-        cursor.execute(
-            '''
-            SELECT users.*
-            FROM users
-            INNER JOIN usersgroups
-            ON users.user_id=usersgroups.user_id
-            WHERE usersgroups.group_id=%s
-            ''',
-            (group_id,)
-        )
-        group_members = cursor.fetchall()
-        group_members_ids = [user[0] for user in group_members]
-        data = group_info + (group_members_ids,)
-
-        result = ('successfully retrieved group', 200, data)
-        cursor.close()
-        return result
-    except Exception as e:
-        result = (str(e), 500, [])
-        cursor.close()
-        return result
+        res = (str(e), True, {})
+        return res

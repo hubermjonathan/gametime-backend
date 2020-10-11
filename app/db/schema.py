@@ -9,10 +9,11 @@ def reset_tables(connection, database):
         cursor.execute(open(schema, 'r').read())
 
         return_data = runner.get_data(cursor)
+        cursor.close()
 
         res = ('successfully dropped and created tables', False, return_data)
         return res
     except Exception as e:
-        return_data = runner.get_data(cursor)
-        res = (str(e), True, return_data)
+        cursor.close()
+        res = (str(e), True, {})
         return res
