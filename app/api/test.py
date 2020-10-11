@@ -47,75 +47,75 @@ def create_test_data():
     db.schema.reset_tables(connection, request.args.get('db'))
 
     db.users.create_user(
-        connection, 'coach1', 'coach1-email1@gmail.com', 'coach1-phone1')  # user_id = 1
+        connection, 'coach1', 'coach1', 'coach1-email1@gmail.com', 'coach1-phone1')  # user_id = 1
     db.users.create_user(
-        connection, 'coach2', 'coach2-email1', 'coach2-phone1')  # user_id = 2
+        connection, 'coach2', 'coach2', 'coach2-email1', 'coach2-phone1')  # user_id = 2
 
     db.users.create_user(
-        connection, 'player1', 'player1-email1@gmail.com', '12195751591')  # user_id = 3
+        connection, 'player1', 'player1', 'player1-email1@gmail.com', '12195751591')  # user_id = 3
     db.users.add_phone_number_to_user(
         connection, 3, 'player1-phone2')  # add phone to user 3
     db.users.add_phone_number_to_user(
         connection, 3, 'player1-phone3')  # add phone to user 3
 
     db.users.create_user(
-        connection, 'player2', 'player2-email1', 'player2-phone1')  # user_id = 4
+        connection, 'player2', 'player2', 'player2-email1', 'player2-phone1')  # user_id = 4
     db.users.add_phone_number_to_user(
         connection, 4, 'player2-phone2')  # add phone to user 4
     db.users.add_phone_number_to_user(
         connection, 4, 'player2-phone3')  # add phone to user 4
 
     db.users.create_user(
-        connection, 'player3', 'player3-email1', 'player3-phone1')  # user_id = 5
+        connection, 'player3', 'player3', 'player3-email1', 'player3-phone1')  # user_id = 5
     db.users.add_phone_number_to_user(
         connection, 5, 'player3-phone2')  # add phone to user 5
     db.users.add_phone_number_to_user(
         connection, 5, 'player3-phone3')  # add phone to user 5
 
     db.users.create_user(
-        connection, 'player4', 'player4-email1', 'player4-phone1')  # user_id = 6
+        connection, 'player4', 'player4', 'player4-email1', 'player4-phone1')  # user_id = 6
     db.users.add_phone_number_to_user(
         connection, 6, 'player4-phone2')  # add phone to user 6
     db.users.add_phone_number_to_user(
         connection, 6, 'player4-phone3')  # add phone to user 6
 
     db.users.create_user(
-        connection, 'player5', 'player5-email1', 'player5-phone1')  # user_id = 7
+        connection, 'player5', 'player5', 'player5-email1', 'player5-phone1')  # user_id = 7
     db.users.add_phone_number_to_user(
         connection, 7, 'player5-phone2')  # add phone to user 7
     db.users.add_phone_number_to_user(
         connection, 7, 'player5-phone3')  # add phone to user 7
 
     db.users.create_user(
-        connection, 'player6', 'player6-email1', 'player6-phone1')  # user_id = 8
+        connection, 'player6', 'player6', 'player6-email1', 'player6-phone1')  # user_id = 8
     db.users.add_phone_number_to_user(
         connection, 8, 'player6-phone2')  # add phone to user 8
     db.users.add_phone_number_to_user(
         connection, 8, 'player6-phone3')  # add phone to user 8
 
     db.users.create_user(
-        connection, 'player7', 'player7-email1', 'player7-phone1')  # user_id = 9
+        connection, 'player7', 'player7', 'player7-email1', 'player7-phone1')  # user_id = 9
     db.users.add_phone_number_to_user(
         connection, 9, 'player7-phone2')  # add phone to user 9
     db.users.add_phone_number_to_user(
         connection, 9, 'player7-phone3')  # add phone to user 9
 
     db.users.create_user(
-        connection, 'player8', 'player8-email1', 'player8-phone1')  # user_id = 10
+        connection, 'player8', 'player8', 'player8-email1', 'player8-phone1')  # user_id = 10
     db.users.add_phone_number_to_user(
         connection, 10, 'player8-phone2')  # add phone to user 10
     db.users.add_phone_number_to_user(
         connection, 10, 'player8-phone3')  # add phone to user 10
 
     db.users.create_user(
-        connection, 'player9', 'player9-email1', '16613104788')  # user_id = 11
+        connection, 'player9', 'player9', 'player9-email1', '16613104788')  # user_id = 11
     db.users.add_phone_number_to_user(
         connection, 11, 'player9-phone2')  # add phone to user 11
     db.users.add_phone_number_to_user(
         connection, 11, 'player9-phone3')  # add phone to user 11
 
     db.users.create_user(
-        connection, 'player10', 'player10-email1', 'player10-phone1')  # user_id = 12
+        connection, 'player10', 'player10', 'player10-email1', 'player10-phone1')  # user_id = 12
     db.users.add_phone_number_to_user(
         connection, 12, 'player10-phone2')  # add phone to user 12
     db.users.add_phone_number_to_user(

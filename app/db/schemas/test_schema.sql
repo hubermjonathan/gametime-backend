@@ -501,7 +501,8 @@ GRANT ALL ON SEQUENCE public.teams_owner_seq TO test;
 CREATE TABLE public.users
 (
     user_id integer NOT NULL DEFAULT nextval('"Users_user_id_seq"'::regclass),
-    name text COLLATE pg_catalog."default" NOT NULL,
+    first_name text COLLATE pg_catalog."default" NOT NULL,
+    last_name text COLLATE pg_catalog."default" NOT NULL,
     email text COLLATE pg_catalog."default" NOT NULL,
     phone_number text COLLATE pg_catalog."default" NOT NULL,
     profile_picture text COLLATE pg_catalog."default",

@@ -1,17 +1,17 @@
 from ..db import runner
 
 
-def create_user(connection, name, email, phone_number):
+def create_user(connection, first_name, last_name, email, phone_number):
     try:
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            INSERT INTO users (name, email, phone_number)
+            INSERT INTO users (first_name, last_name, email, phone_number)
             VALUES (%s, %s, %s)
             RETURNING user_id;
             ''',
-            (name, email, phone_number)
+            (first_name, last_name, email, phone_number)
         )
 
         return_data = runner.get_data(cursor)
