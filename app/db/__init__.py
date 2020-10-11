@@ -1,6 +1,6 @@
-from . import drop
 from . import groups
 from . import messages
+from . import schema
 from . import teams
 from . import users
 import psycopg2
