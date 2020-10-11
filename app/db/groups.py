@@ -16,12 +16,12 @@ def create_group(connection, new_group_name, parent_team_id):
 
         return_data = runner.get_data(cursor)
 
-        res = ('successfully created group', 200, return_data)
+        res = ('successfully created group', False, return_data)
         return res
     except Exception as e:
-        result = (str(e), 500, [])
-        cursor.close()
-        return result
+        return_data = runner.get_data(cursor)
+        res = (str(e), True, return_data)
+        return res
 
 
 def add_user_to_group(connection, user_id, group_id):
@@ -48,12 +48,12 @@ def add_user_to_group(connection, user_id, group_id):
 
         return_data = runner.get_data(cursor)
 
-        res = ('successfully added user(s) to group', 200, return_data)
+        res = ('successfully added user(s) to group', False, return_data)
         return res
     except Exception as e:
-        result = (str(e), 500, [])
-        cursor.close()
-        return result
+        return_data = runner.get_data(cursor)
+        res = (str(e), True, return_data)
+        return res
 
 
 def remove_user_from_group(connection, user_id, group_id):
@@ -80,12 +80,12 @@ def remove_user_from_group(connection, user_id, group_id):
 
         return_data = runner.get_data(cursor)
 
-        res = ('successfully removed user(s) from group', 200, return_data)
+        res = ('successfully removed user(s) from group', False, return_data)
         return res
     except Exception as e:
-        result = (str(e), 500, [])
-        cursor.close()
-        return result
+        return_data = runner.get_data(cursor)
+        res = (str(e), True, return_data)
+        return res
 
 
 def get_groups_members(connection, group_id):

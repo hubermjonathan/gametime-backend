@@ -10,9 +10,9 @@ def reset_tables(connection, database):
 
         return_data = runner.get_data(cursor)
 
-        res = ('successfully dropped and created tables', 200, return_data)
+        res = ('successfully dropped and created tables', False, return_data)
         return res
     except Exception as e:
-        result = (str(e), 500, [])
-        cursor.close()
-        return result
+        return_data = runner.get_data(cursor)
+        res = (str(e), True, return_data)
+        return res
