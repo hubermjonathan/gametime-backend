@@ -1,4 +1,4 @@
-def create_team(connection, name, user_id):
+def create_team(connection, new_team_name, owner_user_id):
     try:
         cursor = connection.cursor()
 
@@ -23,7 +23,8 @@ def create_team(connection, name, user_id):
             WHERE name=%s AND owner=%s
             ORDER BY team_id DESC;
             ''',
-            (name, user_id, user_id, name, user_id)
+            (new_team_name, owner_user_id,
+             owner_user_id, new_team_name, owner_user_id)
         )
 
         result = ('successfully created team', 200, cursor.fetchone()[0])
@@ -35,7 +36,7 @@ def create_team(connection, name, user_id):
         return res
 
 
-def add_to_team(connection, user_id, team_id):
+def add_user_to_team(connection, user_id, team_id):
     try:
         cursor = connection.cursor()
 
@@ -54,7 +55,7 @@ def add_to_team(connection, user_id, team_id):
             (user_id, team_id, user_id, team_id)
         )
 
-        result = ('successfully joined team', 200, [])
+        result = ('successfully added user to team', 200, [])
         cursor.close()
         return result
     except Exception as e:
@@ -63,7 +64,7 @@ def add_to_team(connection, user_id, team_id):
         return res
 
 
-def remove_from_team(connection, user_id, team_id):
+def remove_user_from_team(connection, user_id, team_id):
     try:
         cursor = connection.cursor()
 
@@ -83,7 +84,7 @@ def remove_from_team(connection, user_id, team_id):
             (user_id, team_id, team_id, user_id)
         )
 
-        result = ('successfully left team', 200, [])
+        result = ('successfully removed user from team', 200, [])
         cursor.close()
         return result
     except Exception as e:
@@ -92,7 +93,7 @@ def remove_from_team(connection, user_id, team_id):
         return res
 
 
-def change_permission_level(connection, user_id, team_id, permission_level):
+def change_users_permission_level_for_team(connection, user_id, team_id, permission_level):
     try:
         cursor = connection.cursor()
 
@@ -105,7 +106,7 @@ def change_permission_level(connection, user_id, team_id, permission_level):
             (permission_level, user_id, team_id)
         )
 
-        result = ('successfully changed permission level', 200, [])
+        result = ('successfully changed users permission level for team', 200, [])
         cursor.close()
         return result
     except Exception as e:
@@ -114,7 +115,7 @@ def change_permission_level(connection, user_id, team_id, permission_level):
         return res
 
 
-def edit_team_name(connection, team_id, name):
+def edit_teams_name(connection, team_id, new_team_name):
     try:
         cursor = connection.cursor()
 
@@ -124,10 +125,10 @@ def edit_team_name(connection, team_id, name):
             SET name=%s
             WHERE team_id=%s;
             ''',
-            (name, team_id)
+            (new_team_name, team_id)
         )
 
-        result = ('successfully edited team name', 200, [])
+        result = ('successfully edited teams name', 200, [])
         cursor.close()
         return result
     except Exception as e:
@@ -144,7 +145,7 @@ def get_team(connection, team_id):
             '''
             SELECT *
             FROM teams
-            WHERE team_id=%s
+            WHERE team_id=%s;
             ''',
             (team_id,)
         )
@@ -158,7 +159,7 @@ def get_team(connection, team_id):
         return res
 
 
-def get_teams_members(connection, team_id):
+def get_teams_users(connection, team_id):
     try:
         cursor = connection.cursor()
 
@@ -168,12 +169,12 @@ def get_teams_members(connection, team_id):
             FROM users
             INNER JOIN usersteams
             ON users.user_id=usersteams.user_id
-            WHERE usersteams.team_id=%s
+            WHERE usersteams.team_id=%s;
             ''',
             (team_id,)
         )
 
-        result = ('successfully retrieved members', 200, cursor.fetchall())
+        result = ('successfully retrieved teams users', 200, cursor.fetchall())
         cursor.close()
         return result
     except Exception as e:
@@ -188,29 +189,21 @@ def get_teams_phone_numbers(connection, team_id):
 
         cursor.execute(
             '''
-            SELECT owner
-            FROM teams
-            WHERE team_id=%s;
-            ''',
-            (team_id,)
-        )
-
-        owner_id = cursor.fetchone()[0]
-        cursor.execute(
-            '''
             SELECT users.phone_number
             FROM users
-            INNER JOIN usersteams
-            ON users.user_id=usersteams.user_id
-            WHERE usersteams.team_id=%s AND NOT users.user_id=%s;
+            INNER JOIN usersgroups
+            USING (user_id)
+            INNER JOIN groups
+            USING (group_id)
+            WHERE groups.team_id=%s AND groups.name='All Members';
             ''',
-            (team_id, owner_id)
+            (team_id,)
         )
 
         data = cursor.fetchall()
         data = [phone_number[0] for phone_number in data]
 
-        result = ('successfully retrieved phone numbers', 200, data)
+        result = ('successfully retrieved teams phone numbers', 200, data)
         cursor.close()
         return result
     except Exception as e:
@@ -227,7 +220,7 @@ def get_teams_groups(connection, team_id):
             '''
             SELECT *
             FROM groups
-            WHERE team_id=%s
+            WHERE team_id=%s;
             ''',
             (team_id,)
         )
@@ -246,7 +239,7 @@ def get_teams_groups(connection, team_id):
                 FROM users
                 INNER JOIN usersgroups
                 ON users.user_id=usersgroups.user_id
-                WHERE usersgroups.group_id=%s
+                WHERE usersgroups.group_id=%s;
                 ''',
                 (row[0],)
             )
@@ -256,7 +249,7 @@ def get_teams_groups(connection, team_id):
             data.append(formatted_row)
             cursor2.close()
 
-        result = ('successfully retrieved groups', 200, data)
+        result = ('successfully retrieved teams groups', 200, data)
         cursor.close()
         return result
     except Exception as e:

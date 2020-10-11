@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-def create_message(connection, recipient_id, sender_id, content):
+def create_direct_message(connection, recipient_user_id, sender_user_id, message_content):
     try:
         cursor = connection.cursor()
 
@@ -11,10 +11,11 @@ def create_message(connection, recipient_id, sender_id, content):
                 VALUES (%s, %s, %s, %s)
                 RETURNING message_id;
             ''',
-            (recipient_id, sender_id, content, datetime.now())
+            (recipient_user_id, sender_user_id, message_content, datetime.now())
         )
 
-        result = ('successfully created message', 200, cursor.fetchone()[0])
+        result = ('successfully created direct message',
+                  200, cursor.fetchone()[0])
         cursor.close()
         return result
     except Exception as e:
@@ -23,7 +24,7 @@ def create_message(connection, recipient_id, sender_id, content):
         return res
 
 
-def create_group_message(connection, recipient_id, sender_id, content):
+def create_group_message(connection, recipient_group_id, sender_user_id, message_content):
     try:
         cursor = connection.cursor()
 
@@ -33,7 +34,7 @@ def create_group_message(connection, recipient_id, sender_id, content):
                 VALUES (%s, %s, %s, %s)
                 RETURNING gmessage_id;
             ''',
-            (recipient_id, sender_id, content, datetime.now())
+            (recipient_group_id, sender_user_id, message_content, datetime.now())
         )
 
         result = ('successfully created group message',
@@ -46,7 +47,7 @@ def create_group_message(connection, recipient_id, sender_id, content):
         return res
 
 
-def get_messages(connection, user_id):
+def get_users_direct_messages(connection, user_id):
     try:
         cursor = connection.cursor()
 
@@ -56,12 +57,13 @@ def get_messages(connection, user_id):
             FROM messages
             WHERE user_id=%s
             ORDER BY time_sent
-            ASC
+            ASC;
             ''',
             (user_id,)
         )
 
-        result = ('successfully retrieved messages', 200, cursor.fetchall())
+        result = ('successfully retrieved direct messages',
+                  200, cursor.fetchall())
         cursor.close()
         return result
     except Exception as e:
@@ -70,7 +72,7 @@ def get_messages(connection, user_id):
         return res
 
 
-def get_group_messages(connection, group_id):
+def get_groups_messages(connection, group_id):
     try:
         cursor = connection.cursor()
 
@@ -80,12 +82,13 @@ def get_group_messages(connection, group_id):
             FROM groupmessages
             WHERE group_id=%s
             ORDER BY time_sent
-            ASC
+            ASC;
             ''',
             (group_id,)
         )
 
-        result = ('successfully retrieved messages', 200, cursor.fetchall())
+        result = ('successfully retrieved group messages',
+                  200, cursor.fetchall())
         cursor.close()
         return result
     except Exception as e:

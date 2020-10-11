@@ -1,4 +1,4 @@
-def create_user(connection, name, email, phone_number):
+def create_user(connection, new_user_name, new_user_email, new_user_phone_number):
     try:
         cursor = connection.cursor()
 
@@ -8,7 +8,7 @@ def create_user(connection, name, email, phone_number):
             VALUES (%s, %s, %s)
             RETURNING user_id;
             ''',
-            (name, email, phone_number)
+            (new_user_name, new_user_email, new_user_phone_number)
         )
 
         result = ('successfully created user', 200, cursor.fetchone()[0])
@@ -24,17 +24,6 @@ def get_user_id(connection, email):
     try:
         cursor = connection.cursor()
 
-        print(email)
-
-        cursor.execute(
-            '''
-            SELECT email
-            FROM users;
-            '''
-        )
-
-        print(cursor.fetchall())
-
         cursor.execute(
             '''
             SELECT user_id
@@ -43,8 +32,6 @@ def get_user_id(connection, email):
             ''',
             (email,)
         )
-
-        #print('CURSOR VAL\n\n:' ,cursor.fetchall())
 
         result = ('successfully retrieved user id', 200, cursor.fetchone()[0])
         cursor.close()
@@ -55,7 +42,7 @@ def get_user_id(connection, email):
         return res
 
 
-def check_phone_number_exists(connection, user_id, phone_number):
+def check_if_user_has_phone_number(connection, user_id, phone_number):
     try:
         cursor = connection.cursor()
 
@@ -63,12 +50,13 @@ def check_phone_number_exists(connection, user_id, phone_number):
             '''
             SELECT * FROM phones
             WHERE user_id = %s
-            AND phone_number = %s
+            AND phone_number = %s;
             ''',
             (user_id, phone_number)
         )
 
-        result = ('checked for duplicates', 200, cursor.fetchall())
+        result = ('successfully checked users phone numbers',
+                  200, cursor.fetchall())
         cursor.close()
         return result
     except Exception as e:
@@ -77,7 +65,7 @@ def check_phone_number_exists(connection, user_id, phone_number):
         return res
 
 
-def add_phone_number(connection, user_id, phone_number):
+def add_phone_number_to_user(connection, phone_number, user_id):
     try:
         cursor = connection.cursor()
 
@@ -89,7 +77,7 @@ def add_phone_number(connection, user_id, phone_number):
             (user_id, phone_number)
         )
 
-        result = ('successfully added phone number', 200, [])
+        result = ('successfully added phone number to user', 200, [])
         cursor.close()
         return result
     except Exception as e:
@@ -98,7 +86,7 @@ def add_phone_number(connection, user_id, phone_number):
         return res
 
 
-def remove_phone_number(connection, user_id, phone_number):
+def remove_phone_number_from_user(connection, phone_number, user_id):
     try:
         cursor = connection.cursor()
 
@@ -110,7 +98,7 @@ def remove_phone_number(connection, user_id, phone_number):
             (user_id, phone_number)
         )
 
-        result = ('successfully removed phone number', 200, [])
+        result = ('successfully removed phone number from user', 200, [])
         cursor.close()
         return result
     except Exception as e:
@@ -127,7 +115,7 @@ def get_user(connection, user_id):
             '''
             SELECT *
             FROM users
-            WHERE user_id=%s
+            WHERE user_id=%s;
             ''',
             (user_id,)
         )
@@ -137,7 +125,7 @@ def get_user(connection, user_id):
             '''
             SELECT phone_number
             FROM phones
-            WHERE user_id=%s
+            WHERE user_id=%s;
             ''',
             (user_id,)
         )
@@ -164,7 +152,7 @@ def get_users_teams(connection, user_id):
             FROM teams
             INNER JOIN usersteams
             ON teams.team_id=usersteams.team_id
-            WHERE user_id=%s
+            WHERE user_id=%s;
             ''',
             (user_id,)
         )
@@ -177,7 +165,7 @@ def get_users_teams(connection, user_id):
                 formatted_row[col] = row[i]
             data.append(formatted_row)
 
-        result = ('successfully retrieved teams', 200, data)
+        result = ('successfully retrieved users teams', 200, data)
         cursor.close()
         return result
     except Exception as e:
@@ -196,12 +184,13 @@ def get_users_groups(connection, user_id):
             FROM groups
             INNER JOIN usersgroups
             ON groups.group_id=usersgroups.group_id
-            WHERE user_id=%s
+            WHERE user_id=%s;
             ''',
             (user_id,)
         )
 
-        result = ('successfully retrieved groups', 200, cursor.fetchall())
+        result = ('successfully retrieved users groups',
+                  200, cursor.fetchall())
         cursor.close()
         return result
     except Exception as e:
@@ -218,12 +207,12 @@ def get_users_phone_number(connection, user_id):
             '''
             SELECT phone_number
             FROM users
-            WHERE user_id=%s
+            WHERE user_id=%s;
             ''',
             (user_id,)
         )
 
-        result = ('successfully retrieved phone number',
+        result = ('successfully retrieved users phone number',
                   200, cursor.fetchone()[0])
         cursor.close()
         return result
