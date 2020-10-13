@@ -66,7 +66,7 @@ def send_message():
         message, error, user = users.get_user(
             recipient_id)
         if error:
-            return message, error
+            return message, 500
 
         # Send to SNS
         res, success = sendsms(user['phone_number'], contents)

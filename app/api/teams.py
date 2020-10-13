@@ -117,6 +117,6 @@ def get_teams_groups():
 
         message, error, groups = db.get_teams_groups(team_id)
         if error:
-            return message, error
+            return message, 500
 
         return jsonify(groups), 200
