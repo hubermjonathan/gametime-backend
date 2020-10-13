@@ -20,7 +20,7 @@ def createTeam():
     message, error, data = db.create_team(name, owner)
 
     if error:
-        return 500
+        return "", 500
 
     return jsonify(data), 200
 
@@ -36,7 +36,7 @@ def editTeam():
     message, error, data = db.edit_teams_name(team, name)
 
     if error:
-        return 500
+        return "", 500
 
     return jsonify(""), 200
 
@@ -52,7 +52,7 @@ def removeFromTeam():
     message, error, data = db.remove_user_from_team(user, team)
 
     if error:
-        return 500
+        return "", 500
 
     return "", 200
 
@@ -68,7 +68,7 @@ def viewTeam():
     message, error, data = db.get_team(team)
 
     if error:
-        return 500
+        return "", 500
 
     return jsonify(data), 200
 
@@ -87,7 +87,7 @@ def editPermissions():
         user, team, priv)
 
     if error:
-        return 500
+        return "", 500
 
     return jsonify(data), 200
 
@@ -103,7 +103,7 @@ def joinTeam(id):
     message, error, data = db.add_user_to_team(user, id)
 
     if error:
-        return 500
+        return "", 500
 
     return jsonify(data), 200
 
