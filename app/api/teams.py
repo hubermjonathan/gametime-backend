@@ -2,31 +2,12 @@ from flask import Blueprint, jsonify, request, abort
 from jsonschema import validate
 from flask_login import login_required
 from ..db import teams as db
-from ..db import connect
 from . import schema
 
 import json
 
 teamsbp = Blueprint('teamsbp', __name__)
-connection = None
-connection_pool = None
 
-
-@teamsbp.before_request
-def connect_db():
-    global connection
-    global connection_pool
-    connection, connection_pool = connect()
-
-
-@teamsbp.after_request
-def disconnect_db(response):
-    global connection
-    global connection_pool
-    if connection:
-        connection_pool.putconn(connection)
-        connection = None
-    return response
 
 @login_required
 @teamsbp.route('/team/create', methods=['POST'])
@@ -36,13 +17,14 @@ def createTeam():
 
     name, owner = body['name'], body['owner']
 
-    ret = db.create_team(connection, name, owner)
+    ret = db.create_team(name, owner)
 
     res = {
         'team_id': ret[2]
     }
 
     return jsonify(res), ret[1]
+
 
 @login_required
 @teamsbp.route('/team/edit', methods=['POST'])
@@ -52,8 +34,9 @@ def editTeam():
 
     team, name = body['team'], body['name']
 
-    ret = db.edit_team_name(connection, team, name)
+    ret = db.edit_team_name(team, name)
     return jsonify(""), ret[1]
+
 
 @login_required
 @teamsbp.route('/team/remove', methods=['POST'])
@@ -63,8 +46,9 @@ def removeFromTeam():
 
     team, user = body['team'], body['user']
 
-    ret = db.remove_from_team(connection, user, team)
+    ret = db.remove_from_team(user, team)
     return "", ret[1]
+
 
 @login_required
 @teamsbp.route('/team/view/data', methods=['POST'])
@@ -74,7 +58,7 @@ def viewTeam():
 
     team = body['team']
 
-    ret = db.get_team(connection, team)
+    ret = db.get_team(team)
     team = ret[2][0]
 
     res = {
@@ -90,6 +74,7 @@ def viewTeam():
 
     return jsonify(res), ret[1]
 
+
 @login_required
 @teamsbp.route('/team/view/members', methods=['POST'])
 def viewMembers():
@@ -97,8 +82,8 @@ def viewMembers():
     body = request.get_json()
 
     team = body['team']
-    
-    ret = db.get_teams_members(connection, team)
+
+    ret = db.get_teams_members(team)
 
     users = ret[2]
 
@@ -117,6 +102,7 @@ def viewMembers():
 
     return jsonify(usersRet), ret[1]
 
+
 @login_required
 @teamsbp.route('/team/permissions', methods=['POST'])
 def editPermissions():
@@ -127,8 +113,9 @@ def editPermissions():
     team = body['team']
     priv = body['priv']
 
-    ret = db.change_permission_level(connection, user, team, priv)
+    ret = db.change_permission_level(user, team, priv)
     return jsonify(ret[2]), ret[1]
+
 
 @login_required
 @teamsbp.route('/team/join/<id>', methods=['POST'])
@@ -138,7 +125,7 @@ def joinTeam(id):
 
     user = body['user']
 
-    ret = db.add_to_team(connection, user, id)
+    ret = db.add_to_team(user, id)
     return jsonify(ret[2]), ret[1]
 
 
@@ -149,7 +136,7 @@ def get_teams_groups():
     if request.method == 'GET':
         team_id = request.args.get('id')
 
-        message, status, groups = db.get_teams_groups(connection, team_id)
+        message, status, groups = db.get_teams_groups(team_id)
         if status != 200:
             return message, status
 

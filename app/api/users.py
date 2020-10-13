@@ -5,29 +5,9 @@ import json
 import re
 from flask_login import login_required
 from ..db import users as db
-from ..db import connect
 from . import schema
 
 usersbp = Blueprint('usersbp', __name__)
-connection = None
-connection_pool = None
-
-
-@usersbp.before_request
-def connect_db():
-    global connection
-    global connection_pool
-    connection, connection_pool = connect()
-
-
-@usersbp.after_request
-def disconnect_db(response):
-    global connection
-    global connection_pool
-    if connection:
-        connection_pool.putconn(connection)
-        connection = None
-    return response
 
 
 @usersbp.route('/signup', methods=['POST'])
@@ -61,7 +41,7 @@ def signup():
             return res, r.status_code
 
         new_user_id = db.create_user(
-            connection, first_name + ' ' + last_name, email, phone)
+            first_name + ' ' + last_name, email, phone)
 
         res = r.json()
         res['user_id'] = new_user_id[2]
@@ -95,7 +75,7 @@ def login():
                 res = r.json()
                 return res, r.status_code
 
-            user_id = db.get_user_id(connection, email)
+            user_id = db.get_user_id(email)
 
             res = r.json()
             res['user_id'] = user_id[2]
@@ -105,7 +85,7 @@ def login():
             WHERE email=%s;
             ''',
             (email,)
-            print('USER ID\n\n' , user_id)
+            print('USER ID\n\n', user_id)
             return jsonify(res), 200
         except Exception as e:
             print(str(e))
@@ -124,17 +104,17 @@ def get_user():
         print('USER ID\n\n', user_id)
 
         try:
-            message, status, user_info = db.get_user(connection, user_id)
+            message, status, user_info = db.get_user(user_id)
             if status != 200:
                 return message, status
 
             res = {
-            'user_id': user_info[0],
-            'name': user_info[1],
-            'email': user_info[2],
-            'phone_number': user_info[3],
-            'profile_picture': user_info[4],
-            'extra_phone_numbers': user_info[5]
+                'user_id': user_info[0],
+                'name': user_info[1],
+                'email': user_info[2],
+                'phone_number': user_info[3],
+                'profile_picture': user_info[4],
+                'extra_phone_numbers': user_info[5]
             }
             return jsonify(res), 200
         except Exception as e:
@@ -157,13 +137,13 @@ def addPhone():
     #     return jsonify({"reason": "phone number invalid"}), 400
 
     message, status, user_info = db.check_phone_number_exists(
-        connection, user_id, phone)
+        user_id, phone)
 
     if user_info:
         return jsonify({"reason": "user already has phone number"}), 400
 
     message, status, user_info = db.add_phone_number(
-        connection, user_id, phone)
+        user_id, phone)
 
     if status == 500:
         return jsonify({"reason": "internal server error"}), status
@@ -188,7 +168,7 @@ def removePhone():
     #     return jsonify({"reason": "phone number invalid"}), 400
 
     message, status, user_info = db.remove_phone_number(
-        connection, user_id, phone)
+        user_id, phone)
 
     if status == 500:
         return jsonify({"reason": "internal server error"}), status
@@ -205,7 +185,7 @@ def getTeams():
     # GET, gets all teams user is on
     user_id = request.args.get('id')
 
-    message, status, teams = db.get_users_teams(connection, user_id)
+    message, status, teams = db.get_users_teams(user_id)
 
     res = {
         'teams': teams

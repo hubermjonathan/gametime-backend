@@ -1,30 +1,10 @@
 from flask import Blueprint, jsonify, request, abort
 from jsonschema import validate
 from ..db import groups as db
-from ..db import connect
 from . import schema
 from flask_login import login_required
 
 groupsbp = Blueprint('groupsbp', __name__)
-connection = None
-connection_pool = None
-
-
-@groupsbp.before_request
-def connect_db():
-    global connection
-    global connection_pool
-    connection, connection_pool = connect()
-
-
-@groupsbp.after_request
-def disconnect_db(response):
-    global connection
-    global connection_pool
-    if connection:
-        connection_pool.putconn(connection)
-        connection = None
-    return response
 
 
 @groupsbp.route('/group', methods=['GET', 'POST'])
@@ -35,7 +15,7 @@ def create_fetch_group():
         group_id = request.args.get('id')
 
         message, status, group_info = db.get_group(
-            connection, group_id)
+            group_id)
         if status != 200:
             return jsonify({'message': 'Failed to fetch group members'}), 400
 
@@ -63,13 +43,13 @@ def create_fetch_group():
             return jsonify({'message': 'Failed to create group'}), 400
 
         message, status, new_group_id = db.create_group(
-            connection, name, team_id)
+            name, team_id)
         if status != 200:
             return jsonify({'message': 'Failed to create group'}), 400
 
         for member_id in member_ids:
             message, status, data, = db.add_to_group(
-                connection, member_id, new_group_id)
+                member_id, new_group_id)
             if status != 200:
                 return jsonify({'message': 'Failed to create group'}), 400
 
@@ -91,7 +71,7 @@ def add_members():
 
         for member_id in member_ids:
             message, status, data, = db.add_to_group(
-                connection, member_id, group_id)
+                member_id, group_id)
             if status != 200:
                 return jsonify({'message': 'Failed to add member'}), 400
 
@@ -120,7 +100,7 @@ def delete_members():
 
         for member_id in member_ids:
             message, status, data = db.remove_from_group(
-                connection, member_id, group_id)
+                member_id, group_id)
             if status != 200:
                 return jsonify({'message': 'Failed to delete member'}), 400
 

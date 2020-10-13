@@ -4,7 +4,6 @@ from ..db import messages
 from ..db import users
 from ..db import teams
 from ..db import groups
-from ..db import connect
 from . import schema
 import boto3
 from flask_login import login_required
@@ -42,25 +41,6 @@ def sendsms(phone_number, text):
 
 
 messagesbp = Blueprint('messagesbp', __name__)
-connection = None
-connection_pool = None
-
-
-@messagesbp.before_request
-def connect_db():
-    global connection
-    global connection_pool
-    connection, connection_pool = connect()
-
-
-@messagesbp.after_request
-def disconnect_db(response):
-    global connection
-    global connection_pool
-    if connection:
-        connection_pool.putconn(connection)
-        connection = None
-    return response
 
 
 @messagesbp.route('/sendPlayerMessage', methods=['POST'])
@@ -78,13 +58,13 @@ def send_message():
 
         # Store the message
         message, status, message_id = messages.create_message(
-            connection, recipient_id, sender_id, contents)
+            recipient_id, sender_id, contents)
         if status != 200:
             return jsonify({'message': 'Failed to send message'}), 400
 
         # Fetch the number
         message, status, phone_number = users.get_users_phone_number(
-            connection, recipient_id)
+            recipient_id)
         if status != 200:
             return message, status
 
@@ -113,13 +93,13 @@ def send_to_group():
 
         # Store the message
         message, status, message_id = messages.create_group_message(
-            connection, recipient_id, sender_id, contents)
+            recipient_id, sender_id, contents)
         if status != 200:
             return jsonify({'message': 'Failed to send message'}), 400
 
         # Fetch the numbers
         message, status, phone_numbers = groups.get_groups_phone_numbers(
-            connection, recipient_id)
+            recipient_id)
         if status != 200:
             return jsonify({'message': 'Failed to send message'}), 400
 
@@ -152,13 +132,13 @@ def send_to_team():
 
         # Store the message
         message, status, message_id = messages.create_group_message(
-            connection, recipient_id, sender_id, contents)
+            recipient_id, sender_id, contents)
         if status != 200:
             return jsonify({'message': 'Failed to send message'}), 400
 
         # Fetch the numbers
         message, status, phone_numbers = teams.get_teams_phone_numbers(
-            connection, recipient_id)
+            recipient_id)
         if status != 200:
             return jsonify({'message': 'Failed to send message'}), 400
 

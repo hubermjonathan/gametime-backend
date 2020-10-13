@@ -1,7 +1,7 @@
-from app.api.users import usersbp
-from app.api.messages import messagesbp
-from app.api.teams import teamsbp
-from app.api.groups import groupsbp
+# from app.api.users import usersbp
+# from app.api.messages import messagesbp
+# from app.api.teams import teamsbp
+# from app.api.groups import groupsbp
 from app.api.test import testbp
 import os
 from flask import Flask
@@ -51,9 +51,9 @@ def create_app(test_config=None):
 
     # load blueprints
     app.register_blueprint(testbp)
-    app.register_blueprint(groupsbp)
-    app.register_blueprint(teamsbp)
-    app.register_blueprint(messagesbp)
-    app.register_blueprint(usersbp)
+    # app.register_blueprint(groupsbp)
+    # app.register_blueprint(teamsbp)
+    # app.register_blueprint(messagesbp)
+    # app.register_blueprint(usersbp)
 
     return app
