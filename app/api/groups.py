@@ -16,7 +16,7 @@ def create_fetch_group():
 
         message, error, group_info = db.get_group(
             group_id)
-        if error == True:
+        if error:
             return jsonify({'message': 'Failed to fetch group members'}), 400
 
         return jsonify(group_info), 200
@@ -37,13 +37,13 @@ def create_fetch_group():
 
         message, error, new_group_id = db.create_group(
             name, team_id)
-        if error == True:
+        if error:
             return jsonify({'message': 'Failed to create group'}), 400
 
         for member_id in member_ids:
             message, error, data, = db.add_user_to_group(
                 member_id, new_group_id['group_id'])
-            if error == True:
+            if error:
                 return jsonify({'message': 'Failed to create group'}), 400
 
         return jsonify({'message': 'Success'}), 200
@@ -65,7 +65,7 @@ def add_members():
         for member_id in member_ids:
             message, error, data, = db.add_user_to_group(
                 member_id, group_id)
-            if error == True:
+            if error:
                 return jsonify({'message': 'Failed to add member'}), 400
 
         return jsonify({'message': 'Success'}), 200
@@ -94,7 +94,7 @@ def delete_members():
         for member_id in member_ids:
             message, error, data = db.remove_user_from_group(
                 member_id, group_id)
-            if error == True:
+            if error:
                 return jsonify({'message': 'Failed to delete member'}), 400
 
         return jsonify({'message': 'Success'}), 200
