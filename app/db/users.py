@@ -1,32 +1,36 @@
-from ..db import runner
+from ..db.connection_manager import connection_manager
 
 
-def create_user(connection, first_name, last_name, email, phone_number):
+def create_user(first_name, last_name, email, phone_number):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
             INSERT INTO users (first_name, last_name, email, phone_number)
-            VALUES (%s, %s, %s)
+            VALUES (%s, %s, %s, %s)
             RETURNING user_id;
             ''',
             (first_name, last_name, email, phone_number)
         )
 
-        return_data = runner.get_data(cursor)
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
+        connection_manager.disconnect(connection)
 
         res = ('successfully created user', False, return_data)
         return res
     except Exception as e:
         cursor.close()
+        connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
 
 
-def get_user_id(connection, email):
+def get_user_id(email):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -41,19 +45,22 @@ def get_user_id(connection, email):
             (email,)
         )
 
-        return_data = runner.get_data(cursor)
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
+        connection_manager.disconnect(connection)
 
         res = ('successfully retrieved user id', False, return_data)
         return res
     except Exception as e:
         cursor.close()
+        connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
 
 
-def check_if_user_has_phone_number(connection, user_id, phone_number):
+def check_if_user_has_phone_number(user_id, phone_number):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -65,19 +72,22 @@ def check_if_user_has_phone_number(connection, user_id, phone_number):
             (user_id, phone_number)
         )
 
-        return_data = runner.get_data(cursor)
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
+        connection_manager.disconnect(connection)
 
         res = ('successfully checked users phone numbers', False, return_data)
         return res
     except Exception as e:
         cursor.close()
+        connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
 
 
-def add_phone_number_to_user(connection, phone_number, user_id):
+def add_phone_number_to_user(phone_number, user_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -88,19 +98,22 @@ def add_phone_number_to_user(connection, phone_number, user_id):
             (user_id, phone_number)
         )
 
-        return_data = runner.get_data(cursor)
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
+        connection_manager.disconnect(connection)
 
         res = ('successfully added phone number to user', False, return_data)
         return res
     except Exception as e:
         cursor.close()
+        connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
 
 
-def remove_phone_number_from_user(connection, phone_number, user_id):
+def remove_phone_number_from_user(phone_number, user_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -111,19 +124,22 @@ def remove_phone_number_from_user(connection, phone_number, user_id):
             (user_id, phone_number)
         )
 
-        return_data = runner.get_data(cursor)
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
+        connection_manager.disconnect(connection)
 
         res = ('successfully removed phone number from user', False, return_data)
         return res
     except Exception as e:
         cursor.close()
+        connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
 
 
-def get_user(connection, user_id):
+def get_user(user_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -134,7 +150,7 @@ def get_user(connection, user_id):
             ''',
             (user_id,)
         )
-        user_info = runner.get_data(cursor)
+        user_info = connection_manager.get_data(cursor)
 
         cursor.execute(
             '''
@@ -144,7 +160,8 @@ def get_user(connection, user_id):
             ''',
             (user_id,)
         )
-        phone_numbers = runner.get_data(cursor, 'extra_phone_numbers')
+        phone_numbers = connection_manager.get_data(
+            cursor, 'extra_phone_numbers')
 
         cursor.execute(
             '''
@@ -156,7 +173,7 @@ def get_user(connection, user_id):
             ''',
             (user_id,)
         )
-        teams = runner.get_data(cursor, 'teams')
+        teams = connection_manager.get_data(cursor, 'teams')
 
         cursor.execute(
             '''
@@ -168,17 +185,19 @@ def get_user(connection, user_id):
             ''',
             (user_id,)
         )
-        groups = runner.get_data(cursor, 'groups')
+        groups = connection_manager.get_data(cursor, 'groups')
 
         return_data = user_info
         return_data.update(phone_numbers)
         return_data.update(teams)
         return_data.update(groups)
         cursor.close()
+        connection_manager.disconnect(connection)
 
         res = ('successfully retrieved user', False, return_data)
         return res
     except Exception as e:
         cursor.close()
+        connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res

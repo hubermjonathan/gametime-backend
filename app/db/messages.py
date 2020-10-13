@@ -1,9 +1,10 @@
-from ..db import runner
+from ..db.connection_manager import connection_manager
 from datetime import datetime
 
 
-def create_direct_message(connection, recipient_user_id, sender_user_id, message_content):
+def create_direct_message(recipient_user_id, sender_user_id, message_content):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -15,19 +16,22 @@ def create_direct_message(connection, recipient_user_id, sender_user_id, message
             (recipient_user_id, sender_user_id, message_content, datetime.now())
         )
 
-        return_data = runner.get_data(cursor)
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
+        connection_manager.disconnect(connection)
 
         res = ('successfully created direct message', False, return_data)
         return res
     except Exception as e:
         cursor.close()
+        connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
 
 
-def create_group_message(connection, recipient_group_id, sender_user_id, message_content):
+def create_group_message(recipient_group_id, sender_user_id, message_content):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -39,19 +43,22 @@ def create_group_message(connection, recipient_group_id, sender_user_id, message
             (recipient_group_id, sender_user_id, message_content, datetime.now())
         )
 
-        return_data = runner.get_data(cursor)
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
+        connection_manager.disconnect(connection)
 
         res = ('successfully created group message', False, return_data)
         return res
     except Exception as e:
         cursor.close()
+        connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
 
 
-def get_users_direct_messages(connection, user_id):
+def get_users_direct_messages(user_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -65,19 +72,22 @@ def get_users_direct_messages(connection, user_id):
             (user_id,)
         )
 
-        return_data = runner.get_data(cursor, 'messages')
+        return_data = connection_manager.get_data(cursor, 'messages')
         cursor.close()
+        connection_manager.disconnect(connection)
 
         res = ('successfully retrieved direct messages', False, return_data)
         return res
     except Exception as e:
         cursor.close()
+        connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
 
 
-def get_groups_messages(connection, group_id):
+def get_groups_messages(group_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -91,12 +101,14 @@ def get_groups_messages(connection, group_id):
             (group_id,)
         )
 
-        return_data = runner.get_data(cursor, 'messages')
+        return_data = connection_manager.get_data(cursor, 'messages')
         cursor.close()
+        connection_manager.disconnect(connection)
 
         res = ('successfully retrieved group messages', False, return_data)
         return res
     except Exception as e:
         cursor.close()
+        connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res

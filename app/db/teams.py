@@ -1,8 +1,9 @@
-from ..db import runner
+from ..db.connection_manager import connection_manager
 
 
-def create_team(connection, name, owner_user_id):
+def create_team(name, owner_user_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -30,19 +31,22 @@ def create_team(connection, name, owner_user_id):
             (name, owner_user_id, owner_user_id, name, owner_user_id)
         )
 
-        return_data = runner.get_data(cursor)
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
+        connection_manager.disconnect(connection)
 
         res = ('successfully created team', False, return_data)
         return res
     except Exception as e:
         cursor.close()
+        connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
 
 
-def add_user_to_team(connection, user_id, team_id):
+def add_user_to_team(user_id, team_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -60,19 +64,22 @@ def add_user_to_team(connection, user_id, team_id):
             (user_id, team_id, user_id, team_id)
         )
 
-        return_data = runner.get_data(cursor)
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
+        connection_manager.disconnect(connection)
 
         res = ('successfully added user to team', False, return_data)
         return res
     except Exception as e:
         cursor.close()
+        connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
 
 
-def remove_user_from_team(connection, user_id, team_id):
+def remove_user_from_team(user_id, team_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -91,19 +98,22 @@ def remove_user_from_team(connection, user_id, team_id):
             (user_id, team_id, team_id, user_id)
         )
 
-        return_data = runner.get_data(cursor)
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
+        connection_manager.disconnect(connection)
 
         res = ('successfully removed user from team', False, return_data)
         return res
     except Exception as e:
         cursor.close()
+        connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
 
 
-def change_users_permission_level_for_team(connection, user_id, team_id, permission_level):
+def change_users_permission_level_for_team(user_id, team_id, permission_level):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -115,20 +125,23 @@ def change_users_permission_level_for_team(connection, user_id, team_id, permiss
             (permission_level, user_id, team_id)
         )
 
-        return_data = runner.get_data(cursor)
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
+        connection_manager.disconnect(connection)
 
         res = ('successfully changed users permission level for team',
                False, return_data)
         return res
     except Exception as e:
         cursor.close()
+        connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
 
 
-def edit_teams_name(connection, team_id, new_team_name):
+def edit_teams_name(team_id, new_team_name):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -140,19 +153,22 @@ def edit_teams_name(connection, team_id, new_team_name):
             (new_team_name, team_id)
         )
 
-        return_data = runner.get_data(cursor)
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
+        connection_manager.disconnect(connection)
 
         res = ('successfully edited teams name', False, return_data)
         return res
     except Exception as e:
         cursor.close()
+        connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
 
 
-def get_team(connection, team_id):
+def get_team(team_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -163,7 +179,7 @@ def get_team(connection, team_id):
             ''',
             (team_id,)
         )
-        team_info = runner.get_data(cursor)
+        team_info = connection_manager.get_data(cursor)
 
         cursor.execute(
             '''
@@ -175,22 +191,25 @@ def get_team(connection, team_id):
             ''',
             (team_id,)
         )
-        users = runner.get_data(cursor, 'users')
+        users = connection_manager.get_data(cursor, 'users')
 
         return_data = team_info
         return_data.update(users)
         cursor.close()
+        connection_manager.disconnect(connection)
 
         res = ('successfully retrieved team', False, return_data)
         return res
     except Exception as e:
         cursor.close()
+        connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
 
 
-def get_teams_phone_numbers(connection, team_id):
+def get_teams_phone_numbers(team_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -206,19 +225,22 @@ def get_teams_phone_numbers(connection, team_id):
             (team_id,)
         )
 
-        return_data = runner.get_data(cursor, 'phone_numbers')
+        return_data = connection_manager.get_data(cursor, 'phone_numbers')
         cursor.close()
+        connection_manager.disconnect(connection)
 
         res = ('successfully retrieved teams phone numbers', False, return_data)
         return res
     except Exception as e:
         cursor.close()
+        connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
 
 
-def get_teams_groups(connection, team_id):
+def get_teams_groups(team_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -231,7 +253,7 @@ def get_teams_groups(connection, team_id):
         )
 
         groups = []
-        for row in runner.get_data(cursor, 'groups')['groups']:
+        for row in connection_manager.get_data(cursor, 'groups')['groups']:
             cursor.execute(
                 '''
                 SELECT users.*
@@ -243,7 +265,7 @@ def get_teams_groups(connection, team_id):
                 (row['group_id'],)
             )
 
-            users = runner.get_data(cursor, 'users')
+            users = connection_manager.get_data(cursor, 'users')
             users = {'users': []} if 'users' not in users else users
             row.update(users)
             groups.append(row)
@@ -252,10 +274,12 @@ def get_teams_groups(connection, team_id):
             'groups': groups
         }
         cursor.close()
+        connection_manager.disconnect(connection)
 
         res = ('successfully retrieved teams groups', False, return_data)
         return res
     except Exception as e:
         cursor.close()
+        connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
