@@ -266,7 +266,6 @@ def get_teams_groups(team_id):
             )
 
             users = connection_manager.get_data(cursor, 'users')
-            users = {'users': []} if 'users' not in users else users
             row.update(users)
             groups.append(row)
 

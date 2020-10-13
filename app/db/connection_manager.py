@@ -35,8 +35,12 @@ class ConnectionManager:
         columns = [desc[0] for desc in cursor.description]
         results = cursor.fetchall()
 
-        if (len(results) == 0):
+        if (len(results) == 0 and key_name == 'results'):
             return {}
+        elif (len(results) == 0):
+            return {
+                key_name: []
+            }
         elif (len(results) == 1 and key_name == 'results'):
             data = {}
             for i, col in enumerate(columns):

@@ -23,6 +23,12 @@ def create_user(phone, email, password, first_name, last_name):
     )
 
 
+@testbp.route('/test')
+def test():
+    result = db.messages.get_users_direct_messages(14)
+    return jsonify(result), 200
+
+
 @testbp.route('/create_data')
 def create_test_data():
     db.schema.reset_tables(request.args.get('db'))
@@ -247,9 +253,3 @@ def create_test_data():
         10, 1, 'player8-team2-message3')
 
     return 'successfully created data'
-
-
-@testbp.route('/test')
-def test():
-    result = db.users.create_user('test', 'test', 'test', 'test')
-    return jsonify(result), 200
