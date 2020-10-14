@@ -201,3 +201,30 @@ def get_user(user_id):
         connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
+
+
+def update_users_profile_picture(user_id, image_url):
+    try:
+        connection = connection_manager.connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            UPDATE users
+            SET profile_picture=%s
+            WHERE user_id=%s;
+            ''',
+            (image_url, user_id)
+        )
+
+        return_data = connection_manager.get_data(cursor)
+        cursor.close()
+        connection_manager.disconnect(connection)
+
+        res = ('successfully updated users profile picture', False, return_data)
+        return res
+    except Exception as e:
+        cursor.close()
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
