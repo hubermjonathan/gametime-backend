@@ -166,3 +166,31 @@ def edit_users_fundraiser_description_for_team(user_id, team_id, fundraiser_desc
         connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
+
+
+def get_users_fundraiser_for_team(user_id, team_id):
+    try:
+        connection = connection_manager.connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT fund_goal, fund_current, fund_desc
+            FROM usersteams
+            WHERE user_id=%s AND team_id=%s;
+            ''',
+            (user_id, team_id)
+        )
+
+        return_data = connection_manager.get_data(cursor)
+        cursor.close()
+        connection_manager.disconnect(connection)
+
+        res = ('successfully retrieved users fundraiser information for a team',
+               False, return_data)
+        return res
+    except Exception as e:
+        cursor.close()
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
