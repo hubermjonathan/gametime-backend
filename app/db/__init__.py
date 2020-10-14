@@ -1,6 +1,13 @@
 '''
 FUNCTIONS:
 all functions return a tuple of the format (message string, error boolean, data object)
+    fundraising:
+        edit_teams_fundraiser_goal(team_id, fundraiser_goal) - returns nothing
+        edit_teams_fundraiser_current(team_id, fundraiser_current) - returns nothing
+        edit_teams_fundraiser_description(team_id, fundraiser_description) - returns nothing
+        edit_users_fundraiser_goal_for_team(user_id, team_id, fundraiser_goal) - returns nothing
+        edit_users_fundraiser_current_for_team(user_id, team_id, fundraiser_current) - returns nothing
+        edit_users_fundraiser_description_for_team(user_id, team_id, fundraiser_description) - returns nothing
     groups:
         create_group(name, parent_team_id) - returns group_id
         add_user_to_group(user_id, group_id) - returns nothing
