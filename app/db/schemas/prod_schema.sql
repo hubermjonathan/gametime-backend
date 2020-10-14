@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS public.users CASCADE;
 DROP TABLE IF EXISTS public.phones CASCADE;
 DROP TABLE IF EXISTS public.teams CASCADE;
 DROP TABLE IF EXISTS public.files CASCADE;
+DROP TABLE IF EXISTS public.transactions CASCADE;
 DROP TABLE IF EXISTS public.items CASCADE;
 DROP TABLE IF EXISTS public.itemmodifiers CASCADE;
 DROP TABLE IF EXISTS public.itempictures CASCADE;
@@ -44,6 +45,8 @@ DROP SEQUENCE IF EXISTS public.messages_message_id_seq;
 DROP SEQUENCE IF EXISTS public.messages_sender_id_seq;
 DROP SEQUENCE IF EXISTS public.messages_user_id_seq;
 DROP SEQUENCE IF EXISTS public.teams_owner_seq;
+DROP SEQUENCE IF EXISTS public.transactions_transaction_id_seq;
+DROP SEQUENCE IF EXISTS public.transactions_team_id_seq;
 
 
 -- SEQUENCE: public.Files_file_id_seq
@@ -491,9 +494,39 @@ CREATE SEQUENCE public.teams_owner_seq
     CACHE 1;
 
 ALTER SEQUENCE public.teams_owner_seq
-    OWNER to prod;
+    OWNER TO prod;
 
 GRANT ALL ON SEQUENCE public.teams_owner_seq TO prod;
+
+
+-- SEQUENCE: public.transactions_transaction_id_seq
+
+CREATE SEQUENCE public.transactions_transaction_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE public.transactions_transaction_id_seq
+    OWNER to prod;
+
+GRANT ALL ON SEQUENCE public.transactions_transaction_id_seq TO prod;
+
+
+-- SEQUENCE: public.transactions_team_id_seq
+
+CREATE SEQUENCE public.transactions_team_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE public.transactions_team_id_seq
+    OWNER to prod;
+
+GRANT ALL ON SEQUENCE public.transactions_team_id_seq TO prod;
 
 
 -- Table: public.users
@@ -593,6 +626,31 @@ ALTER TABLE public.files
     OWNER to prod;
 
 GRANT ALL ON TABLE public.files TO prod;
+
+
+-- Table: public.transactions
+
+CREATE TABLE public.transactions
+(
+    transaction_id integer NOT NULL DEFAULT nextval('transactions_transaction_id_seq'::regclass),
+    team_id integer NOT NULL DEFAULT nextval('transactions_team_id_seq'::regclass),
+    status integer NOT NULL,
+    buyer_email text COLLATE pg_catalog."default" NOT NULL,
+    buyer_address text COLLATE pg_catalog."default" NOT NULL,
+    time_purchased timestamp without time zone NOT NULL,
+    CONSTRAINT transaction_id PRIMARY KEY (transaction_id),
+    CONSTRAINT team_id FOREIGN KEY (team_id)
+        REFERENCES public.teams (team_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.transactions
+    OWNER to prod;
+
+GRANT ALL ON TABLE public.transactions TO prod;
 
 
 -- Table: public.items
