@@ -2,31 +2,12 @@ from flask import Blueprint, jsonify, request, abort
 from jsonschema import validate
 from flask_login import login_required
 from ..db import teams as db
-from ..db import connect
 from . import schema
 
 import json
 
 teamsbp = Blueprint('teamsbp', __name__)
-connection = None
-connection_pool = None
 
-
-@teamsbp.before_request
-def connect_db():
-    global connection
-    global connection_pool
-    connection, connection_pool = connect()
-
-
-@teamsbp.after_request
-def disconnect_db(response):
-    global connection
-    global connection_pool
-    if connection:
-        connection_pool.putconn(connection)
-        connection = None
-    return response
 
 @login_required
 @teamsbp.route('/team/create', methods=['POST'])
@@ -36,13 +17,13 @@ def createTeam():
 
     name, owner = body['name'], body['owner']
 
-    ret = db.create_team(connection, name, owner)
+    message, error, data = db.create_team(name, owner)
 
-    res = {
-        'team_id': ret[2]
-    }
+    if error:
+        return "", 500
 
-    return jsonify(res), ret[1]
+    return jsonify(data), 200
+
 
 @login_required
 @teamsbp.route('/team/edit', methods=['POST'])
@@ -52,8 +33,13 @@ def editTeam():
 
     team, name = body['team'], body['name']
 
-    ret = db.edit_team_name(connection, team, name)
-    return jsonify(""), ret[1]
+    message, error, data = db.edit_teams_name(team, name)
+
+    if error:
+        return "", 500
+
+    return jsonify(""), 200
+
 
 @login_required
 @teamsbp.route('/team/remove', methods=['POST'])
@@ -63,8 +49,13 @@ def removeFromTeam():
 
     team, user = body['team'], body['user']
 
-    ret = db.remove_from_team(connection, user, team)
-    return "", ret[1]
+    message, error, data = db.remove_user_from_team(user, team)
+
+    if error:
+        return "", 500
+
+    return "", 200
+
 
 @login_required
 @teamsbp.route('/team/view/data', methods=['POST'])
@@ -74,48 +65,13 @@ def viewTeam():
 
     team = body['team']
 
-    ret = db.get_team(connection, team)
-    team = ret[2][0]
+    message, error, data = db.get_team(team)
 
-    res = {
-        'team_id': team[0],
-        'name': team[1],
-        'fund_goal': team[2],
-        'fund_current': team[3],
-        'fund_desc': team[4],
-        'account_number': team[5],
-        'routing_number': team[6],
-        'owner': team[7]
-    }
+    if error:
+        return "", 500
 
-    return jsonify(res), ret[1]
+    return jsonify(data), 200
 
-@login_required
-@teamsbp.route('/team/view/members', methods=['POST'])
-def viewMembers():
-    # POST, gets Team Members (TODO make GET)
-    body = request.get_json()
-
-    team = body['team']
-    
-    ret = db.get_teams_members(connection, team)
-
-    users = ret[2]
-
-    usersRet = []
-    for user in users:
-        userRet = {
-            'user_id': user[0],
-            'name': user[1],
-            'email': user[2],
-            'phone_number': user[3],
-            'profile_picture': user[4],
-            'permission_level': user[5]
-        }
-
-        usersRet.append(userRet)
-
-    return jsonify(usersRet), ret[1]
 
 @login_required
 @teamsbp.route('/team/permissions', methods=['POST'])
@@ -127,8 +83,14 @@ def editPermissions():
     team = body['team']
     priv = body['priv']
 
-    ret = db.change_permission_level(connection, user, team, priv)
-    return jsonify(ret[2]), ret[1]
+    message, error, data = db.change_users_permission_level_for_team(
+        user, team, priv)
+
+    if error:
+        return "", 500
+
+    return jsonify(data), 200
+
 
 @login_required
 @teamsbp.route('/team/join/<id>', methods=['POST'])
@@ -138,8 +100,12 @@ def joinTeam(id):
 
     user = body['user']
 
-    ret = db.add_to_team(connection, user, id)
-    return jsonify(ret[2]), ret[1]
+    message, error, data = db.add_user_to_team(user, id)
+
+    if error:
+        return "", 500
+
+    return jsonify(data), 200
 
 
 @login_required
@@ -149,11 +115,8 @@ def get_teams_groups():
     if request.method == 'GET':
         team_id = request.args.get('id')
 
-        message, status, groups = db.get_teams_groups(connection, team_id)
-        if status != 200:
-            return message, status
+        message, error, groups = db.get_teams_groups(team_id)
+        if error:
+            return message, 500
 
-        res = {
-            'groups': groups
-        }
-        return jsonify(res), 200
+        return jsonify(groups), 200

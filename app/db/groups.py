@@ -1,5 +1,9 @@
-def create_group(connection, name, team_id):
+from ..db.connection_manager import connection_manager
+
+
+def create_group(name, parent_team_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -8,20 +12,25 @@ def create_group(connection, name, team_id):
             VALUES (%s, %s)
             RETURNING group_id;
             ''',
-            (team_id, name)
+            (parent_team_id, name)
         )
 
-        result = ('successfully created group', 200, cursor.fetchone()[0])
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+
+        res = ('successfully created group', False, return_data)
+        return res
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
 
 
-def add_to_group(connection, user_id, group_id):
+def add_user_to_group(user_id, group_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         if isinstance(user_id, list):
@@ -42,17 +51,22 @@ def add_to_group(connection, user_id, group_id):
                 (user_id, group_id)
             )
 
-        result = ('successfully joined group', 200, [])
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+
+        res = ('successfully added user(s) to group', False, return_data)
+        return res
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
 
 
-def remove_from_group(connection, user_id, group_id):
+def remove_user_from_group(user_id, group_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         if isinstance(user_id, list):
@@ -73,41 +87,63 @@ def remove_from_group(connection, user_id, group_id):
                 (user_id, group_id)
             )
 
-        result = ('successfully left group', 200, [])
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+
+        res = ('successfully removed user(s) from group', False, return_data)
+        return res
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
 
 
-def get_groups_members(connection, group_id):
+def get_group(group_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT *
+            FROM groups
+            WHERE group_id=%s;
+            ''',
+            (group_id,)
+        )
+        group_info = connection_manager.get_data(cursor)
 
         cursor.execute(
             '''
             SELECT users.*
             FROM users
             INNER JOIN usersgroups
-            ON users.user_id=usersgroups.user_id
-            WHERE usersgroups.group_id=%s
+           	USING (user_id)
+            WHERE usersgroups.group_id=%s;
             ''',
             (group_id,)
         )
+        users = connection_manager.get_data(cursor, 'users')
 
-        result = ('successfully retrieved members', 200, cursor.fetchall())
+        return_data = group_info
+        return_data.update(users)
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+
+        res = ('successfully retrieved group', False, return_data)
+        return res
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
 
 
-def get_groups_phone_numbers(connection, group_id):
+def get_groups_phone_numbers(group_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -115,56 +151,20 @@ def get_groups_phone_numbers(connection, group_id):
             SELECT users.phone_number
             FROM users
             INNER JOIN usersgroups
-            ON users.user_id=usersgroups.user_id
-            WHERE usersgroups.group_id=%s
+            USING (user_id)
+            WHERE usersgroups.group_id=%s;
             ''',
             (group_id,)
         )
 
-        data = cursor.fetchall()
-        data = [phone_number[0] for phone_number in data]
-
-        result = ('successfully retrieved phone numbers', 200, data)
+        return_data = connection_manager.get_data(cursor, 'phone_numbers')
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+
+        res = ('successfully retrieved groups phone numbers', False, return_data)
+        return res
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
-
-
-def get_group(connection, group_id):
-    try:
-        cursor = connection.cursor()
-
-        cursor.execute(
-            '''
-            SELECT *
-            FROM groups
-            WHERE group_id=%s
-            ''',
-            (group_id,)
-        )
-        group_info = cursor.fetchone()
-
-        cursor.execute(
-            '''
-            SELECT users.*
-            FROM users
-            INNER JOIN usersgroups
-            ON users.user_id=usersgroups.user_id
-            WHERE usersgroups.group_id=%s
-            ''',
-            (group_id,)
-        )
-        group_members = cursor.fetchall()
-        group_members_ids = [user[0] for user in group_members]
-        data = group_info + (group_members_ids,)
-
-        result = ('successfully retrieved group', 200, data)
-        cursor.close()
-        return result
-    except Exception as e:
-        result = (str(e), 500, [])
-        cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res

@@ -1,30 +1,10 @@
 from flask import Blueprint, jsonify, request, abort
 from jsonschema import validate
 from ..db import groups as db
-from ..db import connect
 from . import schema
 from flask_login import login_required
 
 groupsbp = Blueprint('groupsbp', __name__)
-connection = None
-connection_pool = None
-
-
-@groupsbp.before_request
-def connect_db():
-    global connection
-    global connection_pool
-    connection, connection_pool = connect()
-
-
-@groupsbp.after_request
-def disconnect_db(response):
-    global connection
-    global connection_pool
-    if connection:
-        connection_pool.putconn(connection)
-        connection = None
-    return response
 
 
 @groupsbp.route('/group', methods=['GET', 'POST'])
@@ -34,19 +14,12 @@ def create_fetch_group():
     if request.method == 'GET':
         group_id = request.args.get('id')
 
-        message, status, group_info = db.get_group(
-            connection, group_id)
-        if status != 200:
+        message, error, group_info = db.get_group(
+            group_id)
+        if error:
             return jsonify({'message': 'Failed to fetch group members'}), 400
 
-        res = {
-            'group_id': group_info[0],
-            'team_id': group_info[1],
-            'name': group_info[2],
-            'members': group_info[3]
-        }
-
-        return jsonify(res), 200
+        return jsonify(group_info), 200
 
     # POST, Creates a new group
     if request.method == 'POST':
@@ -62,15 +35,15 @@ def create_fetch_group():
         if not name:
             return jsonify({'message': 'Failed to create group'}), 400
 
-        message, status, new_group_id = db.create_group(
-            connection, name, team_id)
-        if status != 200:
+        message, error, new_group_id = db.create_group(
+            name, team_id)
+        if error:
             return jsonify({'message': 'Failed to create group'}), 400
 
         for member_id in member_ids:
-            message, status, data, = db.add_to_group(
-                connection, member_id, new_group_id)
-            if status != 200:
+            message, error, data, = db.add_user_to_group(
+                member_id, new_group_id['group_id'])
+            if error:
                 return jsonify({'message': 'Failed to create group'}), 400
 
         return jsonify({'message': 'Success'}), 200
@@ -90,9 +63,9 @@ def add_members():
         group_id, member_ids = body['group_id'], body['new_members']
 
         for member_id in member_ids:
-            message, status, data, = db.add_to_group(
-                connection, member_id, group_id)
-            if status != 200:
+            message, error, data, = db.add_user_to_group(
+                member_id, group_id)
+            if error:
                 return jsonify({'message': 'Failed to add member'}), 400
 
         return jsonify({'message': 'Success'}), 200
@@ -119,9 +92,9 @@ def delete_members():
                 return jsonify({'message': 'Failed to delete members'}), 400
 
         for member_id in member_ids:
-            message, status, data = db.remove_from_group(
-                connection, member_id, group_id)
-            if status != 200:
+            message, error, data = db.remove_user_from_group(
+                member_id, group_id)
+            if error:
                 return jsonify({'message': 'Failed to delete member'}), 400
 
         return jsonify({'message': 'Success'}), 200

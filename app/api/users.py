@@ -5,29 +5,9 @@ import json
 import re
 from flask_login import login_required
 from ..db import users as db
-from ..db import connect
 from . import schema
 
 usersbp = Blueprint('usersbp', __name__)
-connection = None
-connection_pool = None
-
-
-@usersbp.before_request
-def connect_db():
-    global connection
-    global connection_pool
-    connection, connection_pool = connect()
-
-
-@usersbp.after_request
-def disconnect_db(response):
-    global connection
-    global connection_pool
-    if connection:
-        connection_pool.putconn(connection)
-        connection = None
-    return response
 
 
 @usersbp.route('/signup', methods=['POST'])
@@ -60,11 +40,11 @@ def signup():
             res = r.json()
             return res, r.status_code
 
-        new_user_id = db.create_user(
-            connection, first_name + ' ' + last_name, email, phone)
+        message, error, data = db.create_user(
+            first_name, last_name, email, phone)
 
         res = r.json()
-        res['user_id'] = new_user_id[2]
+        res.update(data)
         return jsonify(res), 200
 
 
@@ -95,17 +75,11 @@ def login():
                 res = r.json()
                 return res, r.status_code
 
-            user_id = db.get_user_id(connection, email)
+            message, error, data = db.get_user_id(email)
 
             res = r.json()
-            res['user_id'] = user_id[2]
-            '''
-            SELECT user_id
-            FROM users
-            WHERE email=%s;
-            ''',
-            (email,)
-            print('USER ID\n\n' , user_id)
+            res.update(data)
+
             return jsonify(res), 200
         except Exception as e:
             print(str(e))
@@ -121,22 +95,12 @@ def get_user():
     if request.method == 'GET':
         user_id = request.args.get('id')
 
-        print('USER ID\n\n', user_id)
-
         try:
-            message, status, user_info = db.get_user(connection, user_id)
-            if status != 200:
-                return message, status
+            message, error, user_info = db.get_user(user_id)
+            if error:
+                return message, 500
 
-            res = {
-            'user_id': user_info[0],
-            'name': user_info[1],
-            'email': user_info[2],
-            'phone_number': user_info[3],
-            'profile_picture': user_info[4],
-            'extra_phone_numbers': user_info[5]
-            }
-            return jsonify(res), 200
+            return jsonify(user_info), 200
         except Exception as e:
             print(e)
 
@@ -156,22 +120,19 @@ def addPhone():
     # if not Pattern.match(phone):
     #     return jsonify({"reason": "phone number invalid"}), 400
 
-    message, status, user_info = db.check_phone_number_exists(
-        connection, user_id, phone)
+    message, error, data = db.check_if_user_has_phone_number(
+        user_id, phone)
 
-    if user_info:
+    if data['exists'] == 1:
         return jsonify({"reason": "user already has phone number"}), 400
 
-    message, status, user_info = db.add_phone_number(
-        connection, user_id, phone)
+    message, error, data = db.add_phone_number_to_user(
+        phone, user_id)
 
-    if status == 500:
-        return jsonify({"reason": "internal server error"}), status
+    if error:
+        return jsonify({"reason": "internal server error"}), 500
 
-    if status == 200:
-        return jsonify({"reason": "phone number added"}), status
-
-    return jsonify({"reason": "unknown"}), status
+    return jsonify({"reason": "phone number added"}), 200
 
 
 @login_required
@@ -187,27 +148,9 @@ def removePhone():
     # if not Pattern.match(phone):
     #     return jsonify({"reason": "phone number invalid"}), 400
 
-    message, status, user_info = db.remove_phone_number(
-        connection, user_id, phone)
+    message, error, data = db.remove_phone_number_from_user(phone, user_id)
 
-    if status == 500:
-        return jsonify({"reason": "internal server error"}), status
+    if error:
+        return jsonify({"reason": "internal server error"}), 500
 
-    if status == 200:
-        return jsonify({"reason": "phone number removed"}), status
-
-    return jsonify({"reason": "unknown"}), status
-
-
-@login_required
-@usersbp.route('/user/teams', methods=['GET'])
-def getTeams():
-    # GET, gets all teams user is on
-    user_id = request.args.get('id')
-
-    message, status, teams = db.get_users_teams(connection, user_id)
-
-    res = {
-        'teams': teams
-    }
-    return jsonify(res), 200
+    return jsonify({"reason": "phone number removed"}), 200

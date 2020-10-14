@@ -1,8 +1,10 @@
+from ..db.connection_manager import connection_manager
 from datetime import datetime
 
 
-def create_message(connection, recipient_id, sender_id, content):
+def create_direct_message(recipient_user_id, sender_user_id, message_content):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -11,20 +13,25 @@ def create_message(connection, recipient_id, sender_id, content):
                 VALUES (%s, %s, %s, %s)
                 RETURNING message_id;
             ''',
-            (recipient_id, sender_id, content, datetime.now())
+            (recipient_user_id, sender_user_id, message_content, datetime.now())
         )
 
-        result = ('successfully created message', 200, cursor.fetchone()[0])
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+
+        res = ('successfully created direct message', False, return_data)
+        return res
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
 
 
-def create_group_message(connection, recipient_id, sender_id, content):
+def create_group_message(recipient_group_id, sender_user_id, message_content):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -33,21 +40,25 @@ def create_group_message(connection, recipient_id, sender_id, content):
                 VALUES (%s, %s, %s, %s)
                 RETURNING gmessage_id;
             ''',
-            (recipient_id, sender_id, content, datetime.now())
+            (recipient_group_id, sender_user_id, message_content, datetime.now())
         )
 
-        result = ('successfully created group message',
-                  200, cursor.fetchone()[0])
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+
+        res = ('successfully created group message', False, return_data)
+        return res
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
 
 
-def get_messages(connection, user_id):
+def get_users_direct_messages(user_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -56,22 +67,27 @@ def get_messages(connection, user_id):
             FROM messages
             WHERE user_id=%s
             ORDER BY time_sent
-            ASC
+            ASC;
             ''',
             (user_id,)
         )
 
-        result = ('successfully retrieved messages', 200, cursor.fetchall())
+        return_data = connection_manager.get_data(cursor, 'messages')
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+
+        res = ('successfully retrieved direct messages', False, return_data)
+        return res
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
 
 
-def get_group_messages(connection, group_id):
+def get_groups_messages(group_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -80,15 +96,19 @@ def get_group_messages(connection, group_id):
             FROM groupmessages
             WHERE group_id=%s
             ORDER BY time_sent
-            ASC
+            ASC;
             ''',
             (group_id,)
         )
 
-        result = ('successfully retrieved messages', 200, cursor.fetchall())
+        return_data = connection_manager.get_data(cursor, 'messages')
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+
+        res = ('successfully retrieved group messages', False, return_data)
+        return res
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res

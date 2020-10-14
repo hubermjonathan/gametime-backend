@@ -1,5 +1,9 @@
-def create_team(connection, name, user_id):
+from ..db.connection_manager import connection_manager
+
+
+def create_team(name, owner_user_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -11,7 +15,7 @@ def create_team(connection, name, user_id):
                 VALUES (%s, 0, 0, '', 0, 0, %s)
                 RETURNING team_id INTO new_team_id;
 
-                INSERT INTO usersteams (user_id, team_id, privilege_level, fund_goal, fund_current, fund_desc)
+                INSERT INTO usersteams (user_id, team_id, permission_level, fund_goal, fund_current, fund_desc)
                 VALUES (%s, new_team_id, 2, 0, 0, '');
 
                 INSERT INTO groups (team_id, name)
@@ -21,27 +25,33 @@ def create_team(connection, name, user_id):
             SELECT team_id
             FROM teams
             WHERE name=%s AND owner=%s
-            ORDER BY team_id DESC;
+            ORDER BY team_id DESC
+            LIMIT 1;
             ''',
-            (name, user_id, user_id, name, user_id)
+            (name, owner_user_id, owner_user_id, name, owner_user_id)
         )
 
-        result = ('successfully created team', 200, cursor.fetchone()[0])
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+
+        res = ('successfully created team', False, return_data)
+        return res
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
 
 
-def add_to_team(connection, user_id, team_id):
+def add_user_to_team(user_id, team_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            INSERT INTO usersteams (user_id, team_id, privilege_level, fund_goal, fund_current, fund_desc)
+            INSERT INTO usersteams (user_id, team_id, permission_level, fund_goal, fund_current, fund_desc)
             VALUES (%s, %s, 0, 0, 0, '');
 
             INSERT INTO usersgroups (user_id, group_id)
@@ -54,17 +64,22 @@ def add_to_team(connection, user_id, team_id):
             (user_id, team_id, user_id, team_id)
         )
 
-        result = ('successfully joined team', 200, [])
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+
+        res = ('successfully added user to team', False, return_data)
+        return res
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
 
 
-def remove_from_team(connection, user_id, team_id):
+def remove_user_from_team(user_id, team_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -83,39 +98,50 @@ def remove_from_team(connection, user_id, team_id):
             (user_id, team_id, team_id, user_id)
         )
 
-        result = ('successfully left team', 200, [])
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+
+        res = ('successfully removed user from team', False, return_data)
+        return res
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
 
 
-def change_permission_level(connection, user_id, team_id, privilege_level):
+def change_users_permission_level_for_team(user_id, team_id, permission_level):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
             UPDATE usersteams
-            SET privilege_level=%s
+            SET permission_level=%s
             WHERE user_id=%s AND team_id=%s;
             ''',
-            (privilege_level, user_id, team_id)
+            (permission_level, user_id, team_id)
         )
 
-        result = ('successfully changed permission level', 200, [])
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+
+        res = ('successfully changed users permission level for team',
+               False, return_data)
+        return res
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
 
 
-def edit_team_name(connection, team_id, name):
+def edit_teams_name(team_id, new_team_name):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
@@ -124,142 +150,135 @@ def edit_team_name(connection, team_id, name):
             SET name=%s
             WHERE team_id=%s;
             ''',
-            (name, team_id)
+            (new_team_name, team_id)
         )
 
-        result = ('successfully edited team name', 200, [])
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+
+        res = ('successfully edited teams name', False, return_data)
+        return res
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
 
 
-def get_team(connection, team_id):
+def get_team(team_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
             SELECT *
             FROM teams
-            WHERE team_id=%s
-            ''',
-            (team_id,)
-        )
-
-        result = ('successfully retrieved team', 200, cursor.fetchall())
-        cursor.close()
-        return result
-    except Exception as e:
-        result = (str(e), 500, [])
-        cursor.close()
-        return result
-
-
-def get_teams_members(connection, team_id):
-    try:
-        cursor = connection.cursor()
-
-        cursor.execute(
-            '''
-            SELECT users.*, usersteams.privilege_level
-            FROM users
-            INNER JOIN usersteams
-            ON users.user_id=usersteams.user_id
-            WHERE usersteams.team_id=%s
-            ''',
-            (team_id,)
-        )
-
-        result = ('successfully retrieved members', 200, cursor.fetchall())
-        cursor.close()
-        return result
-    except Exception as e:
-        result = (str(e), 500, [])
-        cursor.close()
-        return result
-
-
-def get_teams_phone_numbers(connection, team_id):
-    try:
-        cursor = connection.cursor()
-
-        cursor.execute(
-            '''
-            SELECT owner
-            FROM teams
             WHERE team_id=%s;
             ''',
             (team_id,)
         )
+        team_info = connection_manager.get_data(cursor)
 
-        owner_id = cursor.fetchone()[0]
+        cursor.execute(
+            '''
+            SELECT users.*, usersteams.permission_level
+            FROM users
+            INNER JOIN usersteams
+            USING (user_id)
+            WHERE usersteams.team_id=%s;
+            ''',
+            (team_id,)
+        )
+        users = connection_manager.get_data(cursor, 'users')
+
+        return_data = team_info
+        return_data.update(users)
+        cursor.close()
+        connection_manager.disconnect(connection)
+
+        res = ('successfully retrieved team', False, return_data)
+        return res
+    except Exception as e:
+        cursor.close()
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
+
+
+def get_teams_phone_numbers(team_id):
+    try:
+        connection = connection_manager.connect()
+        cursor = connection.cursor()
+
         cursor.execute(
             '''
             SELECT users.phone_number
             FROM users
-            INNER JOIN usersteams
-            ON users.user_id=usersteams.user_id
-            WHERE usersteams.team_id=%s AND NOT users.user_id=%s;
+            INNER JOIN usersgroups
+            USING (user_id)
+            INNER JOIN groups
+            USING (group_id)
+            WHERE groups.team_id=%s AND groups.name='All Members';
             ''',
-            (team_id, owner_id)
+            (team_id,)
         )
 
-        data = cursor.fetchall()
-        data = [phone_number[0] for phone_number in data]
-
-        result = ('successfully retrieved phone numbers', 200, data)
+        return_data = connection_manager.get_data(cursor, 'phone_numbers')
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+
+        res = ('successfully retrieved teams phone numbers', False, return_data)
+        return res
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
 
 
-def get_teams_groups(connection, team_id):
+def get_teams_groups(team_id):
     try:
+        connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
             SELECT *
             FROM groups
-            WHERE team_id=%s
+            WHERE team_id=%s;
             ''',
             (team_id,)
         )
 
-        data = []
-        columns = [desc[0] for desc in cursor.description]
-        for row in cursor.fetchall():
-            formatted_row = {}
-            for i, col in enumerate(columns):
-                formatted_row[col] = row[i]
-
-            cursor2 = connection.cursor()
-            cursor2.execute(
+        groups = []
+        for row in connection_manager.get_data(cursor, 'groups')['groups']:
+            cursor.execute(
                 '''
                 SELECT users.*
                 FROM users
                 INNER JOIN usersgroups
-                ON users.user_id=usersgroups.user_id
-                WHERE usersgroups.group_id=%s
+                USING (user_id)
+                WHERE usersgroups.group_id=%s;
                 ''',
-                (row[0],)
+                (row['group_id'],)
             )
 
-            group_members = cursor2.fetchall()
-            formatted_row['members'] = group_members
-            data.append(formatted_row)
-            cursor2.close()
+            users = connection_manager.get_data(cursor, 'users')
+            row.update(users)
+            groups.append(row)
 
-        result = ('successfully retrieved groups', 200, data)
+        return_data = {
+            'groups': groups
+        }
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+
+        res = ('successfully retrieved teams groups', False, return_data)
+        return res
     except Exception as e:
-        result = (str(e), 500, [])
         cursor.close()
-        return result
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
