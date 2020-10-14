@@ -26,7 +26,7 @@ all functions return a tuple of the format (message string, error boolean, data 
         create_team(name, owner_user_id) - returns team_id
         add_user_to_team(user_id, team_id) - returns nothing
         remove_user_from_team(user_id, team_id) - returns nothing
-        change_users_permission_level_for_team(user_id, team_id, permission_level) - returns nothing
+        edit_users_permission_level_for_team(user_id, team_id, permission_level) - returns nothing
         edit_teams_name(team_id, new_team_name) - returns nothing
         get_team(team_id) - returns the team info and its users
         get_teams_phone_numbers(team_id) - returns an array of phone numbers
@@ -38,7 +38,7 @@ all functions return a tuple of the format (message string, error boolean, data 
         add_phone_number_to_user(phone_number, user_id) - returns nothing
         remove_phone_number_from_user(phone_number, user_id) - returns nothing
         get_user(user_id) - returns the user info, their teams, and their groups
-        update_users_profile_picture(user_id, image_url) - returns nothing
+        edit_users_profile_picture(user_id, image_url) - returns nothing
 '''
 
 

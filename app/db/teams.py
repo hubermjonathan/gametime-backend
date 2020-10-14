@@ -111,7 +111,7 @@ def remove_user_from_team(user_id, team_id):
         return res
 
 
-def change_users_permission_level_for_team(user_id, team_id, permission_level):
+def edit_users_permission_level_for_team(user_id, team_id, permission_level):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()

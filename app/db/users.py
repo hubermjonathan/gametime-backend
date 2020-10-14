@@ -203,7 +203,7 @@ def get_user(user_id):
         return res
 
 
-def update_users_profile_picture(user_id, image_url):
+def edit_users_profile_picture(user_id, image_url):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()

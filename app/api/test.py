@@ -25,7 +25,7 @@ def create_user(phone, email, password, first_name, last_name):
 
 @testbp.route('/test')
 def test():
-    result = db.messages.get_users_direct_messages(14)
+    result = db.users.edit_users_profile_picture(2, 'test')
     return jsonify(result), 200
 
 
@@ -125,11 +125,11 @@ def create_test_data():
     db.teams.add_user_to_team(11, 2)  # add player 9 to team 2
     db.teams.add_user_to_team(12, 2)  # add player 10 to team 2
 
-    db.teams.change_users_permission_level_for_team(
+    db.teams.edit_users_permission_level_for_team(
         6, 1, 1)  # make player 4 admin on team 1
-    db.teams.change_users_permission_level_for_team(
+    db.teams.edit_users_permission_level_for_team(
         7, 1, 1)  # make player 5 admin on team 1
-    db.teams.change_users_permission_level_for_team(
+    db.teams.edit_users_permission_level_for_team(
         12, 2, 1)  # make player 10 admin on team 2
 
     db.groups.create_group('group1', 1)  # group_id = 3
