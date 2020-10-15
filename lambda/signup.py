@@ -5,8 +5,8 @@ import hashlib
 import base64
 import json
 
-CLIENT_ID = '5hnntk0cimpssub89b2ge6n5s3' #Gametime client ID
-CLIENT_SECRET = 'l9varf6j9jc62chmvvf4e7mr5aiitdflhkliq6iga6397grot8s'
+CLIENT_ID = #Add before putting on AWS
+CLIENT_SECRET =  #Add before putting on AWS
 
 def get_secret_hash(username):
     username = str(username)
@@ -19,7 +19,7 @@ def get_secret_hash(username):
 def lambda_handler(event, context):
     for field in ["phone", "email", "password", "firstname", "lastname"]:
         if not event.get(field):
-            return {"error": False, "success": True, 'message': f"{field} is missing", "data": None}
+            return {"error": True, "success": False, 'message': f"{field} is missing", "data": None}
     phone = event['phone']
     email = event["email"]
     password = event['password']
@@ -30,8 +30,8 @@ def lambda_handler(event, context):
     try:
         resp = client.sign_up(
             ClientId=CLIENT_ID,
-            SecretHash=get_secret_hash(phone),
-            Username=str(phone),
+            SecretHash=get_secret_hash(email),
+            Username=email,
             Password=password, 
             UserAttributes=[
             {
@@ -49,40 +49,44 @@ def lambda_handler(event, context):
             {
                 'Name': "family_name",
                 'Value': lastname
-            }], 
+            }]
+            , 
             ValidationData=[
                 {
-                'Name': "email",
-                'Value': email
+                'Name': "phone_number",
+                'Value': phone
             }
-        ])
+        ]
+        )
     
     except client.exceptions.UsernameExistsException as e:
-        return {"error": False, 
-               "success": True, 
-               "message": "This phone number already exists", 
+        return {"error": True, 
+               "success": False, 
+               "message": "This email already exists", 
                "data": None}
                
     except client.exceptions.InvalidPasswordException as e:
-        return {"error": False, 
-               "success": True, 
+        return {"error": True, 
+               "success": False, 
                "message": "Password should have Caps,\
                           Special chars, Numbers", 
                "data": None}
                
     except client.exceptions.UserLambdaValidationException as e:
-        return {"error": False, 
-               "success": True, 
+        return {"error": True, 
+               "success": False, 
                "message": "Email already exists", 
                "data": None}
     
     except Exception as e:
-        return {"error": False, 
-                "success": True, 
+        return {"error": True, 
+                "success": False, 
                 "message": str(e), 
                "data": None}
+               
+            
     
     return {"error": False, 
             "success": True, 
-            "message": "Check Verification Email", 
+            "message": "Awaiting phone verification", 
             "data": None}
