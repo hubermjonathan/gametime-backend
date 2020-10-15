@@ -138,6 +138,34 @@ def change_users_permission_level_for_team(user_id, team_id, permission_level):
         res = (str(e), True, {})
         return res
 
+def get_users_permission_level_for_team(user_id, team_id):
+    try:
+        connection = connection_manager.connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT permission_level
+            FROM usersteams
+            WHERE user_id=%s AND team_id=%s;
+            ''',
+            (user_id, team_id)
+        )
+
+        return_data = connection_manager.get_data(cursor)
+        cursor.close()
+        connection_manager.disconnect(connection)
+
+        res = ('successfully retrieved users permission level for team',
+               False, return_data)
+        return res
+    except Exception as e:
+        cursor.close()
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
+
+
 
 def edit_teams_name(team_id, new_team_name):
     try:
