@@ -56,7 +56,7 @@ def edit_transactions_status(transaction_id, status):
         return res
 
 
-def get_transaction(transaction_id):
+def get_teams_transactions(team_id):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
@@ -65,16 +65,16 @@ def get_transaction(transaction_id):
             '''
                 SELECT *
                 FROM transactions
-                WHERE transaction_id=%s;
+                WHERE team_id=%s;
             ''',
-            (transaction_id,)
+            (team_id,)
         )
 
-        return_data = connection_manager.get_data(cursor)
+        return_data = connection_manager.get_data(cursor, 'transactions')
         cursor.close()
         connection_manager.disconnect(connection)
 
-        res = ('successfully retrieved transaction', False, return_data)
+        res = ('successfully retrieved transactions', False, return_data)
         return res
     except Exception as e:
         cursor.close()
