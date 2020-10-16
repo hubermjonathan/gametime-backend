@@ -9,9 +9,9 @@ def create_transaction(team_id, buyer_email, buyer_address):
 
         cursor.execute(
             '''
-                INSERT INTO transactions (team_id, status, buyer_email, buyer_address, time_purchased)
-                VALUES (%s, 0, %s, %s, %s)
-                RETURNING transaction_id;
+            INSERT INTO transactions (team_id, status, buyer_email, buyer_address, time_purchased)
+            VALUES (%s, 0, %s, %s, %s)
+            RETURNING transaction_id;
             ''',
             (team_id, buyer_email, buyer_address, datetime.now())
         )
@@ -36,9 +36,9 @@ def edit_transactions_status(transaction_id, status):
 
         cursor.execute(
             '''
-                UPDATE transactions
-                SET status=%s
-                WHERE transaction_id=%s;
+            UPDATE transactions
+            SET status=%s
+            WHERE transaction_id=%s;
             ''',
             (status, transaction_id)
         )
@@ -63,9 +63,9 @@ def get_teams_transactions(team_id):
 
         cursor.execute(
             '''
-                SELECT *
-                FROM transactions
-                WHERE team_id=%s;
+            SELECT *
+            FROM transactions
+            WHERE team_id=%s;
             ''',
             (team_id,)
         )

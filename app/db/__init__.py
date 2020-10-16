@@ -22,6 +22,14 @@ all functions return a tuple of the format (message string, error boolean, data 
         get_groups_messages(group_id) - returns an array of messages
     schema:
         reset_tables(database) - returns nothing
+    store:
+        create_store_item(team_id, name, price, modifiers) - returns item_id
+        remove_store_item(item_id) - returns nothing
+        edit_store_items_name(item_id, new_item_name) - returns nothing
+        edit_store_items_price(item_id, new_item_price) - returns nothing
+        edit_store_items_modifier(modifier_id, new_modifier) - returns nothing
+        remove_store_items_modifier(modifier_id) - returns nothing
+        get_teams_store_items(team_id) - returns an array of store items
     teams:
         create_team(name, owner_user_id) - returns team_id
         add_user_to_team(user_id, team_id) - returns nothing
@@ -50,6 +58,7 @@ from . import fundraising
 from . import groups
 from . import messages
 from . import schema
+from . import store
 from . import teams
 from . import transactions
 from . import users

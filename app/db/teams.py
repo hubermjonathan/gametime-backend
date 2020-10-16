@@ -264,8 +264,8 @@ def get_teams_groups(team_id):
                 ''',
                 (row['group_id'],)
             )
-
             users = connection_manager.get_data(cursor, 'users')
+
             row.update(users)
             groups.append(row)
 

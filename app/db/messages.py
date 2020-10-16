@@ -9,9 +9,9 @@ def create_direct_message(recipient_user_id, sender_user_id, message_content):
 
         cursor.execute(
             '''
-                INSERT INTO messages (user_id, sender_id, content, time_sent)
-                VALUES (%s, %s, %s, %s)
-                RETURNING message_id;
+            INSERT INTO messages (user_id, sender_id, content, time_sent)
+            VALUES (%s, %s, %s, %s)
+            RETURNING message_id;
             ''',
             (recipient_user_id, sender_user_id, message_content, datetime.now())
         )
@@ -36,9 +36,9 @@ def create_group_message(recipient_group_id, sender_user_id, message_content):
 
         cursor.execute(
             '''
-                INSERT INTO groupmessages (group_id, sender_id, content, time_sent)
-                VALUES (%s, %s, %s, %s)
-                RETURNING gmessage_id;
+            INSERT INTO groupmessages (group_id, sender_id, content, time_sent)
+            VALUES (%s, %s, %s, %s)
+            RETURNING gmessage_id;
             ''',
             (recipient_group_id, sender_user_id, message_content, datetime.now())
         )
