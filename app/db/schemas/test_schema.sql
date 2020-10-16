@@ -607,7 +607,7 @@ CREATE TABLE public.files
     file_id integer NOT NULL DEFAULT nextval('"Files_file_id_seq"'::regclass),
     team_id integer NOT NULL DEFAULT nextval('"Files_team_id_seq"'::regclass),
     user_id integer NOT NULL DEFAULT nextval('"Files_user_id_seq"'::regclass),
-    blob_url text COLLATE pg_catalog."default",
+    image_url text COLLATE pg_catalog."default",
     is_document boolean NOT NULL,
     CONSTRAINT file_id PRIMARY KEY (file_id),
     CONSTRAINT team_id FOREIGN KEY (team_id)
@@ -704,7 +704,7 @@ CREATE TABLE public.itempictures
 (
     picture_id integer NOT NULL DEFAULT nextval('"ItemPictures_picture_id_seq"'::regclass),
     item_id integer NOT NULL DEFAULT nextval('"ItemPictures_item_id_seq"'::regclass),
-    blob_url text COLLATE pg_catalog."default" NOT NULL,
+    image_url text COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT picture_id PRIMARY KEY (picture_id),
     CONSTRAINT item_id FOREIGN KEY (item_id)
         REFERENCES public.items (item_id) MATCH SIMPLE
@@ -804,7 +804,7 @@ CREATE TABLE public.sponsors
 (
     sponsor_id integer NOT NULL DEFAULT nextval('"Sponsors_sponsor_id_seq"'::regclass),
     name text COLLATE pg_catalog."default" NOT NULL,
-    blob_url text COLLATE pg_catalog."default" NOT NULL,
+    image_url text COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT sponsor_id PRIMARY KEY (sponsor_id)
 )
 

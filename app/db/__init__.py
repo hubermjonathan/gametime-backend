@@ -23,12 +23,15 @@ all functions return a tuple of the format (message string, error boolean, data 
     schema:
         reset_tables(database) - returns nothing
     store:
-        create_store_item(team_id, name, price, modifiers) - returns item_id
+        create_store_item(team_id, name, price, modifiers, pictures) - returns item_id
         remove_store_item(item_id) - returns nothing
         edit_store_items_name(item_id, new_item_name) - returns nothing
         edit_store_items_price(item_id, new_item_price) - returns nothing
         edit_store_items_modifier(modifier_id, new_modifier) - returns nothing
+        create_store_item_modifier(item_id, modifier) - returns nothing
         remove_store_items_modifier(modifier_id) - returns nothing
+        create_store_item_picture(item_id, image_url) - returns nothing
+        remove_store_items_picture(picture_id) - returns nothing
         get_teams_store_items(team_id) - returns an array of store items
     teams:
         create_team(name, owner_user_id) - returns team_id
