@@ -31,6 +31,10 @@ all functions return a tuple of the format (message string, error boolean, data 
         get_team(team_id) - returns the team info and its users
         get_teams_phone_numbers(team_id) - returns an array of phone numbers
         get_teams_groups(team_id) - returns an array of groups and their users
+    transactions:
+        create_transaction(team_id, buyer_email, buyer_address) - returns transaction_id
+        edit_transactions_status(transaction_id, status) - returns nothing
+        get_transaction - returns the transaction info
     users:
         create_user(name, email, phone_number) - returns user_id
         get_user_id(email) - returns user_id
@@ -42,8 +46,10 @@ all functions return a tuple of the format (message string, error boolean, data 
 '''
 
 
+from . import fundraising
 from . import groups
 from . import messages
 from . import schema
 from . import teams
+from . import transactions
 from . import users
