@@ -69,6 +69,27 @@ login_schema = {
     'type': 'object',
     'properties': {
         'email': {'type': 'string'},
-        'password': {'type': 'string'},
+        'password': {'type': 'string'}
+    }
+}
+
+addphone_schema = {
+    'type': 'object',
+    'properties': {
+        'phone': {'type': 'string'}
+    }
+}
+
+removephone_schema = {
+    'type': 'object',
+    'properties': {
+        'phone': {'type': 'string'}
+    }
+}
+
+profilepicture_schema = {
+    'type': 'object',
+    'properties': {
+        'profile_picture': {'type': 'string'}
     }
 }
