@@ -8,30 +8,30 @@ def create_team(name, owner_user_id):
 
         cursor.execute(
             '''
-            DO $$
-            DECLARE new_team_id integer;
-            BEGIN
-                INSERT INTO teams (name, fund_goal, fund_current, fund_desc, account_number, routing_number, owner)
-                VALUES (%s, 0, 0, '', 0, 0, %s)
-                RETURNING team_id INTO new_team_id;
-
-                INSERT INTO usersteams (user_id, team_id, permission_level, fund_goal, fund_current, fund_desc)
-                VALUES (%s, new_team_id, 2, 0, 0, '');
-
-                INSERT INTO groups (team_id, name)
-                VALUES (new_team_id, 'All Members');
-            END $$;
-
-            SELECT team_id
-            FROM teams
-            WHERE name=%s AND owner=%s
-            ORDER BY team_id DESC
-            LIMIT 1;
+            INSERT INTO teams (name, fund_goal, fund_current, fund_desc, account_number, routing_number, owner)
+            VALUES (%s, 0, 0, '', 0, 0, %s)
+            RETURNING team_id;
             ''',
-            (name, owner_user_id, owner_user_id, name, owner_user_id)
+            (name, owner_user_id)
+        )
+        return_data = connection_manager.get_data(cursor)
+
+        cursor.execute(
+            '''
+            INSERT INTO usersteams (user_id, team_id, permission_level, fund_goal, fund_current, fund_desc)
+            VALUES (%s, %s, 2, 0, 0, '');
+            ''',
+            (owner_user_id, return_data['team_id'])
         )
 
-        return_data = connection_manager.get_data(cursor)
+        cursor.execute(
+            '''
+            INSERT INTO groups (team_id, name)
+            VALUES (%s, 'All Members');
+            ''',
+            (return_data['team_id'],)
+        )
+
         cursor.close()
         connection_manager.disconnect(connection)
 
@@ -111,7 +111,7 @@ def remove_user_from_team(user_id, team_id):
         return res
 
 
-def change_users_permission_level_for_team(user_id, team_id, permission_level):
+def edit_users_permission_level_for_team(user_id, team_id, permission_level):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
@@ -292,8 +292,8 @@ def get_teams_groups(team_id):
                 ''',
                 (row['group_id'],)
             )
-
             users = connection_manager.get_data(cursor, 'users')
+
             row.update(users)
             groups.append(row)
 

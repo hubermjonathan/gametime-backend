@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS public.users CASCADE;
 DROP TABLE IF EXISTS public.phones CASCADE;
 DROP TABLE IF EXISTS public.teams CASCADE;
 DROP TABLE IF EXISTS public.files CASCADE;
+DROP TABLE IF EXISTS public.transactions CASCADE;
 DROP TABLE IF EXISTS public.items CASCADE;
 DROP TABLE IF EXISTS public.itemmodifiers CASCADE;
 DROP TABLE IF EXISTS public.itempictures CASCADE;
@@ -14,493 +15,53 @@ DROP TABLE IF EXISTS public.usersteams CASCADE;
 DROP TABLE IF EXISTS public.teamssponsors CASCADE;
 
 
-DROP SEQUENCE IF EXISTS public."Files_file_id_seq";
-DROP SEQUENCE IF EXISTS public."Files_team_id_seq";
-DROP SEQUENCE IF EXISTS public."Files_user_id_seq";
-DROP SEQUENCE IF EXISTS public."Groups_group_id_seq";
-DROP SEQUENCE IF EXISTS public."Groups_owner_seq";
-DROP SEQUENCE IF EXISTS public."Groups_team_id_seq";
-DROP SEQUENCE IF EXISTS public."ItemModifiers_item_id_seq";
-DROP SEQUENCE IF EXISTS public."ItemModifiers_modifier_id_seq";
-DROP SEQUENCE IF EXISTS public."ItemPictures_item_id_seq";
-DROP SEQUENCE IF EXISTS public."ItemPictures_picture_id_seq";
-DROP SEQUENCE IF EXISTS public."Items_item_id_seq";
-DROP SEQUENCE IF EXISTS public."Items_team_id_seq";
-DROP SEQUENCE IF EXISTS public."Phones_phone_id_seq";
-DROP SEQUENCE IF EXISTS public."Phones_user_id_seq";
-DROP SEQUENCE IF EXISTS public."Sponsors_sponsor_id_seq";
-DROP SEQUENCE IF EXISTS public."TeamsSponsors_sponsor_id_seq";
-DROP SEQUENCE IF EXISTS public."TeamsSponsors_team_id_seq";
-DROP SEQUENCE IF EXISTS public."Teams_team_id_seq";
-DROP SEQUENCE IF EXISTS public."UsersGroups_group_id_seq";
-DROP SEQUENCE IF EXISTS public."UsersGroups_user_id_seq";
-DROP SEQUENCE IF EXISTS public."UsersTeams_team_id_seq";
-DROP SEQUENCE IF EXISTS public."UsersTeams_user_id_seq";
-DROP SEQUENCE IF EXISTS public."Users_user_id_seq";
-DROP SEQUENCE IF EXISTS public.groupmessages_gmessage_id_seq;
-DROP SEQUENCE IF EXISTS public.groupmessages_group_id_seq;
-DROP SEQUENCE IF EXISTS public.groupmessages_sender_id_seq;
-DROP SEQUENCE IF EXISTS public.messages_message_id_seq;
-DROP SEQUENCE IF EXISTS public.messages_sender_id_seq;
-DROP SEQUENCE IF EXISTS public.messages_user_id_seq;
-DROP SEQUENCE IF EXISTS public.teams_owner_seq;
+DROP SEQUENCE IF EXISTS public.teams_team_id_seq;
 
 
--- SEQUENCE: public.Files_file_id_seq
+-- Function: create_code(bigint)
 
-CREATE SEQUENCE public."Files_file_id_seq"
+CREATE OR REPLACE FUNCTION create_code(value bigint) returns int AS $$
+DECLARE
+l1 int;
+l2 int;
+r1 int;
+r2 int;
+i int:=0;
+BEGIN
+    l1:= (value >> 16) & 65535;
+    r1:= value & 65535;
+    WHILE i < 3 LOOP
+        l2 := r1;
+        r2 := l1 # ((((1366 * r1 + 150889) % 714025) / 714025.0) * 32767)::int;
+        l1 := l2;
+        r1 := r2;
+        i := i + 1;
+    END LOOP;
+    return ((r1 << 16) + l1);
+END;
+$$ LANGUAGE plpgsql strict immutable;
+
+
+-- Sequence: public.teams_team_id_seq
+
+CREATE SEQUENCE public.teams_team_id_seq
     INCREMENT 1
     START 1
     MINVALUE 1
     MAXVALUE 2147483647
     CACHE 1;
 
-ALTER SEQUENCE public."Files_file_id_seq"
+ALTER SEQUENCE public.teams_team_id_seq
     OWNER to prod;
 
-GRANT ALL ON SEQUENCE public."Files_file_id_seq" TO prod;
-
-
--- SEQUENCE: public.Files_team_id_seq
-
-CREATE SEQUENCE public."Files_team_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."Files_team_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."Files_team_id_seq" TO prod;
-
-
--- SEQUENCE: public.Files_user_id_seq
-
-CREATE SEQUENCE public."Files_user_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."Files_user_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."Files_user_id_seq" TO prod;
-
-
--- SEQUENCE: public.Groups_group_id_seq
-
-CREATE SEQUENCE public."Groups_group_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."Groups_group_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."Groups_group_id_seq" TO prod;
-
-
--- SEQUENCE: public.Groups_owner_seq
-
-CREATE SEQUENCE public."Groups_owner_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."Groups_owner_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."Groups_owner_seq" TO prod;
-
-
--- SEQUENCE: public.Groups_team_id_seq
-
-CREATE SEQUENCE public."Groups_team_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."Groups_team_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."Groups_team_id_seq" TO prod;
-
-
--- SEQUENCE: public.ItemModifiers_item_id_seq
-
-CREATE SEQUENCE public."ItemModifiers_item_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."ItemModifiers_item_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."ItemModifiers_item_id_seq" TO prod;
-
-
--- SEQUENCE: public.ItemModifiers_modifier_id_seq
-
-CREATE SEQUENCE public."ItemModifiers_modifier_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."ItemModifiers_modifier_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."ItemModifiers_modifier_id_seq" TO prod;
-
-
--- SEQUENCE: public.ItemPictures_item_id_seq
-
-CREATE SEQUENCE public."ItemPictures_item_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."ItemPictures_item_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."ItemPictures_item_id_seq" TO prod;
-
-
--- SEQUENCE: public.ItemPictures_picture_id_seq
-
-CREATE SEQUENCE public."ItemPictures_picture_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."ItemPictures_picture_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."ItemPictures_picture_id_seq" TO prod;
-
-
--- SEQUENCE: public.Items_item_id_seq
-
-CREATE SEQUENCE public."Items_item_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."Items_item_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."Items_item_id_seq" TO prod;
-
-
--- SEQUENCE: public.Items_team_id_seq
-
-CREATE SEQUENCE public."Items_team_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."Items_team_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."Items_team_id_seq" TO prod;
-
-
--- SEQUENCE: public.Phones_phone_id_seq
-
-CREATE SEQUENCE public."Phones_phone_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."Phones_phone_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."Phones_phone_id_seq" TO prod;
-
-
--- SEQUENCE: public.Phones_user_id_seq
-
-CREATE SEQUENCE public."Phones_user_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."Phones_user_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."Phones_user_id_seq" TO prod;
-
-
--- SEQUENCE: public.Sponsors_sponsor_id_seq
-
-CREATE SEQUENCE public."Sponsors_sponsor_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."Sponsors_sponsor_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."Sponsors_sponsor_id_seq" TO prod;
-
-
--- SEQUENCE: public.TeamsSponsors_sponsor_id_seq
-
-CREATE SEQUENCE public."TeamsSponsors_sponsor_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."TeamsSponsors_sponsor_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."TeamsSponsors_sponsor_id_seq" TO prod;
-
-
--- SEQUENCE: public.TeamsSponsors_team_id_seq
-
-CREATE SEQUENCE public."TeamsSponsors_team_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."TeamsSponsors_team_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."TeamsSponsors_team_id_seq" TO prod;
-
-
--- SEQUENCE: public.Teams_team_id_seq
-
-CREATE SEQUENCE public."Teams_team_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."Teams_team_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."Teams_team_id_seq" TO prod;
-
-
--- SEQUENCE: public.UsersGroups_group_id_seq
-
-CREATE SEQUENCE public."UsersGroups_group_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."UsersGroups_group_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."UsersGroups_group_id_seq" TO prod;
-
-
--- SEQUENCE: public.UsersGroups_user_id_seq
-
-CREATE SEQUENCE public."UsersGroups_user_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."UsersGroups_user_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."UsersGroups_user_id_seq" TO prod;
-
-
--- SEQUENCE: public.UsersTeams_team_id_seq
-
-CREATE SEQUENCE public."UsersTeams_team_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."UsersTeams_team_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."UsersTeams_team_id_seq" TO prod;
-
-
--- SEQUENCE: public.UsersTeams_user_id_seq
-
-CREATE SEQUENCE public."UsersTeams_user_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."UsersTeams_user_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."UsersTeams_user_id_seq" TO prod;
-
-
--- SEQUENCE: public.Users_user_id_seq
-
-CREATE SEQUENCE public."Users_user_id_seq"
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public."Users_user_id_seq"
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public."Users_user_id_seq" TO prod;
-
-
--- SEQUENCE: public.groupmessages_gmessage_id_seq
-
-CREATE SEQUENCE public.groupmessages_gmessage_id_seq
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public.groupmessages_gmessage_id_seq
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public.groupmessages_gmessage_id_seq TO prod;
-
-
--- SEQUENCE: public.groupmessages_group_id_seq
-
-CREATE SEQUENCE public.groupmessages_group_id_seq
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public.groupmessages_group_id_seq
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public.groupmessages_group_id_seq TO prod;
-
-
--- SEQUENCE: public.groupmessages_sender_id_seq
-
-CREATE SEQUENCE public.groupmessages_sender_id_seq
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public.groupmessages_sender_id_seq
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public.groupmessages_sender_id_seq TO prod;
-
-
--- SEQUENCE: public.messages_message_id_seq
-
-CREATE SEQUENCE public.messages_message_id_seq
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public.messages_message_id_seq
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public.messages_message_id_seq TO prod;
-
-
--- SEQUENCE: public.messages_sender_id_seq
-
-CREATE SEQUENCE public.messages_sender_id_seq
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public.messages_sender_id_seq
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public.messages_sender_id_seq TO prod;
-
-
--- SEQUENCE: public.messages_user_id_seq
-
-CREATE SEQUENCE public.messages_user_id_seq
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public.messages_user_id_seq
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public.messages_user_id_seq TO prod;
-
-
--- SEQUENCE: public.teams_owner_seq
-
-CREATE SEQUENCE public.teams_owner_seq
-    INCREMENT 1
-    START 1
-    MINVALUE 1
-    MAXVALUE 2147483647
-    CACHE 1;
-
-ALTER SEQUENCE public.teams_owner_seq
-    OWNER to prod;
-
-GRANT ALL ON SEQUENCE public.teams_owner_seq TO prod;
+GRANT ALL ON SEQUENCE public.teams_team_id_seq TO prod;
 
 
 -- Table: public.users
 
 CREATE TABLE public.users
 (
-    user_id integer NOT NULL DEFAULT nextval('"Users_user_id_seq"'::regclass),
+    user_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     first_name text COLLATE pg_catalog."default" NOT NULL,
     last_name text COLLATE pg_catalog."default" NOT NULL,
     email text COLLATE pg_catalog."default" NOT NULL,
@@ -521,9 +82,9 @@ GRANT ALL ON TABLE public.users TO prod;
 
 CREATE TABLE public.phones
 (
-    user_id integer NOT NULL DEFAULT nextval('"Phones_user_id_seq"'::regclass),
+    user_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     phone_number text COLLATE pg_catalog."default" NOT NULL,
-    phone_id integer NOT NULL DEFAULT nextval('"Phones_phone_id_seq"'::regclass),
+    phone_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     CONSTRAINT phone_id PRIMARY KEY (phone_id),
     CONSTRAINT user_id FOREIGN KEY (user_id)
         REFERENCES public.users (user_id) MATCH SIMPLE
@@ -543,14 +104,15 @@ GRANT ALL ON TABLE public.phones TO prod;
 
 CREATE TABLE public.teams
 (
-    team_id integer NOT NULL DEFAULT nextval('"Teams_team_id_seq"'::regclass),
+    team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    invite_code integer NOT NULL DEFAULT create_code(nextval('teams_team_id_seq'::regclass)),
     name text COLLATE pg_catalog."default" NOT NULL,
     fund_goal integer NOT NULL,
     fund_current integer NOT NULL,
     fund_desc text COLLATE pg_catalog."default" NOT NULL,
     account_number integer NOT NULL,
     routing_number integer NOT NULL,
-    owner integer NOT NULL DEFAULT nextval('teams_owner_seq'::regclass),
+    owner uuid NOT NULL DEFAULT uuid_generate_v4(),
     CONSTRAINT team_id PRIMARY KEY (team_id),
     CONSTRAINT owner FOREIGN KEY (owner)
         REFERENCES public.users (user_id) MATCH SIMPLE
@@ -571,10 +133,10 @@ GRANT ALL ON TABLE public.teams TO prod;
 
 CREATE TABLE public.files
 (
-    file_id integer NOT NULL DEFAULT nextval('"Files_file_id_seq"'::regclass),
-    team_id integer NOT NULL DEFAULT nextval('"Files_team_id_seq"'::regclass),
-    user_id integer NOT NULL DEFAULT nextval('"Files_user_id_seq"'::regclass),
-    blob_url text COLLATE pg_catalog."default",
+    file_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    user_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    image_url text COLLATE pg_catalog."default",
     is_document boolean NOT NULL,
     CONSTRAINT file_id PRIMARY KEY (file_id),
     CONSTRAINT team_id FOREIGN KEY (team_id)
@@ -595,14 +157,40 @@ ALTER TABLE public.files
 GRANT ALL ON TABLE public.files TO prod;
 
 
+-- Table: public.transactions
+
+CREATE TABLE public.transactions
+(
+    transaction_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    status integer NOT NULL,
+    buyer_email text COLLATE pg_catalog."default" NOT NULL,
+    buyer_address text COLLATE pg_catalog."default" NOT NULL,
+    time_purchased timestamp without time zone NOT NULL,
+    CONSTRAINT transaction_id PRIMARY KEY (transaction_id),
+    CONSTRAINT team_id FOREIGN KEY (team_id)
+        REFERENCES public.teams (team_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.transactions
+    OWNER to prod;
+
+GRANT ALL ON TABLE public.transactions TO prod;
+
+
 -- Table: public.items
 
 CREATE TABLE public.items
 (
-    item_id integer NOT NULL DEFAULT nextval('"Items_item_id_seq"'::regclass),
-    team_id integer NOT NULL DEFAULT nextval('"Items_team_id_seq"'::regclass),
+    item_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     name text COLLATE pg_catalog."default" NOT NULL,
     price real NOT NULL,
+    active boolean NOT NULL,
     CONSTRAINT item_id PRIMARY KEY (item_id),
     CONSTRAINT team_id FOREIGN KEY (team_id)
         REFERENCES public.teams (team_id) MATCH SIMPLE
@@ -622,8 +210,8 @@ GRANT ALL ON TABLE public.items TO prod;
 
 CREATE TABLE public.itemmodifiers
 (
-    modifier_id integer NOT NULL DEFAULT nextval('"ItemModifiers_modifier_id_seq"'::regclass),
-    item_id integer NOT NULL DEFAULT nextval('"ItemModifiers_item_id_seq"'::regclass),
+    modifier_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    item_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     modifier text COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT modifier_id PRIMARY KEY (modifier_id),
     CONSTRAINT item_id FOREIGN KEY (item_id)
@@ -644,9 +232,9 @@ GRANT ALL ON TABLE public.itemmodifiers TO prod;
 
 CREATE TABLE public.itempictures
 (
-    picture_id integer NOT NULL DEFAULT nextval('"ItemPictures_picture_id_seq"'::regclass),
-    item_id integer NOT NULL DEFAULT nextval('"ItemPictures_item_id_seq"'::regclass),
-    blob_url text COLLATE pg_catalog."default" NOT NULL,
+    picture_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    item_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    image_url text COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT picture_id PRIMARY KEY (picture_id),
     CONSTRAINT item_id FOREIGN KEY (item_id)
         REFERENCES public.items (item_id) MATCH SIMPLE
@@ -666,8 +254,8 @@ GRANT ALL ON TABLE public.itempictures TO prod;
 
 CREATE TABLE public.groups
 (
-    group_id integer NOT NULL DEFAULT nextval('"Groups_group_id_seq"'::regclass),
-    team_id integer NOT NULL DEFAULT nextval('"Groups_team_id_seq"'::regclass),
+    group_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     name text COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT group_id PRIMARY KEY (group_id),
     CONSTRAINT team_id FOREIGN KEY (team_id)
@@ -688,9 +276,9 @@ GRANT ALL ON TABLE public.groups TO prod;
 
 CREATE TABLE public.groupmessages
 (
-    gmessage_id integer NOT NULL DEFAULT nextval('groupmessages_gmessage_id_seq'::regclass),
-    group_id integer NOT NULL DEFAULT nextval('groupmessages_group_id_seq'::regclass),
-    sender_id integer NOT NULL DEFAULT nextval('groupmessages_sender_id_seq'::regclass),
+    gmessage_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    group_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    sender_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     content text COLLATE pg_catalog."default" NOT NULL,
     time_sent timestamp without time zone NOT NULL,
     CONSTRAINT gmessage_id PRIMARY KEY (gmessage_id),
@@ -716,9 +304,9 @@ GRANT ALL ON TABLE public.groupmessages TO prod;
 
 CREATE TABLE public.messages
 (
-    message_id integer NOT NULL DEFAULT nextval('messages_message_id_seq'::regclass),
-    user_id integer NOT NULL DEFAULT nextval('messages_user_id_seq'::regclass),
-    sender_id integer NOT NULL DEFAULT nextval('messages_sender_id_seq'::regclass),
+    message_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    user_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    sender_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     content text COLLATE pg_catalog."default" NOT NULL,
     time_sent timestamp without time zone NOT NULL,
     CONSTRAINT message_id PRIMARY KEY (message_id),
@@ -744,9 +332,9 @@ GRANT ALL ON TABLE public.messages TO prod;
 
 CREATE TABLE public.sponsors
 (
-    sponsor_id integer NOT NULL DEFAULT nextval('"Sponsors_sponsor_id_seq"'::regclass),
+    sponsor_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     name text COLLATE pg_catalog."default" NOT NULL,
-    blob_url text COLLATE pg_catalog."default" NOT NULL,
+    image_url text COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT sponsor_id PRIMARY KEY (sponsor_id)
 )
 
@@ -762,8 +350,8 @@ GRANT ALL ON TABLE public.sponsors TO prod;
 
 CREATE TABLE public.usersgroups
 (
-    user_id integer NOT NULL DEFAULT nextval('"UsersGroups_user_id_seq"'::regclass),
-    group_id integer NOT NULL DEFAULT nextval('"UsersGroups_group_id_seq"'::regclass),
+    user_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    group_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     CONSTRAINT group_id FOREIGN KEY (group_id)
         REFERENCES public.groups (group_id) MATCH SIMPLE
         ON UPDATE NO ACTION
@@ -786,8 +374,8 @@ GRANT ALL ON TABLE public.usersgroups TO prod;
 
 CREATE TABLE public.usersteams
 (
-    user_id integer NOT NULL DEFAULT nextval('"UsersTeams_user_id_seq"'::regclass),
-    team_id integer NOT NULL DEFAULT nextval('"UsersTeams_team_id_seq"'::regclass),
+    user_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     permission_level integer NOT NULL,
     fund_goal integer NOT NULL,
     fund_current integer NOT NULL,
@@ -814,8 +402,8 @@ GRANT ALL ON TABLE public.usersteams TO prod;
 
 CREATE TABLE public.teamssponsors
 (
-    team_id integer NOT NULL DEFAULT nextval('"TeamsSponsors_team_id_seq"'::regclass),
-    sponsor_id integer NOT NULL DEFAULT nextval('"TeamsSponsors_sponsor_id_seq"'::regclass),
+    team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    sponsor_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     active boolean NOT NULL,
     CONSTRAINT sponsor_id FOREIGN KEY (sponsor_id)
         REFERENCES public.sponsors (sponsor_id) MATCH SIMPLE

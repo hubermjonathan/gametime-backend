@@ -1,25 +1,25 @@
 from ..db.connection_manager import connection_manager
 
 
-def create_user(user_id, first_name, last_name, email, phone_number):
+def edit_teams_fundraiser_goal(team_id, fundraiser_goal):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            INSERT INTO users (user_id, first_name, last_name, email, phone_number)
-            VALUES (%s, %s, %s, %s, %s)
-            RETURNING user_id;
+            UPDATE teams
+            SET fund_goal=%s
+            WHERE team_id=%s;
             ''',
-            (user_id, first_name, last_name, email, phone_number)
+            (fundraiser_goal, team_id)
         )
 
         return_data = connection_manager.get_data(cursor)
         cursor.close()
         connection_manager.disconnect(connection)
 
-        res = ('successfully created user', False, return_data)
+        res = ('successfully edited teams fundraiser goal', False, return_data)
         return res
     except Exception as e:
         cursor.close()
@@ -28,28 +28,26 @@ def create_user(user_id, first_name, last_name, email, phone_number):
         return res
 
 
-def get_user_id(email):
+def edit_teams_fundraiser_current(team_id, fundraiser_current):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            SELECT user_id
-            FROM users
-            WHERE email=%s
-            ORDER BY user_id
-            DESC
-            LIMIT 1;
+            UPDATE teams
+            SET fund_current=%s
+            WHERE team_id=%s;
             ''',
-            (email,)
+            (fundraiser_current, team_id)
         )
 
         return_data = connection_manager.get_data(cursor)
         cursor.close()
         connection_manager.disconnect(connection)
 
-        res = ('successfully retrieved user id', False, return_data)
+        res = ('successfully edited teams fundraiser current amount',
+               False, return_data)
         return res
     except Exception as e:
         cursor.close()
@@ -58,25 +56,26 @@ def get_user_id(email):
         return res
 
 
-def check_if_user_has_phone_number(user_id, phone_number):
+def edit_teams_fundraiser_description(team_id, fundraiser_description):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            SELECT COUNT(*) as exists
-            FROM phones
-            WHERE user_id=%s AND phone_number=%s;
+            UPDATE teams
+            SET fund_desc=%s
+            WHERE team_id=%s;
             ''',
-            (user_id, phone_number)
+            (fundraiser_description, team_id)
         )
 
         return_data = connection_manager.get_data(cursor)
         cursor.close()
         connection_manager.disconnect(connection)
 
-        res = ('successfully checked users phone numbers', False, return_data)
+        res = ('successfully edited teams fundraiser description',
+               False, return_data)
         return res
     except Exception as e:
         cursor.close()
@@ -85,24 +84,26 @@ def check_if_user_has_phone_number(user_id, phone_number):
         return res
 
 
-def add_phone_number_to_user(phone_number, user_id):
+def edit_users_fundraiser_goal_for_team(user_id, team_id, fundraiser_goal):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            INSERT INTO phones (user_id, phone_number)
-            VALUES (%s, %s);
+            UPDATE usersteams
+            SET fund_goal=%s
+            WHERE user_id=%s AND team_id=%s;
             ''',
-            (user_id, phone_number)
+            (fundraiser_goal, user_id, team_id)
         )
 
         return_data = connection_manager.get_data(cursor)
         cursor.close()
         connection_manager.disconnect(connection)
 
-        res = ('successfully added phone number to user', False, return_data)
+        res = ('successfully edited users fundraiser goal for team',
+               False, return_data)
         return res
     except Exception as e:
         cursor.close()
@@ -111,24 +112,26 @@ def add_phone_number_to_user(phone_number, user_id):
         return res
 
 
-def remove_phone_number_from_user(phone_number, user_id):
+def edit_users_fundraiser_current_for_team(user_id, team_id, fundraiser_current):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            DELETE FROM phones
-            WHERE user_id=%s AND phone_number=%s;
+            UPDATE usersteams
+            SET fund_current=%s
+            WHERE user_id=%s AND team_id=%s;
             ''',
-            (user_id, phone_number)
+            (fundraiser_current, user_id, team_id)
         )
 
         return_data = connection_manager.get_data(cursor)
         cursor.close()
         connection_manager.disconnect(connection)
 
-        res = ('successfully removed phone number from user', False, return_data)
+        res = ('successfully edited users fundraiser current amount for team',
+               False, return_data)
         return res
     except Exception as e:
         cursor.close()
@@ -137,64 +140,26 @@ def remove_phone_number_from_user(phone_number, user_id):
         return res
 
 
-def get_user(user_id):
+def edit_users_fundraiser_description_for_team(user_id, team_id, fundraiser_description):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            SELECT *
-            FROM users
-            WHERE user_id=%s;
+            UPDATE usersteams
+            SET fund_desc=%s
+            WHERE user_id=%s AND team_id=%s;
             ''',
-            (user_id,)
+            (fundraiser_description, user_id, team_id)
         )
-        user_info = connection_manager.get_data(cursor)
 
-        cursor.execute(
-            '''
-            SELECT phone_number
-            FROM phones
-            WHERE user_id=%s;
-            ''',
-            (user_id,)
-        )
-        phone_numbers = connection_manager.get_data(
-            cursor, 'extra_phone_numbers')
-
-        cursor.execute(
-            '''
-            SELECT teams.team_id, teams.name, usersteams.permission_level
-            FROM teams
-            INNER JOIN usersteams
-            USING (team_id)
-            WHERE user_id=%s;
-            ''',
-            (user_id,)
-        )
-        teams = connection_manager.get_data(cursor, 'teams')
-
-        cursor.execute(
-            '''
-            SELECT groups.group_id, groups.name
-            FROM groups
-            INNER JOIN usersgroups
-            USING (group_id)
-            WHERE user_id=%s;
-            ''',
-            (user_id,)
-        )
-        groups = connection_manager.get_data(cursor, 'groups')
-
-        return_data = user_info
-        return_data.update(phone_numbers)
-        return_data.update(teams)
-        return_data.update(groups)
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
         connection_manager.disconnect(connection)
 
-        res = ('successfully retrieved user', False, return_data)
+        res = ('successfully edited users fundraiser description for team',
+               False, return_data)
         return res
     except Exception as e:
         cursor.close()
@@ -203,25 +168,26 @@ def get_user(user_id):
         return res
 
 
-def edit_users_profile_picture(user_id, image_url):
+def get_users_fundraiser_for_team(user_id, team_id):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            UPDATE users
-            SET profile_picture=%s
-            WHERE user_id=%s;
+            SELECT fund_goal, fund_current, fund_desc
+            FROM usersteams
+            WHERE user_id=%s AND team_id=%s;
             ''',
-            (image_url, user_id)
+            (user_id, team_id)
         )
 
         return_data = connection_manager.get_data(cursor)
         cursor.close()
         connection_manager.disconnect(connection)
 
-        res = ('successfully updated users profile picture', False, return_data)
+        res = ('successfully retrieved users fundraiser information for a team',
+               False, return_data)
         return res
     except Exception as e:
         cursor.close()

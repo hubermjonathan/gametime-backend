@@ -88,7 +88,7 @@ def editPermissions():
     team = body['team']
     priv = body['priv']
 
-    message, error, data = db.change_users_permission_level_for_team(
+    message, error, data = db.edit_users_permission_level_for_team(
         user, team, priv)
 
     if error:

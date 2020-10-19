@@ -41,7 +41,7 @@ def signup():
             return res, r.status_code
 
         message, error, data = db.create_user(
-            first_name, last_name, email, phone)
+            r.json()['user']['UserSub'], first_name, last_name, email, phone)
 
         res = r.json()
         res.update(data)
@@ -75,10 +75,7 @@ def login():
                 res = r.json()
                 return res, r.status_code
 
-            message, error, data = db.get_user_id(email)
-
             res = r.json()
-            res.update(data)
 
             return jsonify(res), 200
         except Exception as e:
