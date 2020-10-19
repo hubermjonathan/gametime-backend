@@ -19,7 +19,7 @@ all functions return a tuple of the format (message string, error boolean, data 
         add_user_to_team(user_id, team_id) - returns nothing
         remove_user_from_team(user_id, team_id) - returns nothing
         change_users_permission_level_for_team(user_id, team_id, permission_level) - returns nothing
-        get_users_permission_level_for_team(user_id, team_id)
+        get_users_permission_level_for_team(user_id, team_id) - returns permission_level
         edit_teams_name(team_id, new_team_name) - returns nothing
         get_team(team_id) - returns the team info and its users
         get_teams_phone_numbers(team_id) - returns an array of phone numbers
