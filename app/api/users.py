@@ -88,8 +88,8 @@ def login():
         return "", 500
 
 
-@login_required
 @usersbp.route('/user', methods=['GET'])
+@login_required
 def get_user():
     # GET, Gets info about a user
     if request.method == 'GET':
@@ -107,8 +107,8 @@ def get_user():
         return "", 500
 
 
-@login_required
 @usersbp.route('/user/phone/add', methods=['POST'])
+@login_required
 def addPhone():
     # POST, Add Phone Number to User
     body = request.get_json()
@@ -135,8 +135,8 @@ def addPhone():
     return jsonify({"reason": "phone number added"}), 200
 
 
-@login_required
 @usersbp.route('/user/phone/remove', methods=['POST'])
+@login_required
 def removePhone():
     # POST, Remove Phone Number from User
     body = request.get_json()
