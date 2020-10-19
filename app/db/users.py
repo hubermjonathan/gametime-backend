@@ -28,36 +28,6 @@ def create_user(user_id, first_name, last_name, email, phone_number):
         return res
 
 
-def get_user_id(email):
-    try:
-        connection = connection_manager.connect()
-        cursor = connection.cursor()
-
-        cursor.execute(
-            '''
-            SELECT user_id
-            FROM users
-            WHERE email=%s
-            ORDER BY user_id
-            DESC
-            LIMIT 1;
-            ''',
-            (email,)
-        )
-
-        return_data = connection_manager.get_data(cursor)
-        cursor.close()
-        connection_manager.disconnect(connection)
-
-        res = ('successfully retrieved user id', False, return_data)
-        return res
-    except Exception as e:
-        cursor.close()
-        connection_manager.disconnect(connection)
-        res = (str(e), True, {})
-        return res
-
-
 def check_if_user_has_phone_number(user_id, phone_number):
     try:
         connection = connection_manager.connect()
