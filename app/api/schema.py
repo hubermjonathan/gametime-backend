@@ -86,3 +86,10 @@ removephone_schema = {
         'phone': {'type': 'string'}
     }
 }
+
+profilepicture_schema = {
+    'type': 'object',
+    'properties': {
+        'profile_picture': {'type': 'string'}
+    }
+}

@@ -4,8 +4,22 @@ import requests
 import json
 import re
 from flask_login import login_required, current_user
+import boto3
+from os import environ, path
+from dotenv import load_dotenv
+import base64
 from ..db import users as db
 from . import schema
+
+
+basedir = path.abspath(path.dirname(__file__))
+load_dotenv(path.join(basedir, '../.env'))
+
+AWS = boto3.resource(
+    's3',
+    aws_access_key_id=environ.get('AWS_ACCESS_KEY'),
+    aws_secret_access_key=environ.get('AWS_SECRET_ACCESS_KEY')
+)
 
 usersbp = Blueprint('usersbp', __name__)
 
@@ -157,6 +171,38 @@ def remove_phone():
 
         message, error, data = db.remove_phone_number_from_user(
             phone_number, current_user.user_id)
+
+        if error:
+            return jsonify({'message': message}), 500
+
+        return jsonify({'message': message}), 200
+    else:
+        return jsonify({'message': 'method not allowed'}), 405
+
+
+@usersbp.route('/user/profilePicture', methods=['POST', 'PUT'])
+@login_required
+def edit_profile_picture():
+    if request.method == 'POST' or request.method == 'PUT':
+        try:
+            body = request.get_json()
+            validate(body, schema=schema.profilepicture_schema)
+
+            profile_picture = body['profile_picture']
+        except Exception:
+            return jsonify({'message': 'invalid body provided'}), 400
+
+        if re.search(r'^data:image\/jpeg;base64,(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$', profile_picture) is None:
+            return jsonify({'message': 'invalid profile picture provided'}), 400
+
+        profile_picture = profile_picture[23:]
+        obj = AWS.Object('gametime-file-storage',
+                         f'{current_user.user_id}.jpeg')
+        obj.put(Body=base64.b64decode(profile_picture), ACL='public-read')
+        image_url = f'https://gametime-file-storage.s3-us-east-2.amazonaws.com/{current_user.user_id}.jpeg'
+
+        message, error, data = db.edit_users_profile_picture(
+            current_user.user_id, image_url)
 
         if error:
             return jsonify({'message': message}), 500
