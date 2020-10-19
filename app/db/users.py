@@ -1,18 +1,18 @@
 from ..db.connection_manager import connection_manager
 
 
-def create_user(first_name, last_name, email, phone_number):
+def create_user(user_id, first_name, last_name, email, phone_number):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            INSERT INTO users (first_name, last_name, email, phone_number)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO users (user_id, first_name, last_name, email, phone_number)
+            VALUES (%s, %s, %s, %s, %s)
             RETURNING user_id;
             ''',
-            (first_name, last_name, email, phone_number)
+            (user_id, first_name, last_name, email, phone_number)
         )
 
         return_data = connection_manager.get_data(cursor)
