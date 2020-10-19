@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, abort
+from flask import Blueprint, jsonify, request
 from jsonschema import validate
 import requests
 import json
@@ -12,23 +12,27 @@ usersbp = Blueprint('usersbp', __name__)
 
 @usersbp.route('/signup', methods=['POST'])
 def signup():
-    # POST, Creates a new user
     if request.method == 'POST':
-        body = request.get_json()
-
         try:
+            body = request.get_json()
             validate(body, schema=schema.signup_schema)
-        except Exception as e:
-            return jsonify(str(e)), 400
 
-        phone, email, password, first_name, last_name = body['phone'], body[
-            'email'], body['password'], body['firstname'], body['lastname']
-        email = email.lower()
+            phone_number, email, password, first_name, last_name = body['phone'], body[
+                'email'], body['password'], body['firstname'], body['lastname']
+            email = email.lower()
+        except Exception:
+            return jsonify({'message': 'invalid body provided'}), 400
 
-        r = requests.post(
+        if re.search(r'^\+1[0-9]{10}$', phone_number) is None:
+            return jsonify({'message': 'invalid phone number provided'}), 400
+
+        if re.search(r'^.+@.+\..+$', email) is None:
+            return jsonify({'message': 'invalid email provided'}), 400
+
+        cognito_request = requests.post(
             'https://1sz21h77li.execute-api.us-east-2.amazonaws.com/Dev/signup',
             data=json.dumps({
-                'phone': phone,
+                'phone': phone_number,
                 'email': email,
                 'password': password,
                 'firstname': first_name,
@@ -36,116 +40,127 @@ def signup():
             })
         )
 
-        if (r.json()['error'] is not False):
-            res = r.json()
-            return res, r.status_code
+        if cognito_request.json()['error']:
+            return cognito_request.json(), cognito_request.status_code
 
-        message, error, data = db.create_user(
-            r.json()['user']['UserSub'], first_name, last_name, email, phone)
+        db.create_user(
+            cognito_request.json()['user']['UserSub'], first_name, last_name, email, phone_number)
 
-        res = r.json()
-        res.update(data)
-        return jsonify(res), 200
+        return cognito_request.json(), 200
+    else:
+        return jsonify({'message': 'method not allowed'}), 405
 
 
 @usersbp.route('/login', methods=['POST'])
 def login():
-    # POST, Logs a user in
     if request.method == 'POST':
         try:
             body = request.get_json()
-
-            try:
-                validate(body, schema=schema.login_schema)
-            except Exception as e:
-                return jsonify(str(e)), 400
+            validate(body, schema=schema.login_schema)
 
             email, password = body['email'], body['password']
             email = email.lower()
+        except Exception:
+            return jsonify({'message': 'invalid body provided'}), 400
 
-            r = requests.post(
-                'https://1sz21h77li.execute-api.us-east-2.amazonaws.com/Dev/login',
-                data=json.dumps({
-                    'email': email,
-                    'password': password
-                })
-            )
+        if re.search(r'^.+@.+\..+$', email) is None:
+            return jsonify({'message': 'invalid email provided'}), 400
 
-            if (r.json()['error'] is not False):
-                res = r.json()
-                return res, r.status_code
+        cognito_request = requests.post(
+            'https://1sz21h77li.execute-api.us-east-2.amazonaws.com/Dev/login',
+            data=json.dumps({
+                'email': email,
+                'password': password
+            })
+        )
 
-            res = r.json()
+        if cognito_request.json()['error']:
+            return cognito_request.json(), cognito_request.status_code
 
-            return jsonify(res), 200
-        except Exception as e:
-            print(str(e))
-            return "", 500
-
-        return "", 500
+        return cognito_request.json(), 200
+    else:
+        return jsonify({'message': 'method not allowed'}), 405
 
 
 @usersbp.route('/user', methods=['GET'])
 @login_required
 def get_user():
-    # GET, Gets info about a user
     if request.method == 'GET':
+        message, error, data = db.get_user(current_user.user_id)
+
+        if error:
+            return jsonify({'message': message}), 500
+
+        return jsonify(data), 200
+    else:
+        return jsonify({'message': 'method not allowed'}), 405
+
+
+@usersbp.route('/user/addPhone', methods=['POST'])
+@login_required
+def add_phone():
+    if request.method == 'POST':
         try:
-            message, error, user_info = db.get_user(current_user.user_id)
-            if error:
-                return message, 500
+            body = request.get_json()
+            validate(body, schema=schema.addphone_schema)
 
-            return jsonify(user_info), 200
-        except Exception as e:
-            print(e)
+            phone_number = body['phone']
+        except Exception:
+            return jsonify({'message': 'invalid body provided'}), 400
 
-        return "", 500
+        if re.search(r'^\+1[0-9]{10}$', phone_number) is None:
+            return jsonify({'message': 'invalid phone number provided'}), 400
+
+        message, error, data = db.check_if_user_has_phone_number(
+            current_user.user_id, phone_number)
+
+        if error:
+            return jsonify({'message': message}), 500
+
+        if data['exists'] == 1:
+            return jsonify({'message': 'user already has phone number'}), 400
+
+        message, error, data = db.add_phone_number_to_user(
+            phone_number, current_user.user_id)
+
+        if error:
+            return jsonify({'message': message}), 500
+
+        return jsonify({'message': message}), 200
+    else:
+        return jsonify({'message': 'method not allowed'}), 405
 
 
-@usersbp.route('/user/phone/add', methods=['POST'])
+@usersbp.route('/user/removePhone', methods=['POST'])
 @login_required
-def addPhone():
-    # POST, Add Phone Number to User
-    body = request.get_json()
+def remove_phone():
+    if request.method == 'POST':
+        try:
+            body = request.get_json()
+            validate(body, schema=schema.removephone_schema)
 
-    user_id = body['id']
-    phone = body['phone']
+            phone_number = body['phone']
+        except Exception:
+            return jsonify({'message': 'invalid body provided'}), 400
 
-    # Pattern = re.compile("\1[0-9]{10}")
-    # if not Pattern.match(phone):
-    #     return jsonify({"reason": "phone number invalid"}), 400
+        if re.search(r'^\+1[0-9]{10}$', phone_number) is None:
+            return jsonify({'message': 'invalid phone number provided'}), 400
 
-    message, error, data = db.check_if_user_has_phone_number(
-        user_id, phone)
+        message, error, data = db.check_if_user_has_phone_number(
+            current_user.user_id, phone_number)
 
-    if data['exists'] == 1:
-        return jsonify({"reason": "user already has phone number"}), 400
+        if error:
+            return jsonify({'message': message}), 500
 
-    message, error, data = db.add_phone_number_to_user(
-        phone, user_id)
+        if data['exists'] == 0:
+            return jsonify({'message': 'user does not have phone number'}), 400
 
-    if error:
-        return jsonify({"reason": "internal server error"}), 500
+        message, error, data = db.remove_phone_number_from_user(
+            phone_number, current_user.user_id)
 
-    return jsonify({"reason": "phone number added"}), 200
+        if error:
+            return jsonify({'message': message}), 500
 
-
-@usersbp.route('/user/phone/remove', methods=['POST'])
-@login_required
-def removePhone():
-    # POST, Remove Phone Number from User
-    body = request.get_json()
-
-    user_id = body['id']
-    phone = body['phone']
-
-    # Pattern = re.compile("\1[0-9]{10}")
-    # if not Pattern.match(phone):
-    #     return jsonify({"reason": "phone number invalid"}), 400
-
-    message, error, data = db.remove_phone_number_from_user(phone, user_id)
-
-    if error:
-        return jsonify({"reason": "internal server error"}), 500
-
-    return jsonify({"reason": "phone number removed"}), 200
+        return jsonify({'message': message}), 200
+    else:
+        return jsonify({'message': 'method not allowed'}), 405

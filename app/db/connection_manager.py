@@ -29,19 +29,19 @@ class ConnectionManager:
         self.connection_pool.putconn(connection)
 
     def get_data(self, cursor, key_name='results'):
-        if (cursor.description is None):
+        if cursor.description is None:
             return {}
 
         columns = [desc[0] for desc in cursor.description]
         results = cursor.fetchall()
 
-        if (len(results) == 0 and key_name == 'results'):
+        if len(results) == 0 and key_name == 'results':
             return {}
-        elif (len(results) == 0):
+        elif len(results) == 0:
             return {
                 key_name: []
             }
-        elif (len(results) == 1 and key_name == 'results'):
+        elif len(results) == 1 and key_name == 'results':
             data = {}
             for i, col in enumerate(columns):
                 data[col] = results[0][i]
@@ -50,7 +50,7 @@ class ConnectionManager:
                 key_name: []
             }
             for row in results:
-                if (len(row) == 1):
+                if len(row) == 1:
                     data[key_name].append(row[0])
                 else:
                     formatted_row = {}
