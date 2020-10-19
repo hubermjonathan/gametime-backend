@@ -15,12 +15,12 @@ def decodeJWK():
 
     # Private key may not load in correctly
     try:
-        jwks = json.loads(environ.get(DB_PUBLIC_KEY))
+        jwks = json.load(open(".jsonKey", "r"))
         for jwk in jwks['keys']:
             kid = jwk['kid']
             public_keys[kid] = jwt.algorithms.RSAAlgorithm.from_jwk(json.dumps(jwk))
-    except exception as e:
-        print("Loading Cognito Public Key failed)
+    except Exception as e:
+        print("Loading Cognito Public Key failed")
         print(e)
 
 def decodeJWT(access_token_enc):
