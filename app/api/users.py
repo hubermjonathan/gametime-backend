@@ -3,7 +3,7 @@ from jsonschema import validate
 import requests
 import json
 import re
-from flask_login import login_required
+from flask_login import login_required, current_user
 from ..db import users as db
 from . import schema
 
@@ -93,10 +93,8 @@ def login():
 def get_user():
     # GET, Gets info about a user
     if request.method == 'GET':
-        user_id = request.args.get('id')
-
         try:
-            message, error, user_info = db.get_user(user_id)
+            message, error, user_info = db.get_user(current_user.user_id)
             if error:
                 return message, 500
 

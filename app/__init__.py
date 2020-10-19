@@ -23,7 +23,7 @@ load_dotenv(path.join(basedir, '.env'))
 class User:
 
     def __init__(self, username):
-        self.user = username
+        self.user_id = username
         self.is_authenticated = True
         self.is_active = True
 

@@ -15,7 +15,7 @@ def decodeJWK():
 
     # Private key may not load in correctly
     try:
-        jwks = json.load(open(".jsonKey", "r"))
+        jwks = json.load(open("app/.jsonKey", "r"))
         for jwk in jwks['keys']:
             kid = jwk['kid']
             public_keys[kid] = jwt.algorithms.RSAAlgorithm.from_jwk(json.dumps(jwk))
