@@ -3,14 +3,15 @@ from jsonschema import validate
 from flask_login import login_required
 from ..db import teams as db
 from . import schema
+from .. import auth
 
 import json
 
 teamsbp = Blueprint('teamsbp', __name__)
 
 
-@login_required
 @teamsbp.route('/team/create', methods=['POST'])
+@login_required
 def createTeam():
     # POST, Creates a new team
     body = request.get_json()
@@ -25,8 +26,8 @@ def createTeam():
     return jsonify(data), 200
 
 
-@login_required
 @teamsbp.route('/team/edit', methods=['POST'])
+@login_required
 def editTeam():
     # POST, Edits team attributes
     body = request.get_json()
@@ -41,8 +42,8 @@ def editTeam():
     return jsonify(""), 200
 
 
-@login_required
 @teamsbp.route('/team/remove', methods=['POST'])
+@login_required
 def removeFromTeam():
     # POST, Removes player from team
     body = request.get_json()
@@ -57,13 +58,17 @@ def removeFromTeam():
     return "", 200
 
 
-@login_required
 @teamsbp.route('/team/view/data', methods=['POST'])
+@login_required
 def viewTeam():
     # POST, gets Attributes of Team (TODO make GET)
     body = request.get_json()
 
     team = body['team']
+    player = body['player']
+
+    if not auth.isOwner(player, team):
+        return "", 401
 
     message, error, data = db.get_team(team)
 
@@ -73,8 +78,8 @@ def viewTeam():
     return jsonify(data), 200
 
 
-@login_required
 @teamsbp.route('/team/permissions', methods=['POST'])
+@login_required
 def editPermissions():
     # POST, edits permissions of player
     body = request.get_json()
@@ -92,8 +97,8 @@ def editPermissions():
     return jsonify(data), 200
 
 
-@login_required
 @teamsbp.route('/team/join/<id>', methods=['POST'])
+@login_required
 def joinTeam(id):
     # POST, player joins team
     body = request.get_json()
@@ -108,8 +113,8 @@ def joinTeam(id):
     return jsonify(data), 200
 
 
-@login_required
 @teamsbp.route('/team/view/groups', methods=['GET'])
+@login_required
 def get_teams_groups():
     # GET, Gets groups from a team
     if request.method == 'GET':

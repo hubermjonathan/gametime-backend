@@ -3,7 +3,7 @@ from jsonschema import validate
 import requests
 import json
 import re
-from flask_login import login_required
+from flask_login import login_required, current_user
 from ..db import users as db
 from . import schema
 
@@ -85,15 +85,13 @@ def login():
         return "", 500
 
 
-@login_required
 @usersbp.route('/user', methods=['GET'])
+@login_required
 def get_user():
     # GET, Gets info about a user
     if request.method == 'GET':
-        user_id = request.args.get('id')
-
         try:
-            message, error, user_info = db.get_user(user_id)
+            message, error, user_info = db.get_user(current_user.user_id)
             if error:
                 return message, 500
 
@@ -104,8 +102,8 @@ def get_user():
         return "", 500
 
 
-@login_required
 @usersbp.route('/user/phone/add', methods=['POST'])
+@login_required
 def addPhone():
     # POST, Add Phone Number to User
     body = request.get_json()
@@ -132,8 +130,8 @@ def addPhone():
     return jsonify({"reason": "phone number added"}), 200
 
 
-@login_required
 @usersbp.route('/user/phone/remove', methods=['POST'])
+@login_required
 def removePhone():
     # POST, Remove Phone Number from User
     body = request.get_json()
