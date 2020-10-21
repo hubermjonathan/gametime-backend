@@ -93,3 +93,59 @@ profilepicture_schema = {
         'profile_picture': {'type': 'string'}
     }
 }
+
+# Store Endpoints
+place_order_schema = {
+    'type': 'object',
+    'properties': {
+        'buyer_email': {'type': 'string'},
+        'buyer_address': {'type': 'string'},
+        'items': {'type': 'array'}
+    }
+}
+
+# Create item
+create_item_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'number'},
+        'name': {'type': 'string'},
+        'types': {'type': 'array'}
+        'picture': {'type': 'string'}
+        'price': {'type': 'number'}
+        'active': {'type': 'boolean'}
+    }
+}
+
+# Add item to store page
+add_item_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'number'},
+        'item_id': {'type': 'string'}
+    }
+}
+
+# Edit item
+edit_item_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'number'},
+        'item_id': {'type': 'string'}
+        'name': {'type': 'string'},
+        'types': {'type': 'array'}
+        'picture': {'type': 'string'}
+        'price': {'type': 'number'}
+        'active': {'type': 'boolean'}
+    }
+}
+
+# Update order status
+update_order_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'number'},
+        'order_id': {'type': 'string'}
+        'status': {'type': 'number'}
+    }
+}
