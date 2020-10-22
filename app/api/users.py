@@ -131,7 +131,7 @@ def add_phone():
         if error:
             return jsonify({'message': message}), 500
 
-        if data['exists'] == 1:
+        if data['exists_primary'] == 1 or data['exists_secondary'] == 1:
             return jsonify({'message': 'user already has phone number'}), 400
 
         message, error, data = db.add_phone_number_to_user(
@@ -166,7 +166,10 @@ def remove_phone():
         if error:
             return jsonify({'message': message}), 500
 
-        if data['exists'] == 0:
+        if data['exists_primary'] == 1:
+            return jsonify({'message': 'cannot remove primary phone number'}), 400
+
+        if data['exists_secondary'] == 0:
             return jsonify({'message': 'user does not have phone number'}), 400
 
         message, error, data = db.remove_phone_number_from_user(

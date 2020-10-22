@@ -50,7 +50,7 @@ all functions return a tuple of the format (message string, error boolean, data 
         get_transaction - returns the transaction info
     users:
         create_user(user_id, first_name, last_name, email, phone_number) - returns user_id
-        check_if_user_has_phone_number(user_id, phone_number) - returns exists (0 or 1)
+        check_if_user_has_phone_number(user_id, phone_number) - returns exists_primary and exists_secondary (0 or 1)
         add_phone_number_to_user(phone_number, user_id) - returns nothing
         remove_phone_number_from_user(phone_number, user_id) - returns nothing
         get_user(user_id) - returns the user info, their teams, and their groups

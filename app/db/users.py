@@ -35,14 +35,26 @@ def check_if_user_has_phone_number(user_id, phone_number):
 
         cursor.execute(
             '''
-            SELECT COUNT(*) as exists
+            SELECT COUNT(*) as exists_primary
+            FROM users
+            WHERE user_id=%s AND phone_number=%s;
+            ''',
+            (user_id, phone_number)
+        )
+        primary_info = connection_manager.get_data(cursor)
+
+        cursor.execute(
+            '''
+            SELECT COUNT(*) as exists_secondary
             FROM phones
             WHERE user_id=%s AND phone_number=%s;
             ''',
             (user_id, phone_number)
         )
+        secondary_info = connection_manager.get_data(cursor)
 
-        return_data = connection_manager.get_data(cursor)
+        return_data = primary_info
+        return_data.update(secondary_info)
         cursor.close()
         connection_manager.disconnect(connection)
 
