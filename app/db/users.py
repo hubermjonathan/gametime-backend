@@ -35,14 +35,26 @@ def check_if_user_has_phone_number(user_id, phone_number):
 
         cursor.execute(
             '''
-            SELECT COUNT(*) as exists
+            SELECT COUNT(*) as exists_primary
+            FROM users
+            WHERE user_id=%s AND phone_number=%s;
+            ''',
+            (user_id, phone_number)
+        )
+        primary_info = connection_manager.get_data(cursor)
+
+        cursor.execute(
+            '''
+            SELECT COUNT(*) as exists_secondary
             FROM phones
             WHERE user_id=%s AND phone_number=%s;
             ''',
             (user_id, phone_number)
         )
+        secondary_info = connection_manager.get_data(cursor)
 
-        return_data = connection_manager.get_data(cursor)
+        return_data = primary_info
+        return_data.update(secondary_info)
         cursor.close()
         connection_manager.disconnect(connection)
 
@@ -165,6 +177,33 @@ def get_user(user_id):
         connection_manager.disconnect(connection)
 
         res = ('successfully retrieved user', False, return_data)
+        return res
+    except Exception as e:
+        cursor.close()
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
+
+
+def get_users_profile_picture(user_id):
+    try:
+        connection = connection_manager.connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT profile_picture
+            FROM users
+            WHERE user_id=%s;
+            ''',
+            (user_id,)
+        )
+
+        return_data = connection_manager.get_data(cursor)
+        cursor.close()
+        connection_manager.disconnect(connection)
+
+        res = ('successfully retrieved users profile picture', False, return_data)
         return res
     except Exception as e:
         cursor.close()

@@ -23,10 +23,11 @@ all functions return a tuple of the format (message string, error boolean, data 
     schema:
         reset_tables(database) - returns nothing
     store:
-        create_store_item(team_id, name, price, modifiers, pictures) - returns item_id
+        create_store_item(team_id, name, price, active, modifiers, pictures) - returns item_id
         remove_store_item(item_id) - returns nothing
         edit_store_items_name(item_id, new_item_name) - returns nothing
         edit_store_items_price(item_id, new_item_price) - returns nothing
+        edit_store_items_visibility(item_id, active) - returns nothing
         edit_store_items_modifier(modifier_id, new_modifier) - returns nothing
         create_store_item_modifier(item_id, modifier) - returns nothing
         remove_store_items_modifier(modifier_id) - returns nothing
@@ -49,10 +50,11 @@ all functions return a tuple of the format (message string, error boolean, data 
         get_transaction - returns the transaction info
     users:
         create_user(user_id, first_name, last_name, email, phone_number) - returns user_id
-        check_if_user_has_phone_number(user_id, phone_number) - returns exists (0 or 1)
+        check_if_user_has_phone_number(user_id, phone_number) - returns exists_primary and exists_secondary (0 or 1)
         add_phone_number_to_user(phone_number, user_id) - returns nothing
         remove_phone_number_from_user(phone_number, user_id) - returns nothing
         get_user(user_id) - returns the user info, their teams, and their groups
+        get_users_profile_picture(user_id) - returns profile_picture
         edit_users_profile_picture(user_id, image_url) - returns nothing
 '''
 

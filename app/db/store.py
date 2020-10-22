@@ -1,18 +1,18 @@
 from ..db.connection_manager import connection_manager
 
 
-def create_store_item(team_id, name, price, modifiers, pictures):
+def create_store_item(team_id, name, price, active, modifiers, pictures):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            INSERT INTO items (team_id, name, price)
-            VALUES (%s, %s, %s)
+            INSERT INTO items (team_id, name, price, active)
+            VALUES (%s, %s, %s, %s)
             RETURNING item_id;
             ''',
-            (team_id, name, price)
+            (team_id, name, price, active)
         )
         return_data = connection_manager.get_data(cursor)
 
@@ -124,6 +124,34 @@ def edit_store_items_price(item_id, new_item_price):
         connection_manager.disconnect(connection)
 
         res = ('successfully edited store items price', False, return_data)
+        return res
+
+    except Exception as e:
+        cursor.close()
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
+
+
+def edit_store_items_visibility(item_id, active):
+    try:
+        connection = connection_manager.connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            UPDATE items
+            SET active=%s
+            WHERE item_id=%s;
+            ''',
+            (active, item_id)
+        )
+
+        return_data = connection_manager.get_data(cursor)
+        cursor.close()
+        connection_manager.disconnect(connection)
+
+        res = ('successfully edited store items visibility', False, return_data)
         return res
 
     except Exception as e:

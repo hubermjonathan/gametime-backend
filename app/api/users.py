@@ -131,7 +131,7 @@ def add_phone():
         if error:
             return jsonify({'message': message}), 500
 
-        if data['exists'] == 1:
+        if data['exists_primary'] == 1 or data['exists_secondary'] == 1:
             return jsonify({'message': 'user already has phone number'}), 400
 
         message, error, data = db.add_phone_number_to_user(
@@ -166,7 +166,10 @@ def remove_phone():
         if error:
             return jsonify({'message': message}), 500
 
-        if data['exists'] == 0:
+        if data['exists_primary'] == 1:
+            return jsonify({'message': 'cannot remove primary phone number'}), 400
+
+        if data['exists_secondary'] == 0:
             return jsonify({'message': 'user does not have phone number'}), 400
 
         message, error, data = db.remove_phone_number_from_user(
@@ -180,10 +183,23 @@ def remove_phone():
         return jsonify({'message': 'method not allowed'}), 405
 
 
-@usersbp.route('/user/profilePicture', methods=['POST', 'PUT'])
+@usersbp.route('/user/profilePicture', methods=['GET', 'POST', 'PUT'])
 @login_required
-def edit_profile_picture():
-    if request.method == 'POST' or request.method == 'PUT':
+def profile_picture():
+    if request.method == 'GET':
+        message, error, data = db.get_users_profile_picture(
+            current_user.user_id)
+
+        if error:
+            return jsonify({'message': message}), 500
+
+        if data is None:
+            data = {
+                'profile_picture': None
+            }
+
+        return jsonify(data), 200
+    elif request.method == 'POST' or request.method == 'PUT':
         try:
             body = request.get_json()
             validate(body, schema=schema.profilepicture_schema)
