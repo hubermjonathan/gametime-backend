@@ -110,9 +110,9 @@ create_item_schema = {
     'properties': {
         'team_id': {'type': 'number'},
         'name': {'type': 'string'},
-        'types': {'type': 'array'}
-        'picture': {'type': 'string'}
-        'price': {'type': 'number'}
+        'types': {'type': 'array'},
+        'picture': {'type': 'string'},
+        'price': {'type': 'number'},
         'active': {'type': 'boolean'}
     }
 }
@@ -131,11 +131,11 @@ edit_item_schema = {
     'type': 'object',
     'properties': {
         'team_id': {'type': 'number'},
-        'item_id': {'type': 'string'}
+        'item_id': {'type': 'string'},
         'name': {'type': 'string'},
-        'types': {'type': 'array'}
-        'picture': {'type': 'string'}
-        'price': {'type': 'number'}
+        'types': {'type': 'array'},
+        'picture': {'type': 'string'},
+        'price': {'type': 'number'},
         'active': {'type': 'boolean'}
     }
 }
@@ -145,7 +145,7 @@ update_order_schema = {
     'type': 'object',
     'properties': {
         'team_id': {'type': 'number'},
-        'order_id': {'type': 'string'}
+        'order_id': {'type': 'string'},
         'status': {'type': 'number'}
     }
 }
