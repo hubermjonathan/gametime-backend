@@ -173,6 +173,33 @@ def get_user(user_id):
         return res
 
 
+def get_users_profile_picture(user_id):
+    try:
+        connection = connection_manager.connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT profile_picture
+            FROM users
+            WHERE user_id=%s;
+            ''',
+            (user_id,)
+        )
+
+        return_data = connection_manager.get_data(cursor)
+        cursor.close()
+        connection_manager.disconnect(connection)
+
+        res = ('successfully retrieved users profile picture', False, return_data)
+        return res
+    except Exception as e:
+        cursor.close()
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
+
+
 def edit_users_profile_picture(user_id, image_url):
     try:
         connection = connection_manager.connect()

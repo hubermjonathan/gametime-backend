@@ -54,6 +54,7 @@ all functions return a tuple of the format (message string, error boolean, data 
         add_phone_number_to_user(phone_number, user_id) - returns nothing
         remove_phone_number_from_user(phone_number, user_id) - returns nothing
         get_user(user_id) - returns the user info, their teams, and their groups
+        get_users_profile_picture(user_id) - returns profile_picture
         edit_users_profile_picture(user_id, image_url) - returns nothing
 '''
 
