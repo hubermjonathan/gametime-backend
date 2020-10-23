@@ -1,6 +1,6 @@
+from os import path, environ
 import psycopg2
 import psycopg2.pool
-from os import environ, path
 from dotenv import load_dotenv
 
 

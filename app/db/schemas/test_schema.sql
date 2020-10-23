@@ -430,6 +430,7 @@ CREATE TABLE public.transactionsitems
 (
     transaction_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     item_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    type_id uuid,
     quantity integer NOT NULL,
     CONSTRAINT transaction_id FOREIGN KEY (transaction_id)
         REFERENCES public.transactions (transaction_id) MATCH SIMPLE
@@ -437,6 +438,10 @@ CREATE TABLE public.transactionsitems
         ON DELETE NO ACTION,
     CONSTRAINT item_id FOREIGN KEY (item_id)
         REFERENCES public.items (item_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+  	CONSTRAINT type_id FOREIGN KEY (type_id)
+        REFERENCES public.itemtypes (type_id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )

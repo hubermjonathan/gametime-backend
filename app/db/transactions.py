@@ -20,11 +20,11 @@ def create_transaction(team_id, buyer_email, buyer_address, items):
         for item in items:
             cursor.execute(
                 '''
-                INSERT INTO transactionsitems (transaction_id, item_id, quantity)
-                VALUES (%s, %s, %s);
+                INSERT INTO transactionsitems (transaction_id, item_id, type_id, quantity)
+                VALUES (%s, %s, %s, %s);
                 ''',
                 (transaction_info['transaction_id'],
-                 item['item_id'], item['quantity'])
+                 item['item_id'], item['type_id'], item['quantity'])
             )
 
         return_data = transaction_info
@@ -85,8 +85,12 @@ def get_teams_transactions(team_id):
         for transaction in transactions['transactions']:
             cursor.execute(
                 '''
-                SELECT item_id, quantity
+				SELECT transactionsitems.quantity, items.item_id, items.name, itemtypes.type_id, itemtypes.label
                 FROM transactionsitems
+                INNER JOIN items
+                USING (item_id)
+                LEFT JOIN itemtypes
+                USING (type_id)
                 WHERE transaction_id=%s;
                 ''',
                 (transaction['transaction_id'],)

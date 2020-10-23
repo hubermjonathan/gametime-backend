@@ -7,11 +7,7 @@ from ..db import groups
 from . import schema
 import boto3
 from flask_login import login_required
-from os import environ, path
-from dotenv import load_dotenv
-
-basedir = path.abspath(path.dirname(__file__))
-load_dotenv(path.join(basedir, '../.env'))
+from os import environ
 
 
 AWS = boto3.client(
