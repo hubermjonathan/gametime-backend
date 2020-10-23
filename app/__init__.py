@@ -11,7 +11,6 @@ from flask_login import LoginManager, current_user, login_required
 from warrant import Cognito
 import time
 import app.auth as auth
-
 from os import environ, path
 from dotenv import load_dotenv
 
@@ -51,7 +50,7 @@ def create_app(test_config=None):
             # kid = jwt.get_unverified_header(id_token_enc)['kid']
             # key = public_keys[kid]
             # access_token_dec = jwt.decode(id_token_enc, public_keys[kid], algorithms='RS256')
-            
+
             access_token = request.headers["Authorization"]
             cognito = Cognito(
                 environ.get('COGNITO_REGION'), environ.get('COGNITO_ACCESS'), access_token=access_token, user_pool_region='us-east-2')

@@ -1,6 +1,6 @@
 import requests
 import json
-import os
+from os import environ
 from flask import Blueprint, request, jsonify
 from flask_login import login_required
 import boto3
@@ -12,21 +12,21 @@ test_phone = '+16613104788'
 
 AWS = boto3.client(
     'cognito-idp',
-    aws_access_key_id=os.environ.get('AWS_ACCESS_KEY'),
-    aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
+    aws_access_key_id=environ.get('AWS_ACCESS_KEY'),
+    aws_secret_access_key=environ.get('AWS_SECRET_ACCESS_KEY'),
     region_name='us-east-2'
 )
 
 
 def delete_all_cognito_users():
     users = AWS.list_users(
-        UserPoolId=os.environ.get('AWS_COGNITO_POOL_ID'),
+        UserPoolId=environ.get('AWS_COGNITO_POOL_ID'),
         AttributesToGet=[]
     )
 
     for user in users['Users']:
         AWS.admin_delete_user(
-            UserPoolId=os.environ.get('AWS_COGNITO_POOL_ID'),
+            UserPoolId=environ.get('AWS_COGNITO_POOL_ID'),
             Username=user['Username']
         )
 

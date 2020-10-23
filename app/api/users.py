@@ -5,15 +5,11 @@ import json
 import re
 from flask_login import login_required, current_user
 import boto3
-from os import environ, path
-from dotenv import load_dotenv
+from os import environ
 import base64
 from ..db import users as db
 from . import schema
 
-
-basedir = path.abspath(path.dirname(__file__))
-load_dotenv(path.join(basedir, '../.env'))
 
 AWS = boto3.resource(
     's3',
