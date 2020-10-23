@@ -219,6 +219,6 @@ def profile_picture():
         if error:
             return jsonify({'message': message}), 500
 
-        return jsonify({'message': message}), 200
+        return jsonify(data), 200
     else:
         return jsonify({'message': 'method not allowed'}), 405

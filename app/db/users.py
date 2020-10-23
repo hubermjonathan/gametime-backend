@@ -221,7 +221,8 @@ def edit_users_profile_picture(user_id, image_url):
             '''
             UPDATE users
             SET profile_picture=%s
-            WHERE user_id=%s;
+            WHERE user_id=%s
+            RETURNING profile_picture;
             ''',
             (image_url, user_id)
         )
