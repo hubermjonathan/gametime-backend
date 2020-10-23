@@ -48,6 +48,7 @@ all functions return a tuple of the format (message string, error boolean, data 
         create_transaction(team_id, buyer_email, buyer_address, items) - returns transaction_id
         edit_transactions_status(transaction_id, status) - returns nothing
         get_teams_transactions(team_id) - returns an array of transactions
+        get_item(item_id) - returns the item info
     users:
         create_user(user_id, first_name, last_name, email, phone_number) - returns user_id
         check_if_user_has_phone_number(user_id, phone_number) - returns exists_primary and exists_secondary (0 or 1)
