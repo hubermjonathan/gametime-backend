@@ -90,7 +90,7 @@ def get_teams_transactions(team_id):
                 INNER JOIN items
                 USING (item_id)
                 LEFT JOIN itemtypes
-                USING (item_id)
+                USING (type_id)
                 WHERE transaction_id=%s;
                 ''',
                 (transaction['transaction_id'],)

@@ -8,7 +8,9 @@ from .. import db
 
 
 testbp = Blueprint('testbp', __name__)
+test_email = 'test@hubermjonathan.com'
 test_phone = '+16613104788'
+test_image = 'https://gametime-file-storage.s3-us-east-2.amazonaws.com/3aa84fd6-662b-4313-8152-3c82585457a3.jpeg'
 
 AWS = boto3.client(
     'cognito-idp',
@@ -53,18 +55,20 @@ def create_user(name):
 
 @testbp.route('/test')
 def test():
-    # result = db.transactions.create_transaction('e1aae866-d1df-4e85-8fb8-0b01cf05eee6', 'test', 'test', [
+    # result = db.transactions.create_transaction('c48c1075-5909-492c-9a52-d6ebf38e375e', 'buyer', 'buyer', [
     #     {
-    #         'item_id': '6a1bccc3-4273-4fb2-a289-b259aa1827b2',
-    #         'quantity': 1
+    #         'item_id': 'a3988830-0d1f-49ef-a717-e50315d36bae',
+    #         'quantity': 1,
+    #         'type_id': '745393db-6132-4b15-b094-a84122a8acd6'
     #     },
     #     {
-    #         'item_id': 'e1127dbe-fa87-4d25-8304-b37b5bf36765',
-    #         'quantity': 2
+    #         'item_id': '918c7288-c4f9-4b1a-a3fc-3120bf239c9d',
+    #         'quantity': 2,
+    #         'type_id': None
     #     }
     # ])
-    # result = db.transactions.get_item(
-    #     '6a1bccc3-4273-4fb2-a289-b259aa1827b2')
+    result = db.transactions.get_teams_transactions(
+        '0d644392-4839-4c0f-8475-bd4525adc01c')
     return jsonify(result), 200
 
 
@@ -79,10 +83,12 @@ def create_test_data():
     player1 = create_user('player1')
     db.users.add_phone_number_to_user(player1, test_phone)
     db.users.add_phone_number_to_user(player1, test_phone)
+    db.users.edit_users_profile_picture(player1, test_image)
 
     player2 = create_user('player2')
     db.users.add_phone_number_to_user(player2, test_phone)
     db.users.add_phone_number_to_user(player2, test_phone)
+    db.users.edit_users_profile_picture(player2, test_image)
 
     player3 = create_user('player3')
     db.users.add_phone_number_to_user(player3, test_phone)
@@ -99,10 +105,12 @@ def create_test_data():
     player6 = create_user('player6')
     db.users.add_phone_number_to_user(player6, test_phone)
     db.users.add_phone_number_to_user(player6, test_phone)
+    db.users.edit_users_profile_picture(player6, test_image)
 
     player7 = create_user('player7')
     db.users.add_phone_number_to_user(player7, test_phone)
     db.users.add_phone_number_to_user(player7, test_phone)
+    db.users.edit_users_profile_picture(player7, test_image)
 
     player8 = create_user('player8')
     db.users.add_phone_number_to_user(player8, test_phone)
@@ -140,9 +148,9 @@ def create_test_data():
     db.teams.edit_users_permission_level_for_team(player5, team1, 1)
     db.teams.edit_users_permission_level_for_team(player10, team2, 1)
 
-    group1 = db.groups.create_group('group1', team1)
+    group1 = db.groups.create_group('team1-group1', team1)
     group1 = group1[2]['group_id']
-    group2 = db.groups.create_group('group2', team2)
+    group2 = db.groups.create_group('team2-group2', team2)
     group2 = group2[2]['group_id']
 
     db.groups.add_user_to_group(player3, group1)
@@ -154,13 +162,13 @@ def create_test_data():
     db.groups.add_user_to_group(player9, group2)
     db.groups.add_user_to_group(player10, group2)
 
-    db.messages.create_group_message(group1, coach1, 'group1-team1-m1')
-    db.messages.create_group_message(group1, coach1, 'group1-team1-m2')
-    db.messages.create_group_message(group1, coach1, 'group1-team1-m3')
+    db.messages.create_group_message(group1, coach1, 'team1-group1-m1')
+    db.messages.create_group_message(group1, coach1, 'team1-group1-m2')
+    db.messages.create_group_message(group1, coach1, 'team1-group1-m3')
 
-    db.messages.create_group_message(group2, coach2, 'group2-team2-m1')
-    db.messages.create_group_message(group2, coach2, 'group2-team2-m2')
-    db.messages.create_group_message(group2, coach2, 'group2-team2-m3')
+    db.messages.create_group_message(group2, coach2, 'team2-group2-m1')
+    db.messages.create_group_message(group2, coach2, 'team2-group2-m2')
+    db.messages.create_group_message(group2, coach2, 'team2-group2-m3')
 
     db.messages.create_direct_message(player1, coach1, 'player1-team1-m1')
     db.messages.create_direct_message(player2, coach1, 'player2-team1-m1')
@@ -177,5 +185,46 @@ def create_test_data():
     db.messages.create_direct_message(player8, coach2, 'player8-team2-m1')
     db.messages.create_direct_message(player9, coach2, 'player9-team2-m1')
     db.messages.create_direct_message(player10, coach2, 'player10-team2-m1')
+
+    item1 = db.store.create_store_item(
+        team1, 'team1-item1', 10, True, ['small', 'medium'], [test_image])
+    item1 = item1[2]['item_id']
+    type1 = db.store.create_store_item_type(item1, 'large')
+    type1 = type1[2]['type_id']
+    item2 = db.store.create_store_item(team1, 'team1-item2', 10, True, [], [])
+    item2 = item2[2]['item_id']
+
+    item3 = db.store.create_store_item(
+        team2, 'team2-item3', 10, True, ['xl', 'xxl'], [test_image])
+    item3 = item3[2]['item_id']
+    type3 = db.store.create_store_item_type(item3, 'xxl')
+    type3 = type3[2]['type_id']
+    item4 = db.store.create_store_item(team2, 'team2-item4', 10, True, [], [])
+    item4 = item4[2]['item_id']
+
+    db.transactions.create_transaction(team1, test_email, 'test_address', [
+        {
+            'item_id': item1,
+            'quantity': 1,
+            'type_id': type1
+        },
+        {
+            'item_id': item2,
+            'quantity': 2,
+            'type_id': None
+        }
+    ])
+    db.transactions.create_transaction(team2, test_email, 'test_address', [
+        {
+            'item_id': item3,
+            'quantity': 1,
+            'type_id': type3
+        },
+        {
+            'item_id': item4,
+            'quantity': 2,
+            'type_id': None
+        }
+    ])
 
     return 'successfully created data'
