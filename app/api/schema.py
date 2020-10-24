@@ -98,6 +98,7 @@ profilepicture_schema = {
 place_order_schema = {
     'type': 'object',
     'properties': {
+        'team_id': {'type': 'string'},
         'buyer_email': {'type': 'string'},
         'buyer_address': {'type': 'string'},
         'items': {'type': 'array'}
@@ -108,7 +109,7 @@ place_order_schema = {
 create_item_schema = {
     'type': 'object',
     'properties': {
-        'team_id': {'type': 'number'},
+        'team_id': {'type': 'string'},
         'name': {'type': 'string'},
         'types': {'type': 'array'},
         'picture': {'type': 'string'},
