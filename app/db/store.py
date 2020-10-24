@@ -1,28 +1,28 @@
 from ..db.connection_manager import connection_manager
 
 
-def create_store_item(team_id, name, price, modifiers, pictures):
+def create_store_item(team_id, name, price, active, types, pictures):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            INSERT INTO items (team_id, name, price)
-            VALUES (%s, %s, %s)
+            INSERT INTO items (team_id, name, price, active)
+            VALUES (%s, %s, %s, %s)
             RETURNING item_id;
             ''',
-            (team_id, name, price)
+            (team_id, name, price, active)
         )
         return_data = connection_manager.get_data(cursor)
 
-        for modifier in modifiers:
+        for t in types:
             cursor.execute(
                 '''
-                INSERT INTO itemmodifiers (item_id, modifier)
+                INSERT INTO itemtypes (item_id, label)
                 VALUES (%s, %s);
                 ''',
-                (return_data['item_id'], modifier)
+                (return_data['item_id'], t)
             )
 
         for picture in pictures:
@@ -54,7 +54,7 @@ def remove_store_item(item_id):
 
         cursor.execute(
             '''
-            DELETE FROM itemmodifiers
+            DELETE FROM itemtypes
             WHERE item_id=%s;
             
             DELETE FROM items
@@ -133,25 +133,25 @@ def edit_store_items_price(item_id, new_item_price):
         return res
 
 
-def edit_store_items_modifier(modifier_id, new_modifier):
+def edit_store_items_visibility(item_id, active):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            UPDATE itemmodifiers
-            SET modifier=%s
-            WHERE modifier_id=%s;
+            UPDATE items
+            SET active=%s
+            WHERE item_id=%s;
             ''',
-            (new_modifier, modifier_id)
+            (active, item_id)
         )
 
         return_data = connection_manager.get_data(cursor)
         cursor.close()
         connection_manager.disconnect(connection)
 
-        res = ('successfully edited store items modifier', False, return_data)
+        res = ('successfully edited store items visibility', False, return_data)
         return res
 
     except Exception as e:
@@ -161,25 +161,53 @@ def edit_store_items_modifier(modifier_id, new_modifier):
         return res
 
 
-def create_store_item_modifier(item_id, modifier):
+def edit_store_items_type(type_id, new_type_label):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            INSERT INTO itemmodifiers (item_id, modifier)
+            UPDATE itemtypes
+            SET label=%s
+            WHERE type_id=%s;
+            ''',
+            (new_type_label, type_id)
+        )
+
+        return_data = connection_manager.get_data(cursor)
+        cursor.close()
+        connection_manager.disconnect(connection)
+
+        res = ('successfully edited store items type', False, return_data)
+        return res
+
+    except Exception as e:
+        cursor.close()
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
+
+
+def create_store_item_type(item_id, type_label):
+    try:
+        connection = connection_manager.connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            INSERT INTO itemtypes (item_id, label)
             VALUES (%s, %s)
-            RETURNING modifier_id;
+            RETURNING type_id;
             ''',
-            (item_id, modifier)
+            (item_id, type_label)
         )
 
         return_data = connection_manager.get_data(cursor)
         cursor.close()
         connection_manager.disconnect(connection)
 
-        res = ('successfully created store item modifier', False, return_data)
+        res = ('successfully created store item type', False, return_data)
         return res
 
     except Exception as e:
@@ -189,24 +217,24 @@ def create_store_item_modifier(item_id, modifier):
         return res
 
 
-def remove_store_items_modifier(modifier_id):
+def remove_store_items_type(type_id):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            DELETE FROM itemmodifiers
-            WHERE modifier_id=%s;
+            DELETE FROM itemtypes
+            WHERE type_id=%s;
             ''',
-            (modifier_id,)
+            (type_id,)
         )
 
         return_data = connection_manager.get_data(cursor)
         cursor.close()
         connection_manager.disconnect(connection)
 
-        res = ('successfully removed store items modifier', False, return_data)
+        res = ('successfully removed store items type', False, return_data)
         return res
 
     except Exception as e:
@@ -289,16 +317,16 @@ def get_teams_store_items(team_id):
         for row in connection_manager.get_data(cursor, 'store_items')['store_items']:
             cursor.execute(
                 '''
-                SELECT itemmodifiers.modifier_id, itemmodifiers.modifier
-                FROM itemmodifiers
+                SELECT itemtypes.type_id, itemtypes.label
+                FROM itemtypes
                 INNER JOIN items
                 USING (item_id)
                 WHERE item_id=%s
                 ''',
                 (row['item_id'],)
             )
-            modifiers = connection_manager.get_data(
-                cursor, 'modifiers')
+            types = connection_manager.get_data(
+                cursor, 'types')
 
             cursor.execute(
                 '''
@@ -313,7 +341,7 @@ def get_teams_store_items(team_id):
             pictures = connection_manager.get_data(
                 cursor, 'pictures')
 
-            row.update(modifiers)
+            row.update(types)
             row.update(pictures)
             store_items.append(row)
 

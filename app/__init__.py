@@ -12,7 +12,6 @@ from flask_login import LoginManager, current_user, login_required
 from warrant import Cognito
 import time
 import app.auth as auth
-
 from os import environ, path
 from dotenv import load_dotenv
 

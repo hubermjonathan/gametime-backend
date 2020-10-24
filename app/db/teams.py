@@ -138,6 +138,7 @@ def edit_users_permission_level_for_team(user_id, team_id, permission_level):
         res = (str(e), True, {})
         return res
 
+
 def get_users_permission_level_for_team(user_id, team_id):
     try:
         connection = connection_manager.connect()
@@ -164,7 +165,6 @@ def get_users_permission_level_for_team(user_id, team_id):
         connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
-
 
 
 def edit_teams_name(team_id, new_team_name):

@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS public.teams CASCADE;
 DROP TABLE IF EXISTS public.files CASCADE;
 DROP TABLE IF EXISTS public.transactions CASCADE;
 DROP TABLE IF EXISTS public.items CASCADE;
-DROP TABLE IF EXISTS public.itemmodifiers CASCADE;
+DROP TABLE IF EXISTS public.itemtypes CASCADE;
 DROP TABLE IF EXISTS public.itempictures CASCADE;
 DROP TABLE IF EXISTS public.groups CASCADE;
 DROP TABLE IF EXISTS public.groupmessages CASCADE;
@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS public.sponsors CASCADE;
 DROP TABLE IF EXISTS public.usersgroups CASCADE;
 DROP TABLE IF EXISTS public.usersteams CASCADE;
 DROP TABLE IF EXISTS public.teamssponsors CASCADE;
+DROP TABLE IF EXISTS public.transactionsitems CASCADE;
 
 
 DROP SEQUENCE IF EXISTS public.teams_team_id_seq;
@@ -206,14 +207,14 @@ ALTER TABLE public.items
 GRANT ALL ON TABLE public.items TO test;
 
 
--- Table: public.itemmodifiers
+-- Table: public.itemtypes
 
-CREATE TABLE public.itemmodifiers
+CREATE TABLE public.itemtypes
 (
-    modifier_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    type_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     item_id uuid NOT NULL DEFAULT uuid_generate_v4(),
-    modifier text COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT modifier_id PRIMARY KEY (modifier_id),
+    label text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT type_id PRIMARY KEY (type_id),
     CONSTRAINT item_id FOREIGN KEY (item_id)
         REFERENCES public.items (item_id) MATCH SIMPLE
         ON UPDATE NO ACTION
@@ -222,10 +223,10 @@ CREATE TABLE public.itemmodifiers
 
 TABLESPACE pg_default;
 
-ALTER TABLE public.itemmodifiers
+ALTER TABLE public.itemtypes
     OWNER to test;
 
-GRANT ALL ON TABLE public.itemmodifiers TO test;
+GRANT ALL ON TABLE public.itemtypes TO test;
 
 
 -- Table: public.itempictures
@@ -421,3 +422,33 @@ ALTER TABLE public.teamssponsors
     OWNER to test;
 
 GRANT ALL ON TABLE public.teamssponsors TO test;
+
+
+-- Table: public.transactionsitems
+
+CREATE TABLE public.transactionsitems
+(
+    transaction_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    item_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    type_id uuid,
+    quantity integer NOT NULL,
+    CONSTRAINT transaction_id FOREIGN KEY (transaction_id)
+        REFERENCES public.transactions (transaction_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT item_id FOREIGN KEY (item_id)
+        REFERENCES public.items (item_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+  	CONSTRAINT type_id FOREIGN KEY (type_id)
+        REFERENCES public.itemtypes (type_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.transactionsitems
+    OWNER to test;
+
+GRANT ALL ON TABLE public.transactionsitems TO test;
