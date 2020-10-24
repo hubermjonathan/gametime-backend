@@ -118,11 +118,19 @@ create_item_schema = {
     }
 }
 
+# Delete item
+delete_item_schema = {
+    'type': 'object',
+    'properties': {
+        'item_id': {'type': 'string'}
+    }
+}
+
 # Add item to store page
 add_item_schema = {
     'type': 'object',
     'properties': {
-        'team_id': {'type': 'number'},
+        'team_id': {'type': 'string'},
         'item_id': {'type': 'string'}
     }
 }
@@ -131,7 +139,7 @@ add_item_schema = {
 edit_item_schema = {
     'type': 'object',
     'properties': {
-        'team_id': {'type': 'number'},
+        'team_id': {'type': 'string'},
         'item_id': {'type': 'string'},
         'name': {'type': 'string'},
         'types': {'type': 'array'},
@@ -141,11 +149,19 @@ edit_item_schema = {
     }
 }
 
+# Get store orders
+get_orders_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'string'}
+    }
+}
+
 # Update order status
 update_order_schema = {
     'type': 'object',
     'properties': {
-        'team_id': {'type': 'number'},
+        'team_id': {'type': 'string'},
         'order_id': {'type': 'string'},
         'status': {'type': 'number'}
     }

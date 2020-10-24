@@ -56,7 +56,7 @@ def place_order():
 @storesbp.route('/store/create', methods=['POST'])
 # @login_required
 def create_item():
-    # POST, make an order
+    # POST, create an item
     if request.method == 'POST':
         body = request.get_json()
 
@@ -77,3 +77,104 @@ def create_item():
             return jsonify({'message': 'Failed to create item'}), 400
 
         return jsonify({'message': 'Succesfully created item'}), 200
+
+
+@storesbp.route('/store/delete', methods=['DELETE'])
+# @login_required
+def delete_item():
+    # DELETE, remove an item
+    if request.method == 'DELETE':
+        body = request.get_json()
+
+        # TODO: implement permissions and auth
+
+        try:
+            validate(body, schema=schema.delete_item_schema)
+        except:
+            return jsonify({'message': 'Bad Request'}), 400
+
+        item_id = body['item_id']
+
+        # TODO: talk to jon about this one
+
+        # Call to register a transaction
+        # message, error, data = store.remove_store_item(item_id)
+        # if error:
+        #     print(message)
+        #     return jsonify({'message': 'Failed to delete item'}), 400
+
+        return jsonify({'message': 'Succesfully deleted item'}), 200
+
+
+@storesbp.route('/store/update', methods=['PUT'])
+# @login_required
+def edit_item():
+    # PUT, remove an item
+    if request.method == 'PUT':
+        body = request.get_json()
+
+        # TODO: implement permissions and auth
+
+        try:
+            validate(body, schema=schema.edit_item_schema)
+        except:
+            return jsonify({'message': 'Bad Request'}), 400
+
+        team_id, name, types, picture, price, active = body['team_id'], body[
+            'name'], body['types'], body['picture'], body['price'], body['active']
+
+        # TODO: talk to jon about this one too
+
+        # Call to update item details
+        # if error:
+        #     print(message)
+        #     return jsonify({'message': 'Failed to delete item'}), 400
+
+        return jsonify({'message': 'Succesfully deleted item'}), 200
+
+
+@storesbp.route('/store/status/', methods=['POST', 'PUT'])
+# @login_required
+def orders():
+    # POST, fetch orders from DB
+    if request.method == 'POST':
+        body = request.get_json()
+
+        # TODO: implement permissions and auth
+
+        try:
+            validate(body, schema=schema.get_orders_schema)
+        except:
+            return jsonify({'message': 'Bad Request'}), 400
+
+        team_id = body['team_id']
+
+        # Call to fetch items from DB
+        message, error, data = order.get_teams_transactions(team_id)
+
+        if error:
+            return jsonify({'message': 'Failed to fetch orders'}), 400
+
+        return jsonify(data), 200
+
+    # PUT, update order status
+    if request.method == 'PUT':
+        body = request.get_json()
+
+        # TODO: implement permissions and auth
+
+        try:
+            validate(body, schema=schema.update_order_schema)
+        except:
+            return jsonify({'message': 'Bad Request'}), 400
+
+        order_id, status = body['order_id'], body['status']
+
+        # Call to fetch items from DB
+        message, error, data = order.edit_transactions_status(order_id, status)
+
+        if error:
+            print(message)
+            return jsonify({'message': 'Failed to update order status'}), 400
+
+        return jsonify({'message': 'Succesfully updated order status'}), 200
