@@ -192,6 +192,7 @@ CREATE TABLE public.items
     name text COLLATE pg_catalog."default" NOT NULL,
     price real NOT NULL,
     active boolean NOT NULL,
+    archived boolean NOT NULL,
     CONSTRAINT item_id PRIMARY KEY (item_id),
     CONSTRAINT team_id FOREIGN KEY (team_id)
         REFERENCES public.teams (team_id) MATCH SIMPLE
