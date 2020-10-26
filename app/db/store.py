@@ -56,7 +56,7 @@ def remove_store_item(item_id):
             '''
             UPDATE items
             SET archived=true
-            WHERE item_id=%s
+            WHERE item_id=%s;
             ''',
             (item_id,)
         )
@@ -75,7 +75,7 @@ def remove_store_item(item_id):
         return res
 
 
-def edit_store_items_name(item_id, new_item_name):
+def edit_store_item(item_id, name, price, active, types):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
@@ -83,101 +83,27 @@ def edit_store_items_name(item_id, new_item_name):
         cursor.execute(
             '''
             UPDATE items
-            SET name=%s
+            SET name=%s, price=%s, active=%s
             WHERE item_id=%s;
             ''',
-            (new_item_name, item_id)
+            (name, price, active, item_id)
         )
+
+        for t in types:
+            cursor.execute(
+                '''
+                UPDATE itemtypes
+                SET label=%s
+                WHERE type_id=%s;
+                ''',
+                (t['label'], t['type_id'])
+            )
 
         return_data = connection_manager.get_data(cursor)
         cursor.close()
         connection_manager.disconnect(connection)
 
-        res = ('successfully edited store items name', False, return_data)
-        return res
-
-    except Exception as e:
-        cursor.close()
-        connection_manager.disconnect(connection)
-        res = (str(e), True, {})
-        return res
-
-
-def edit_store_items_price(item_id, new_item_price):
-    try:
-        connection = connection_manager.connect()
-        cursor = connection.cursor()
-
-        cursor.execute(
-            '''
-            UPDATE items
-            SET price=%s
-            WHERE item_id=%s;
-            ''',
-            (new_item_price, item_id)
-        )
-
-        return_data = connection_manager.get_data(cursor)
-        cursor.close()
-        connection_manager.disconnect(connection)
-
-        res = ('successfully edited store items price', False, return_data)
-        return res
-
-    except Exception as e:
-        cursor.close()
-        connection_manager.disconnect(connection)
-        res = (str(e), True, {})
-        return res
-
-
-def edit_store_items_visibility(item_id, active):
-    try:
-        connection = connection_manager.connect()
-        cursor = connection.cursor()
-
-        cursor.execute(
-            '''
-            UPDATE items
-            SET active=%s
-            WHERE item_id=%s;
-            ''',
-            (active, item_id)
-        )
-
-        return_data = connection_manager.get_data(cursor)
-        cursor.close()
-        connection_manager.disconnect(connection)
-
-        res = ('successfully edited store items visibility', False, return_data)
-        return res
-
-    except Exception as e:
-        cursor.close()
-        connection_manager.disconnect(connection)
-        res = (str(e), True, {})
-        return res
-
-
-def edit_store_items_type(type_id, new_type_label):
-    try:
-        connection = connection_manager.connect()
-        cursor = connection.cursor()
-
-        cursor.execute(
-            '''
-            UPDATE itemtypes
-            SET label=%s
-            WHERE type_id=%s;
-            ''',
-            (new_type_label, type_id)
-        )
-
-        return_data = connection_manager.get_data(cursor)
-        cursor.close()
-        connection_manager.disconnect(connection)
-
-        res = ('successfully edited store items type', False, return_data)
+        res = ('successfully edited store item', False, return_data)
         return res
 
     except Exception as e:
@@ -319,7 +245,7 @@ def get_teams_store_items(team_id):
                 FROM itemtypes
                 INNER JOIN items
                 USING (item_id)
-                WHERE item_id=%s
+                WHERE item_id=%s;
                 ''',
                 (row['item_id'],)
             )
@@ -332,7 +258,7 @@ def get_teams_store_items(team_id):
                 FROM itempictures
                 INNER JOIN items
                 USING (item_id)
-                WHERE item_id=%s
+                WHERE item_id=%s;
                 ''',
                 (row['item_id'],)
             )
