@@ -8,8 +8,8 @@ def create_store_item(team_id, name, price, active, types, pictures):
 
         cursor.execute(
             '''
-            INSERT INTO items (team_id, name, price, active)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO items (team_id, name, price, active, archived)
+            VALUES (%s, %s, %s, %s, false)
             RETURNING item_id;
             ''',
             (team_id, name, price, active)
@@ -54,13 +54,11 @@ def remove_store_item(item_id):
 
         cursor.execute(
             '''
-            DELETE FROM itemtypes
-            WHERE item_id=%s;
-            
-            DELETE FROM items
-            WHERE item_id=%s;
+            UPDATE items
+            SET archived=true
+            WHERE item_id=%s
             ''',
-            (item_id, item_id)
+            (item_id,)
         )
 
         return_data = connection_manager.get_data(cursor)
@@ -308,7 +306,7 @@ def get_teams_store_items(team_id):
             '''
             SELECT *
             FROM items
-            WHERE team_id=%s;
+            WHERE team_id=%s AND archived=false;
             ''',
             (team_id,)
         )
