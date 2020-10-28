@@ -30,12 +30,12 @@ def decodeJWT(access_token_enc):
 
 def isPlayer(username, team_id):
     permLevel = db.get_users_permission_level_for_team(username, team_id)
-    return permLevel == 0
+    return permLevel >= 0
 
 def isAdmin(username, team_id):
     permLevel = db.get_users_permission_level_for_team(username, team_id)
-    return permLevel == 1
+    return permLevel >= 1
 
 def isOwner(username, team_id):
     permLevel = db.get_users_permission_level_for_team(username, team_id)
-    return permLevel == 2
+    return permLevel >= 2
