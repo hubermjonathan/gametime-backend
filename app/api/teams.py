@@ -68,6 +68,7 @@ def viewTeam():
     player = body['player']
 
     if not auth.isOwner(player, team):
+        print("Is not owner")
         return "", 401
 
     message, error, data = db.get_team(team)
