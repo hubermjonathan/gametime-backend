@@ -26,8 +26,6 @@ all functions return a tuple of the format (message string, error boolean, data 
         create_store_item(team_id, name, price, active, types, pictures) - returns item_id
         remove_store_item(item_id) - returns nothing
         edit_store_item(item_id, name, price, active, types) - returns nothing
-        create_store_item_type(item_id, type_label) - returns type_id
-        remove_store_items_type(type_id) - returns nothing
         create_store_item_picture(item_id, image_url) - returns picture_id
         remove_store_items_picture(picture_id) - returns nothing
         get_teams_store_items(team_id) - returns an array of store items
