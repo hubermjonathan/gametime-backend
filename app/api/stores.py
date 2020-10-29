@@ -95,13 +95,11 @@ def delete_item():
 
         item_id = body['item_id']
 
-        # TODO: talk to jon about this one
-
-        # Call to register a transaction
-        # message, error, data = store.remove_store_item(item_id)
-        # if error:
-        #     print(message)
-        #     return jsonify({'message': 'Failed to delete item'}), 400
+        # Call to archive and retire item
+        message, error, data = store.remove_store_item(item_id)
+        if error:
+            print(message)
+            return jsonify({'message': 'Failed to delete item'}), 400
 
         return jsonify({'message': 'Succesfully deleted item'}), 200
 
@@ -120,17 +118,17 @@ def edit_item():
         except:
             return jsonify({'message': 'Bad Request'}), 400
 
-        team_id, name, types, picture, price, active = body['team_id'], body[
+        item_id, name, types, picture, price, active = body['item_id'], body[
             'name'], body['types'], body['picture'], body['price'], body['active']
 
-        # TODO: talk to jon about this one too
-
         # Call to update item details
-        # if error:
-        #     print(message)
-        #     return jsonify({'message': 'Failed to delete item'}), 400
+        message, error, data = store.edit_store_item(
+            item_id, name, price, active, types)
+        if error:
+            print(message)
+            return jsonify({'message': 'Failed to update item'}), 400
 
-        return jsonify({'message': 'Succesfully deleted item'}), 200
+        return jsonify({'message': 'Succesfully updated item'}), 200
 
 
 @storesbp.route('/store/status/', methods=['POST', 'PUT'])
@@ -171,6 +169,7 @@ def orders():
         order_id, status = body['order_id'], body['status']
 
         # Call to fetch items from DB
+        # TODO: Currently succeeds when updating a transaction that does not exist.
         message, error, data = order.edit_transactions_status(order_id, status)
 
         if error:
