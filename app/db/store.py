@@ -89,14 +89,21 @@ def edit_store_item(item_id, name, price, active, types):
             (name, price, active, item_id)
         )
 
+        cursor.execute(
+            '''
+            DELETE FROM itemtypes
+            WHERE item_id=%s;
+            ''',
+            (item_id,)
+        )
+
         for t in types:
             cursor.execute(
                 '''
-                UPDATE itemtypes
-                SET label=%s
-                WHERE type_id=%s;
+                INSERT INTO itemtypes (item_id, label)
+                VALUES (%s, %s);
                 ''',
-                (t['label'], t['type_id'])
+                (item_id, t)
             )
 
         return_data = connection_manager.get_data(cursor)
@@ -104,61 +111,6 @@ def edit_store_item(item_id, name, price, active, types):
         connection_manager.disconnect(connection)
 
         res = ('successfully edited store item', False, return_data)
-        return res
-
-    except Exception as e:
-        cursor.close()
-        connection_manager.disconnect(connection)
-        res = (str(e), True, {})
-        return res
-
-
-def create_store_item_type(item_id, type_label):
-    try:
-        connection = connection_manager.connect()
-        cursor = connection.cursor()
-
-        cursor.execute(
-            '''
-            INSERT INTO itemtypes (item_id, label)
-            VALUES (%s, %s)
-            RETURNING type_id;
-            ''',
-            (item_id, type_label)
-        )
-
-        return_data = connection_manager.get_data(cursor)
-        cursor.close()
-        connection_manager.disconnect(connection)
-
-        res = ('successfully created store item type', False, return_data)
-        return res
-
-    except Exception as e:
-        cursor.close()
-        connection_manager.disconnect(connection)
-        res = (str(e), True, {})
-        return res
-
-
-def remove_store_items_type(type_id):
-    try:
-        connection = connection_manager.connect()
-        cursor = connection.cursor()
-
-        cursor.execute(
-            '''
-            DELETE FROM itemtypes
-            WHERE type_id=%s;
-            ''',
-            (type_id,)
-        )
-
-        return_data = connection_manager.get_data(cursor)
-        cursor.close()
-        connection_manager.disconnect(connection)
-
-        res = ('successfully removed store items type', False, return_data)
         return res
 
     except Exception as e:
