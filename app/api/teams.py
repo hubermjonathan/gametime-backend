@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, abort
 from jsonschema import validate
-from flask_login import login_required
+from flask_login import login_required, current_user
 from ..db import teams as db
 from . import schema
 from .. import auth
@@ -98,13 +98,11 @@ def editPermissions():
     return jsonify(data), 200
 
 
-@teamsbp.route('/team/join/<id>', methods=['POST'])
+@teamsbp.route('/team/join/<id>', methods=['GET'])
 @login_required
 def joinTeam(id):
-    # POST, player joins team
-    body = request.get_json()
-
-    user = body['user']
+    # GET, player joins team
+    user = current_user.user_id
 
     message, error, data = db.add_user_to_team(user, id)
 
