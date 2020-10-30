@@ -17,6 +17,7 @@ DROP TABLE IF EXISTS public.transactionsitems CASCADE;
 
 
 DROP SEQUENCE IF EXISTS public.teams_team_id_seq;
+DROP SEQUENCE IF EXISTS public.usersteams_userteam_id_seq;
 
 
 -- Function: create_code(bigint)
@@ -124,6 +125,8 @@ CREATE TABLE public.teams
     invite_code integer NOT NULL DEFAULT create_code(nextval('teams_team_id_seq'::regclass)),
     name text COLLATE pg_catalog."default" NOT NULL,
     fund_id integer NOT NULL DEFAULT create_code(nextval('teams_team_id_seq'::regclass)),
+    fund_start timestamp without time zone,
+    fund_end timestamp without time zone,
     fund_goal integer,
     fund_current integer,
     fund_desc text COLLATE pg_catalog."default",
@@ -396,6 +399,8 @@ CREATE TABLE public.usersteams
     team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     permission_level integer NOT NULL,
     fund_id integer NOT NULL DEFAULT create_code(nextval('usersteams_userteam_id_seq'::regclass)),
+    fund_start timestamp without time zone,
+    fund_end timestamp without time zone,
     fund_goal integer,
     fund_current integer,
     fund_desc text COLLATE pg_catalog."default",

@@ -6,6 +6,8 @@ all functions return a tuple of the format (message string, error boolean, data 
         edit_users_fundraiser(fund_id, goal, current, description) - returns nothing
         get_teams_fundraiser(fund_id) - returns fund_id, fund_goal, fund_current, and fund_desc
         get_users_fundraiser(fund_id) - returns fund_id, fund_goal, fund_current, and fund_desc
+        start_teams_fundraiser(fund_id, end_date) - returns nothing
+        start_users_fundraiser(fund_id, end_date) - returns nothing
     groups:
         create_group(name, parent_team_id) - returns group_id
         add_user_to_group(user_id, group_id) - returns nothing
