@@ -1,7 +1,7 @@
 from ..db.connection_manager import connection_manager
 
 
-def edit_teams_fundraiser_goal(team_id, fundraiser_goal):
+def edit_teams_fundraiser(fund_id, goal, current, description):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
@@ -9,17 +9,17 @@ def edit_teams_fundraiser_goal(team_id, fundraiser_goal):
         cursor.execute(
             '''
             UPDATE teams
-            SET fund_goal=%s
-            WHERE team_id=%s;
+            SET fund_goal=%s, fund_current=%s, fund_desc=%s
+            WHERE fund_id=%s;
             ''',
-            (fundraiser_goal, team_id)
+            (goal, current, description, fund_id)
         )
 
         return_data = connection_manager.get_data(cursor)
         cursor.close()
         connection_manager.disconnect(connection)
 
-        res = ('successfully edited teams fundraiser goal', False, return_data)
+        res = ('successfully edited teams fundraiser', False, return_data)
         return res
     except Exception as e:
         cursor.close()
@@ -28,63 +28,7 @@ def edit_teams_fundraiser_goal(team_id, fundraiser_goal):
         return res
 
 
-def edit_teams_fundraiser_current(team_id, fundraiser_current):
-    try:
-        connection = connection_manager.connect()
-        cursor = connection.cursor()
-
-        cursor.execute(
-            '''
-            UPDATE teams
-            SET fund_current=%s
-            WHERE team_id=%s;
-            ''',
-            (fundraiser_current, team_id)
-        )
-
-        return_data = connection_manager.get_data(cursor)
-        cursor.close()
-        connection_manager.disconnect(connection)
-
-        res = ('successfully edited teams fundraiser current amount',
-               False, return_data)
-        return res
-    except Exception as e:
-        cursor.close()
-        connection_manager.disconnect(connection)
-        res = (str(e), True, {})
-        return res
-
-
-def edit_teams_fundraiser_description(team_id, fundraiser_description):
-    try:
-        connection = connection_manager.connect()
-        cursor = connection.cursor()
-
-        cursor.execute(
-            '''
-            UPDATE teams
-            SET fund_desc=%s
-            WHERE team_id=%s;
-            ''',
-            (fundraiser_description, team_id)
-        )
-
-        return_data = connection_manager.get_data(cursor)
-        cursor.close()
-        connection_manager.disconnect(connection)
-
-        res = ('successfully edited teams fundraiser description',
-               False, return_data)
-        return res
-    except Exception as e:
-        cursor.close()
-        connection_manager.disconnect(connection)
-        res = (str(e), True, {})
-        return res
-
-
-def edit_users_fundraiser_goal_for_team(user_id, team_id, fundraiser_goal):
+def edit_users_fundraiser(fund_id, goal, current, description):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
@@ -92,17 +36,17 @@ def edit_users_fundraiser_goal_for_team(user_id, team_id, fundraiser_goal):
         cursor.execute(
             '''
             UPDATE usersteams
-            SET fund_goal=%s
-            WHERE user_id=%s AND team_id=%s;
+            SET fund_goal=%s, fund_current=%s, fund_desc=%s
+            WHERE fund_id=%s;
             ''',
-            (fundraiser_goal, user_id, team_id)
+            (goal, current, description, fund_id)
         )
 
         return_data = connection_manager.get_data(cursor)
         cursor.close()
         connection_manager.disconnect(connection)
 
-        res = ('successfully edited users fundraiser goal for team',
+        res = ('successfully edited users fundraiser for team',
                False, return_data)
         return res
     except Exception as e:
@@ -112,25 +56,25 @@ def edit_users_fundraiser_goal_for_team(user_id, team_id, fundraiser_goal):
         return res
 
 
-def edit_users_fundraiser_current_for_team(user_id, team_id, fundraiser_current):
+def get_teams_fundraiser(fund_id):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            UPDATE usersteams
-            SET fund_current=%s
-            WHERE user_id=%s AND team_id=%s;
+            SELECT fund_id, fund_goal, fund_current, fund_desc
+            FROM teams
+            WHERE fund_id=%s;
             ''',
-            (fundraiser_current, user_id, team_id)
+            (fund_id,)
         )
 
         return_data = connection_manager.get_data(cursor)
         cursor.close()
         connection_manager.disconnect(connection)
 
-        res = ('successfully edited users fundraiser current amount for team',
+        res = ('successfully retrieved teams fundraiser information',
                False, return_data)
         return res
     except Exception as e:
@@ -140,46 +84,18 @@ def edit_users_fundraiser_current_for_team(user_id, team_id, fundraiser_current)
         return res
 
 
-def edit_users_fundraiser_description_for_team(user_id, team_id, fundraiser_description):
+def get_users_fundraiser(fund_id):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            UPDATE usersteams
-            SET fund_desc=%s
-            WHERE user_id=%s AND team_id=%s;
-            ''',
-            (fundraiser_description, user_id, team_id)
-        )
-
-        return_data = connection_manager.get_data(cursor)
-        cursor.close()
-        connection_manager.disconnect(connection)
-
-        res = ('successfully edited users fundraiser description for team',
-               False, return_data)
-        return res
-    except Exception as e:
-        cursor.close()
-        connection_manager.disconnect(connection)
-        res = (str(e), True, {})
-        return res
-
-
-def get_users_fundraiser_for_team(user_id, team_id):
-    try:
-        connection = connection_manager.connect()
-        cursor = connection.cursor()
-
-        cursor.execute(
-            '''
-            SELECT fund_goal, fund_current, fund_desc
+            SELECT fund_id, fund_goal, fund_current, fund_desc
             FROM usersteams
-            WHERE user_id=%s AND team_id=%s;
+            WHERE fund_id=%s;
             ''',
-            (user_id, team_id)
+            (fund_id,)
         )
 
         return_data = connection_manager.get_data(cursor)

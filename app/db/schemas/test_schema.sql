@@ -58,6 +58,21 @@ ALTER SEQUENCE public.teams_team_id_seq
 GRANT ALL ON SEQUENCE public.teams_team_id_seq TO test;
 
 
+-- Sequence: public.usersteams_userteam_id_seq
+
+CREATE SEQUENCE public.usersteams_userteam_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE public.usersteams_userteam_id_seq
+    OWNER to test;
+
+GRANT ALL ON SEQUENCE public.usersteams_userteam_id_seq TO test;
+
+
 -- Table: public.users
 
 CREATE TABLE public.users
@@ -108,11 +123,12 @@ CREATE TABLE public.teams
     team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     invite_code integer NOT NULL DEFAULT create_code(nextval('teams_team_id_seq'::regclass)),
     name text COLLATE pg_catalog."default" NOT NULL,
-    fund_goal integer NOT NULL,
-    fund_current integer NOT NULL,
-    fund_desc text COLLATE pg_catalog."default" NOT NULL,
-    account_number integer NOT NULL,
-    routing_number integer NOT NULL,
+    fund_id integer NOT NULL DEFAULT create_code(nextval('teams_team_id_seq'::regclass)),
+    fund_goal integer,
+    fund_current integer,
+    fund_desc text COLLATE pg_catalog."default",
+    account_number integer,
+    routing_number integer,
     owner uuid NOT NULL DEFAULT uuid_generate_v4(),
     CONSTRAINT team_id PRIMARY KEY (team_id),
     CONSTRAINT owner FOREIGN KEY (owner)
@@ -379,9 +395,10 @@ CREATE TABLE public.usersteams
     user_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     permission_level integer NOT NULL,
-    fund_goal integer NOT NULL,
-    fund_current integer NOT NULL,
-    fund_desc text COLLATE pg_catalog."default" NOT NULL,
+    fund_id integer NOT NULL DEFAULT create_code(nextval('usersteams_userteam_id_seq'::regclass)),
+    fund_goal integer,
+    fund_current integer,
+    fund_desc text COLLATE pg_catalog."default",
     CONSTRAINT team_id FOREIGN KEY (team_id)
         REFERENCES public.teams (team_id) MATCH SIMPLE
         ON UPDATE NO ACTION
