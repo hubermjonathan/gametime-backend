@@ -49,7 +49,7 @@ def getFundraisingInfo(id):
             "donation_goal": data.get('fund_goal'),
             "description":  data.get('fund_desc'),
             "start_timestamp":  data.get('fund_start'),
-            "end_timestamp":  data  .get('fund_end')
+            "end_timestamp":  data.get('fund_end')
         }
 
         return ret
@@ -65,7 +65,7 @@ def getFundraisingInfo(id):
             "donation_goal": data.get('fund_goal'),
             "description":  data.get('fund_desc'),
             "start_timestamp":  data.get('fund_start'),
-            "end_timestamp":  data  .get('fund_end')
+            "end_timestamp":  data.get('fund_end')
         }
 
         return ret

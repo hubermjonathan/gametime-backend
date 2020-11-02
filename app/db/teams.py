@@ -234,6 +234,30 @@ def get_team(team_id):
         res = (str(e), True, {})
         return res
 
+def get_all_teams():
+    try:
+        connection = connection_manager.connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT name, team_id
+            FROM teams
+            '''
+        )
+        teams_info = connection_manager.get_data(cursor)
+
+        return_data = teams_info
+        cursor.close()
+        connection_manager.disconnect(connection)
+
+        res = ('successfully retrieved team', False, teams_info)
+        return res
+    except Exception as e:
+        cursor.close()
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
 
 def get_teams_phone_numbers(team_id):
     try:
