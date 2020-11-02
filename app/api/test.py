@@ -55,8 +55,8 @@ def create_user(name):
 
 @testbp.route('/test')
 def test():
-    result = db.store.edit_store_item(
-        'bc2222e8-b533-4181-8cff-6016492ecaef', 'test', 11, True, ['hi', 'there'])
+    result = db.fundraising.start_users_fundraiser(
+        1967657373, 1604096457314)
     return jsonify(result), 200
 
 
@@ -175,17 +175,17 @@ def create_test_data():
     db.messages.create_direct_message(player10, coach2, 'player10-team2-m1')
 
     item1 = db.store.create_store_item(
-        team1, 'team1-item1', 10, True, ['small', 'medium'], [test_image])
+        team1, 'team1-item1', 10, test_image, True, ['small', 'medium'])
     item1 = item1[2]['item_id']
     type1 = 'large'
-    item2 = db.store.create_store_item(team1, 'team1-item2', 10, True, [], [])
+    item2 = db.store.create_store_item(team1, 'team1-item2', 10, test_image, True, [])
     item2 = item2[2]['item_id']
 
     item3 = db.store.create_store_item(
-        team2, 'team2-item3', 10, True, ['xl', 'xxl'], [test_image])
+        team2, 'team2-item3', 10, test_image, True, ['xl', 'xxl'])
     item3 = item3[2]['item_id']
     type3 = 'xxxl'
-    item4 = db.store.create_store_item(team2, 'team2-item4', 10, True, [], [])
+    item4 = db.store.create_store_item(team2, 'team2-item4', 10, test_image, True, [])
     item4 = item4[2]['item_id']
 
     db.transactions.create_transaction(team1, test_email, 'test_address', [

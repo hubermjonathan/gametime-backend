@@ -22,7 +22,7 @@ all functions return a tuple of the format (message string, error boolean, data 
     schema:
         reset_tables(database) - returns nothing
     store:
-        create_store_item(team_id, name, price, picture, active, types, pictures) - returns item_id
+        create_store_item(team_id, name, price, picture, active, types) - returns item_id
         remove_store_item(item_id) - returns nothing
         edit_store_item(item_id, name, price, picture, active, types) - returns nothing
         get_teams_store_items(team_id) - returns an array of store items
