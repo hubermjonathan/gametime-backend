@@ -11,7 +11,7 @@ def test():
     res = db.print_all_team_fundraisers()
     db.print_all_user_fundraisers()
 
-    return res
+    return res, 200
 
 @fundraisingbp.route('/fundraising/user', methods=['GET'])
 def getUserFundId():
@@ -20,7 +20,7 @@ def getUserFundId():
 
     res = db.get_user_fund_id(user, team)
 
-    return res
+    return res[2], 200
 
 @fundraisingbp.route('/fundraising/team', methods=['GET'])
 def getTeamFundId():
@@ -28,7 +28,7 @@ def getTeamFundId():
 
     res = db.get_team_fund_id(team)
 
-    return res
+    return res[2], 200
 
 
 @fundraisingbp.route('/fundraising/id/<id>', methods=['GET'])
@@ -52,7 +52,7 @@ def getFundraisingInfo(id):
             "end_timestamp":  data.get('fund_end')
         }
 
-        return ret
+        return ret, 200
     else:
         res = db.get_users_fundraiser(id)
 
