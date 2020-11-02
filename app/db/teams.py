@@ -242,16 +242,15 @@ def get_all_teams():
         cursor.execute(
             '''
             SELECT name, team_id
-            FROM teams
+            FROM teams;
             '''
         )
-        teams_info = connection_manager.get_data(cursor)
 
-        return_data = teams_info
+        return_data = connection_manager.get_data(cursor, 'teams')
         cursor.close()
         connection_manager.disconnect(connection)
 
-        res = ('successfully retrieved team', False, teams_info)
+        res = ('successfully retrieved all teams', False, return_data)
         return res
     except Exception as e:
         cursor.close()
