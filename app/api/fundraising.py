@@ -1,8 +1,9 @@
 from flask import Blueprint, jsonify, request, abort
 from ..db import fundraising as db
 from . import schema
-import json
+import boto3
 from flask_login import login_required, current_user
+from os import environ
 
 fundraisingbp = Blueprint('fundraisingbp', __name__)
 
@@ -58,8 +59,6 @@ def getTeamFundraisingInfo(teamid):
 
     data = res[2]
     ret = {
-        "first_name": "TBD",
-        "last_name": "TBD",
         "team_name": "TBD",
         "donation_total": data.get('fund_current'),
         "donation_goal": data.get('fund_goal'),
@@ -71,10 +70,11 @@ def getTeamFundraisingInfo(teamid):
     return ret
         
 @fundraisingbp.route('/fundraising/start', methods=['POST'])
+@login_required
 def startFundraiser():
     body = request.get_json()
 
-    fundId = body['fundId']
+    teamId = body['teamId']
     endTime = body['endTime']
     isTeam = body['isTeam']
 
@@ -93,7 +93,7 @@ def startFundraiser():
 def editFundraisingInfo():
     body = request.get_json()
     
-    fundId = body['fundId']
+    teamId = body['fundId']
     goal = body['goal']
     current = body['current']
     description = body['description']
@@ -116,7 +116,38 @@ def emailInfo():
         print("Post")
         
 
-@fundraisingbp.route('/fundraising/email', methods=['GET'])
+@fundraisingbp.route('/fundraising/email', methods=['POST'])
 @login_required
 def sendEmail():
-    print("Send")
+    body = request.get_json()
+
+    recipient = body['recipient']
+    subject = body['subject']
+    emailBody = body['body']
+
+    client = boto3.client('ses',
+        aws_access_key_id=environ.get('AWS_ACCESS_KEY'),
+        aws_secret_access_key=environ.get('AWS_SECRET_ACCESS_KEY'),
+        region_name='us-east-1')
+    
+    response = client.send_email(
+    Source='gametimefundraising@gmail.com',
+    Destination={
+        'ToAddresses': [
+            recipient,
+        ]
+    },
+    Message={
+        'Subject': {
+            'Data': subject,
+            'Charset': 'utf-8'
+        },
+        'Body': {
+            'Text': {
+                'Data': emailBody,
+                'Charset': 'utf-8'
+            }
+        }
+    })
+
+    return "Email sent"
