@@ -3,5 +3,5 @@
   "python.linting.enabled": true,
   "editor.formatOnSave": true,
   "python.formatting.provider": "autopep8",
-  "python.pythonPath": "/usr/sbin/python"
+  "python.pythonPath": ".venv/bin/python"
 }

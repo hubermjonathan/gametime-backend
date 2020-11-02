@@ -72,7 +72,7 @@ def create_item():
 
         # Call to register a transaction
         message, error, data = store.create_store_item(
-            team_id, name, price, active, types, picture)
+            team_id, name, price, picture, active, types)
         if error:
             return jsonify({'message': 'Failed to create item'}), 400
 
@@ -123,7 +123,7 @@ def edit_item():
 
         # Call to update item details
         message, error, data = store.edit_store_item(
-            item_id, name, price, active, types)
+            item_id, name, price, picture, active, types)
         if error:
             print(message)
             return jsonify({'message': 'Failed to update item'}), 400
@@ -131,7 +131,7 @@ def edit_item():
         return jsonify({'message': 'Succesfully updated item'}), 200
 
 
-@storesbp.route('/store/status/', methods=['POST', 'PUT'])
+@storesbp.route('/store/status', methods=['POST', 'PUT'])
 # @login_required
 def orders():
     # POST, fetch orders from DB
