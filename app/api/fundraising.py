@@ -31,7 +31,7 @@ def getTeamFundId():
     return res
 
 
-@fundraisingbp.route('/fundraising/<id>', methods=['GET'])
+@fundraisingbp.route('/fundraising/id/<id>', methods=['GET'])
 def getFundraisingInfo(id):
     # Check if res was valid because we do not know which table
     # this fundraiser is in
@@ -72,17 +72,24 @@ def getFundraisingInfo(id):
         
 @fundraisingbp.route('/fundraising/start', methods=['POST'])
 def startFundraiser():
+    body = request.get_json()
+
     fundId = body['fundId']
     endTime = body['endTime']
 
     try:
-        db.start_teams_fundraiser(fundId, endTime)
+        print(db.start_teams_fundraiser(fundId, endTime))
     except:
-        db.start_users_fundraiser(fundId, endTime)
+        print(db.start_users_fundraiser(fundId, endTime))
+
+
+    return "Done"
 
 @fundraisingbp.route('/fundraising/edit', methods=['POST'])
 @login_required
 def editFundraisingInfo():
+    body = request.get_json()
+    
     fundId = body['fundId']
     goal = body['goal']
     current = body['current']
