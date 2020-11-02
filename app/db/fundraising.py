@@ -161,7 +161,7 @@ def edit_users_fundraiser(fund_id, goal, current, description):
         return res
 
 
-def get_teams_fundraiser(fund_id):
+def get_teams_fundraiser(team_id):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
@@ -170,9 +170,9 @@ def get_teams_fundraiser(fund_id):
             '''
             SELECT fund_id, fund_goal, fund_current, fund_desc, fund_start, fund_end
             FROM teams
-            WHERE fund_id=%s;
+            WHERE team_id=%s;
             ''',
-            (fund_id,)
+            (team_id)
         )
 
         return_data = connection_manager.get_data(cursor)
@@ -189,7 +189,7 @@ def get_teams_fundraiser(fund_id):
         return res
 
 
-def get_users_fundraiser(fund_id):
+def get_users_fundraiser(user_id, team_id):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
@@ -198,9 +198,9 @@ def get_users_fundraiser(fund_id):
             '''
             SELECT fund_id, fund_goal, fund_current, fund_desc, fund_start, fund_end
             FROM usersteams
-            WHERE fund_id=%s;
+            WHERE user_id=%s AND team_id=%s;
             ''',
-            (fund_id,)
+            (user_id, team_id)
         )
 
         return_data = connection_manager.get_data(cursor)

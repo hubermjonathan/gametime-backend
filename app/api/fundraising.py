@@ -31,44 +31,44 @@ def getTeamFundId():
     return res[2], 200
 
 
-@fundraisingbp.route('/fundraising/id/<id>', methods=['GET'])
-def getFundraisingInfo(id):
+@fundraisingbp.route('/fundraising/id/<teamid>/<userid>', methods=['GET'])
+def getUserFundraisingInfo(teamid, userid):
     # Check if res was valid because we do not know which table
     # this fundraiser is in
-    res = db.get_teams_fundraiser(id)
+    res = db.get_users_fundraiser(userid, teamid)
 
-    # Check if dictionary is empty
-    if bool(res[2]):
-        data = res[2]
-        print(data)
-        ret = {
-            "first_name": "TBD",
-            "last_name": "TBD",
-            "team_name": "TBD",
-            "donation_total": data.get('fund_current'),
-            "donation_goal": data.get('fund_goal'),
-            "description":  data.get('fund_desc'),
-            "start_timestamp":  data.get('fund_start'),
-            "end_timestamp":  data.get('fund_end')
-        }
+    data = res[2]
+    print(data)
+    ret = {
+        "first_name": "TBD",
+        "last_name": "TBD",
+        "team_name": "TBD",
+        "donation_total": data.get('fund_current'),
+        "donation_goal": data.get('fund_goal'),
+        "description":  data.get('fund_desc'),
+        "start_timestamp":  data.get('fund_start'),
+        "end_timestamp":  data.get('fund_end')
+    }
 
-        return ret, 200
-    else:
-        res = db.get_users_fundraiser(id)
+    return ret, 200
 
-        data = res[2]
-        ret = {
-            "first_name": "TBD",
-            "last_name": "TBD",
-            "team_name": "TBD",
-            "donation_total": data.get('fund_current'),
-            "donation_goal": data.get('fund_goal'),
-            "description":  data.get('fund_desc'),
-            "start_timestamp":  data.get('fund_start'),
-            "end_timestamp":  data.get('fund_end')
-        }
+@fundraisingbp.route('/fundraising/id/<teamid>', methods=['GET'])
+def getTeamFundraisingInfo(teamid):
+    res = db.get_teams_fundraiser(teamid)
 
-        return ret
+    data = res[2]
+    ret = {
+        "first_name": "TBD",
+        "last_name": "TBD",
+        "team_name": "TBD",
+        "donation_total": data.get('fund_current'),
+        "donation_goal": data.get('fund_goal'),
+        "description":  data.get('fund_desc'),
+        "start_timestamp":  data.get('fund_start'),
+        "end_timestamp":  data.get('fund_end')
+    }
+
+    return ret
         
 @fundraisingbp.route('/fundraising/start', methods=['POST'])
 def startFundraiser():
@@ -76,14 +76,17 @@ def startFundraiser():
 
     fundId = body['fundId']
     endTime = body['endTime']
+    isTeam = body['isTeam']
 
-    try:
-        print(db.start_teams_fundraiser(fundId, endTime))
-    except:
-        print(db.start_users_fundraiser(fundId, endTime))
+    res = ""
 
+    if isTeam:
+        res = db.start_teams_fundraiser(fundId, endTime)
+    else:
+        res = db.start_users_fundraiser(fundId, endTime)
 
-    return "Done"
+    print(res)
+    return res
 
 @fundraisingbp.route('/fundraising/edit', methods=['POST'])
 @login_required
