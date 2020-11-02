@@ -2,6 +2,7 @@ from app.api.users import usersbp
 from app.api.messages import messagesbp
 from app.api.teams import teamsbp
 from app.api.groups import groupsbp
+from app.api.stores import storesbp
 from app.api.test import testbp
 import os
 import sys
@@ -74,5 +75,6 @@ def create_app(test_config=None):
     app.register_blueprint(teamsbp)
     app.register_blueprint(messagesbp)
     app.register_blueprint(usersbp)
+    app.register_blueprint(storesbp)
 
     return app
