@@ -89,7 +89,7 @@ def startFundraiser():
 @login_required
 def editFundraisingInfo():
     body = request.get_json()
-
+    
     fundId = body['fundId']
     goal = body['goal']
     current = body['current']
