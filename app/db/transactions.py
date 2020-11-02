@@ -85,7 +85,7 @@ def get_teams_transactions(team_id):
         for transaction in transactions['transactions']:
             cursor.execute(
                 '''
-				SELECT transactionsitems.label, transactionsitems.quantity items.item_id, items.name
+				SELECT transactionsitems.label, transactionsitems.quantity, items.item_id, items.name
                 FROM transactionsitems
                 INNER JOIN items
                 USING (item_id)

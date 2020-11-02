@@ -208,7 +208,7 @@ CREATE TABLE public.items
     item_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     name text COLLATE pg_catalog."default" NOT NULL,
-    price real NOT NULL,
+    price double precision NOT NULL,
     picture text COLLATE pg_catalog."default" NOT NULL,
     active boolean NOT NULL,
     archived boolean NOT NULL,
