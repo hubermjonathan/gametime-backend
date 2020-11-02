@@ -55,20 +55,8 @@ def create_user(name):
 
 @testbp.route('/test')
 def test():
-    # result = db.transactions.create_transaction('c48c1075-5909-492c-9a52-d6ebf38e375e', 'buyer', 'buyer', [
-    #     {
-    #         'item_id': 'a3988830-0d1f-49ef-a717-e50315d36bae',
-    #         'quantity': 1,
-    #         'type_id': '745393db-6132-4b15-b094-a84122a8acd6'
-    #     },
-    #     {
-    #         'item_id': '918c7288-c4f9-4b1a-a3fc-3120bf239c9d',
-    #         'quantity': 2,
-    #         'type_id': None
-    #     }
-    # ])
-    result = db.transactions.get_teams_transactions(
-        '0d644392-4839-4c0f-8475-bd4525adc01c')
+    result = db.store.edit_store_item(
+        'bc2222e8-b533-4181-8cff-6016492ecaef', 'test', 11, True, ['hi', 'there'])
     return jsonify(result), 200
 
 
@@ -189,16 +177,14 @@ def create_test_data():
     item1 = db.store.create_store_item(
         team1, 'team1-item1', 10, True, ['small', 'medium'], [test_image])
     item1 = item1[2]['item_id']
-    type1 = db.store.create_store_item_type(item1, 'large')
-    type1 = type1[2]['type_id']
+    type1 = 'large'
     item2 = db.store.create_store_item(team1, 'team1-item2', 10, True, [], [])
     item2 = item2[2]['item_id']
 
     item3 = db.store.create_store_item(
         team2, 'team2-item3', 10, True, ['xl', 'xxl'], [test_image])
     item3 = item3[2]['item_id']
-    type3 = db.store.create_store_item_type(item3, 'xxl')
-    type3 = type3[2]['type_id']
+    type3 = 'xxxl'
     item4 = db.store.create_store_item(team2, 'team2-item4', 10, True, [], [])
     item4 = item4[2]['item_id']
 
@@ -206,24 +192,24 @@ def create_test_data():
         {
             'item_id': item1,
             'quantity': 1,
-            'type_id': type1
+            'label': type1
         },
         {
             'item_id': item2,
             'quantity': 2,
-            'type_id': None
+            'label': None
         }
     ])
     db.transactions.create_transaction(team2, test_email, 'test_address', [
         {
             'item_id': item3,
             'quantity': 1,
-            'type_id': type3
+            'label': type3
         },
         {
             'item_id': item4,
             'quantity': 2,
-            'type_id': None
+            'label': None
         }
     ])
 

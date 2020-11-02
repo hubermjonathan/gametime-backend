@@ -8,8 +8,8 @@ def create_team(name, owner_user_id):
 
         cursor.execute(
             '''
-            INSERT INTO teams (name, fund_goal, fund_current, fund_desc, account_number, routing_number, owner)
-            VALUES (%s, 0, 0, '', 0, 0, %s)
+            INSERT INTO teams (name, owner)
+            VALUES (%s, %s)
             RETURNING team_id;
             ''',
             (name, owner_user_id)
@@ -18,8 +18,8 @@ def create_team(name, owner_user_id):
 
         cursor.execute(
             '''
-            INSERT INTO usersteams (user_id, team_id, permission_level, fund_goal, fund_current, fund_desc)
-            VALUES (%s, %s, 2, 0, 0, '');
+            INSERT INTO usersteams (user_id, team_id, permission_level)
+            VALUES (%s, %s, 2);
             ''',
             (owner_user_id, return_data['team_id'])
         )
@@ -51,8 +51,8 @@ def add_user_to_team(user_id, team_id):
 
         cursor.execute(
             '''
-            INSERT INTO usersteams (user_id, team_id, permission_level, fund_goal, fund_current, fund_desc)
-            VALUES (%s, %s, 0, 0, 0, '');
+            INSERT INTO usersteams (user_id, team_id, permission_level)
+            VALUES (%s, %s, 0);
 
             INSERT INTO usersgroups (user_id, group_id)
             VALUES (%s, (

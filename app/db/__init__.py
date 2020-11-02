@@ -2,13 +2,12 @@
 FUNCTIONS:
 all functions return a tuple of the format (message string, error boolean, data object)
     fundraising:
-        edit_teams_fundraiser_goal(team_id, fundraiser_goal) - returns nothing
-        edit_teams_fundraiser_current(team_id, fundraiser_current) - returns nothing
-        edit_teams_fundraiser_description(team_id, fundraiser_description) - returns nothing
-        edit_users_fundraiser_goal_for_team(user_id, team_id, fundraiser_goal) - returns nothing
-        edit_users_fundraiser_current_for_team(user_id, team_id, fundraiser_current) - returns nothing
-        edit_users_fundraiser_description_for_team(user_id, team_id, fundraiser_description) - returns nothing
-        get_users_fundraiser_for_team(user_id, team_id) - returns fund_goal, fund_current, and fund_desc
+        edit_teams_fundraiser(fund_id, goal, current, description) - returns nothing
+        edit_users_fundraiser(fund_id, goal, current, description) - returns nothing
+        get_teams_fundraiser(fund_id) - returns fund_id, fund_goal, fund_current, and fund_desc
+        get_users_fundraiser(fund_id) - returns fund_id, fund_goal, fund_current, and fund_desc
+        start_teams_fundraiser(fund_id, end_date) - returns nothing
+        start_users_fundraiser(fund_id, end_date) - returns nothing
     groups:
         create_group(name, parent_team_id) - returns group_id
         add_user_to_group(user_id, group_id) - returns nothing
@@ -26,8 +25,6 @@ all functions return a tuple of the format (message string, error boolean, data 
         create_store_item(team_id, name, price, active, types, pictures) - returns item_id
         remove_store_item(item_id) - returns nothing
         edit_store_item(item_id, name, price, active, types) - returns nothing
-        create_store_item_type(item_id, type_label) - returns type_id
-        remove_store_items_type(type_id) - returns nothing
         create_store_item_picture(item_id, image_url) - returns picture_id
         remove_store_items_picture(picture_id) - returns nothing
         get_teams_store_items(team_id) - returns an array of store items
