@@ -1,6 +1,58 @@
 from ..db.connection_manager import connection_manager
 from datetime import datetime
 
+def print_all_team_fundraisers():
+    try:
+        connection = connection_manager.connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT *
+            FROM teams
+            ''',
+        )
+
+        return_data = connection_manager.get_data(cursor)
+        cursor.close()
+        connection_manager.disconnect(connection)
+
+        print(return_data)
+
+        res = ('successfully got user fund id', False, return_data)
+        return res
+    except Exception as e:
+        cursor.close()
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
+
+def print_all_user_fundraisers():
+    try:
+        connection = connection_manager.connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT *
+            FROM usersteams
+            ''',
+        )
+
+        return_data = connection_manager.get_data(cursor)
+        cursor.close()
+        connection_manager.disconnect(connection)
+
+        print(return_data)
+
+        res = ('successfully got user fund id', False, return_data)
+        return res
+    except Exception as e:
+        cursor.close()
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
+
 def get_user_fund_id(user_id, team_id):
     try:
         connection = connection_manager.connect()
@@ -116,7 +168,7 @@ def get_teams_fundraiser(fund_id):
 
         cursor.execute(
             '''
-            SELECT fund_id, fund_goal, fund_current, fund_desc
+            SELECT fund_id, fund_goal, fund_current, fund_desc, fund_start, fund_end
             FROM teams
             WHERE fund_id=%s;
             ''',
@@ -144,7 +196,7 @@ def get_users_fundraiser(fund_id):
 
         cursor.execute(
             '''
-            SELECT fund_id, fund_goal, fund_current, fund_desc
+            SELECT fund_id, fund_goal, fund_current, fund_desc, fund_start, fund_end
             FROM usersteams
             WHERE fund_id=%s;
             ''',

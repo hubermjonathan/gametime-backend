@@ -1,12 +1,20 @@
 from flask import Blueprint, jsonify, request, abort
 from ..db import fundraising as db
 from . import schema
+import json
 from flask_login import login_required, current_user
 
-groupsbp = Blueprint('fundraisingbp', __name__)
+fundraisingbp = Blueprint('fundraisingbp', __name__)
 
-@fundraisingsbp.route('/fundraising/user', methods=['GET'])
-def getUserFundId(id):
+@fundraisingbp.route('/fundraising/test', methods=['GET'])
+def test():
+    res = db.print_all_team_fundraisers()
+    db.print_all_user_fundraisers()
+
+    return res
+
+@fundraisingbp.route('/fundraising/user', methods=['GET'])
+def getUserFundId():
     user = request.args.get('user')
     team = request.args.get('team')
 
@@ -14,8 +22,8 @@ def getUserFundId(id):
 
     return res
 
-@fundraisingsbp.route('/fundraising/team', methods=['GET'])
-def getTeamFundId(id):
+@fundraisingbp.route('/fundraising/team', methods=['GET'])
+def getTeamFundId():
     team = request.args.get('team')
 
     res = db.get_team_fund_id(team)
@@ -23,16 +31,46 @@ def getTeamFundId(id):
     return res
 
 
-@fundraisingsbp.route('/fundraising/<id>', methods=['GET'])
+@fundraisingbp.route('/fundraising/<id>', methods=['GET'])
 def getFundraisingInfo(id):
     # Check if res was valid because we do not know which table
     # this fundraiser is in
-    try:
-        res = db.get_teams_fundraiser(id)
-    except:
+    res = db.get_teams_fundraiser(id)
+
+    # Check if dictionary is empty
+    if bool(res[2]):
+        data = res[2]
+        print(data)
+        ret = {
+            "first_name": "TBD",
+            "last_name": "TBD",
+            "team_name": "TBD",
+            "donation_total": data.get('fund_current'),
+            "donation_goal": data.get('fund_goal'),
+            "description":  data.get('fund_desc'),
+            "start_timestamp":  data.get('fund_start'),
+            "end_timestamp":  data  .get('fund_end')
+        }
+
+        return ret
+    else:
         res = db.get_users_fundraiser(id)
+
+        data = res[2]
+        ret = {
+            "first_name": "TBD",
+            "last_name": "TBD",
+            "team_name": "TBD",
+            "donation_total": data.get('fund_current'),
+            "donation_goal": data.get('fund_goal'),
+            "description":  data.get('fund_desc'),
+            "start_timestamp":  data.get('fund_start'),
+            "end_timestamp":  data  .get('fund_end')
+        }
+
+        return ret
         
-@fundraisingsbp.route('/fundraising/start', methods=['POST'])
+@fundraisingbp.route('/fundraising/start', methods=['POST'])
 def startFundraiser():
     fundId = body['fundId']
     endTime = body['endTime']
@@ -42,9 +80,9 @@ def startFundraiser():
     except:
         db.start_users_fundraiser(fundId, endTime)
 
-@fundraisingsbp.route('/fundraising/edit', methods=['POST'])
+@fundraisingbp.route('/fundraising/edit', methods=['POST'])
 @login_required
-def getFundraisingInfo():
+def editFundraisingInfo():
     fundId = body['fundId']
     goal = body['goal']
     current = body['current']
@@ -56,15 +94,19 @@ def getFundraisingInfo():
     except:
         db.edit_users_fundraiser(fundId, goal, current, description)
 
-@fundraisingsbp.route('/fundraising/template', methods=['GET','POST'])
+@fundraisingbp.route('/fundraising/template', methods=['GET','POST'])
 @login_required
 def emailInfo():
 
     if request.method == 'GET':
         # return call to db function to retrive it
-    else if request.method == 'POST':
+        print("Get")
+    elif request.method == 'POST':
+        # return call to db function to set it
+        print("Post")
         
 
-@fundraisingsbp.route('/fundraising/email', methods=['GET'])
+@fundraisingbp.route('/fundraising/email', methods=['GET'])
 @login_required
 def sendEmail():
+    print("Send")
