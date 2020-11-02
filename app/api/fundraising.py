@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request, abort
 from ..db import fundraising as db
 from . import schema
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 groupsbp = Blueprint('fundraisingbp', __name__)
 
@@ -43,13 +43,28 @@ def startFundraiser():
         db.start_users_fundraiser(fundId, endTime)
 
 @fundraisingsbp.route('/fundraising/edit', methods=['POST'])
+@login_required
 def getFundraisingInfo():
     fundId = body['fundId']
     goal = body['goal']
     current = body['current']
     description = body['description']
 
+    # Verify user has permission for that team/userteam
     try:
         db.edit_teams_fundraiser(fundId, goal, current, description)
     except:
         db.edit_users_fundraiser(fundId, goal, current, description)
+
+@fundraisingsbp.route('/fundraising/template', methods=['GET','POST'])
+@login_required
+def emailInfo():
+
+    if request.method == 'GET':
+        # return call to db function to retrive it
+    else if request.method == 'POST':
+        
+
+@fundraisingsbp.route('/fundraising/email', methods=['GET'])
+@login_required
+def sendEmail():
