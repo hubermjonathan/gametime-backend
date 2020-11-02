@@ -9,7 +9,7 @@ from .. import auth
 storesbp = Blueprint('storesbp', __name__)
 
 
-@storesbp.route('/store/items/', methods=['GET'])
+@storesbp.route('/store/items', methods=['GET'])
 # @login_required
 def get_items():
     # GET, fetch items from DB
@@ -131,7 +131,7 @@ def edit_item():
         return jsonify({'message': 'Succesfully updated item'}), 200
 
 
-@storesbp.route('/store/status/', methods=['POST', 'PUT'])
+@storesbp.route('/store/status', methods=['POST', 'PUT'])
 # @login_required
 def orders():
     # POST, fetch orders from DB
