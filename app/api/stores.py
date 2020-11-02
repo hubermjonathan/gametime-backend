@@ -9,7 +9,7 @@ from .. import auth
 storesbp = Blueprint('storesbp', __name__)
 
 
-@storesbp.route('/store/items', methods=['GET'])
+@storesbp.route('/store/items/', methods=['GET'])
 # @login_required
 def get_items():
     # GET, fetch items from DB
