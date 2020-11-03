@@ -78,6 +78,15 @@ def viewTeam():
 
     return jsonify(data), 200
 
+@teamsbp.route('/team/view/all', methods=['GET'])
+def viewAllTeams():
+    message, error, data = db.get_all_teams()
+
+    if error:
+        return "", 500
+
+    return jsonify(data), 200
+
 
 @teamsbp.route('/team/permissions', methods=['POST'])
 @login_required

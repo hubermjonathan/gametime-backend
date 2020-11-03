@@ -34,6 +34,7 @@ all functions return a tuple of the format (message string, error boolean, data 
         get_users_permission_level_for_team(user_id, team_id) - returns permission_level
         edit_teams_name(team_id, new_team_name) - returns nothing
         get_team(team_id) - returns the team info and its users
+        get_all_teams() - returns all teams
         get_teams_phone_numbers(team_id) - returns an array of phone numbers
         get_teams_groups(team_id) - returns an array of groups and their users
     transactions:
