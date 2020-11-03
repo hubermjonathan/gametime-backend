@@ -5,7 +5,6 @@ DROP TABLE IF EXISTS public.files CASCADE;
 DROP TABLE IF EXISTS public.transactions CASCADE;
 DROP TABLE IF EXISTS public.items CASCADE;
 DROP TABLE IF EXISTS public.itemtypes CASCADE;
-DROP TABLE IF EXISTS public.itempictures CASCADE;
 DROP TABLE IF EXISTS public.groups CASCADE;
 DROP TABLE IF EXISTS public.groupmessages CASCADE;
 DROP TABLE IF EXISTS public.messages CASCADE;
@@ -209,7 +208,8 @@ CREATE TABLE public.items
     item_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     name text COLLATE pg_catalog."default" NOT NULL,
-    price real NOT NULL,
+    price double precision NOT NULL,
+    picture text COLLATE pg_catalog."default" NOT NULL,
     active boolean NOT NULL,
     archived boolean NOT NULL,
     CONSTRAINT item_id PRIMARY KEY (item_id),
@@ -247,28 +247,6 @@ ALTER TABLE public.itemtypes
     OWNER to test;
 
 GRANT ALL ON TABLE public.itemtypes TO test;
-
-
--- Table: public.itempictures
-
-CREATE TABLE public.itempictures
-(
-    picture_id uuid NOT NULL DEFAULT uuid_generate_v4(),
-    item_id uuid NOT NULL DEFAULT uuid_generate_v4(),
-    image_url text COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT picture_id PRIMARY KEY (picture_id),
-    CONSTRAINT item_id FOREIGN KEY (item_id)
-        REFERENCES public.items (item_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE public.itempictures
-    OWNER to test;
-
-GRANT ALL ON TABLE public.itempictures TO test;
 
 
 -- Table: public.groups

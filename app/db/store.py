@@ -1,18 +1,18 @@
 from ..db.connection_manager import connection_manager
 
 
-def create_store_item(team_id, name, price, active, types, pictures):
+def create_store_item(team_id, name, price, picture, active, types):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            INSERT INTO items (team_id, name, price, active, archived)
-            VALUES (%s, %s, %s, %s, false)
+            INSERT INTO items (team_id, name, price, picture, active, archived)
+            VALUES (%s, %s, %s, %s, %s, false)
             RETURNING item_id;
             ''',
-            (team_id, name, price, active)
+            (team_id, name, price, picture, active)
         )
         return_data = connection_manager.get_data(cursor)
 
@@ -23,15 +23,6 @@ def create_store_item(team_id, name, price, active, types, pictures):
                 VALUES (%s, %s);
                 ''',
                 (return_data['item_id'], t)
-            )
-
-        for picture in pictures:
-            cursor.execute(
-                '''
-                INSERT INTO itempictures (item_id, image_url)
-                VALUES (%s, %s);
-                ''',
-                (return_data['item_id'], picture)
             )
 
         cursor.close()
@@ -75,19 +66,29 @@ def remove_store_item(item_id):
         return res
 
 
-def edit_store_item(item_id, name, price, active, types):
+def edit_store_item(item_id, name, price, picture, active, types):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
-        cursor.execute(
-            '''
-            UPDATE items
-            SET name=%s, price=%s, active=%s
-            WHERE item_id=%s;
-            ''',
-            (name, price, active, item_id)
-        )
+        if picture == '':
+            cursor.execute(
+                '''
+                UPDATE items
+                SET name=%s, price=%s, active=%s
+                WHERE item_id=%s;
+                ''',
+                (name, price, active, item_id)
+            )
+        else:
+            cursor.execute(
+                '''
+                UPDATE items
+                SET name=%s, price=%s, picture=%s, active=%s
+                WHERE item_id=%s;
+                ''',
+                (name, price, picture, active, item_id)
+            )
 
         cursor.execute(
             '''
@@ -111,61 +112,6 @@ def edit_store_item(item_id, name, price, active, types):
         connection_manager.disconnect(connection)
 
         res = ('successfully edited store item', False, return_data)
-        return res
-
-    except Exception as e:
-        cursor.close()
-        connection_manager.disconnect(connection)
-        res = (str(e), True, {})
-        return res
-
-
-def create_store_item_picture(item_id, image_url):
-    try:
-        connection = connection_manager.connect()
-        cursor = connection.cursor()
-
-        cursor.execute(
-            '''
-            INSERT INTO itempictures (item_id, image_url)
-            VALUES (%s, %s)
-            RETURNING picture_id;
-            ''',
-            (item_id, image_url)
-        )
-
-        return_data = connection_manager.get_data(cursor)
-        cursor.close()
-        connection_manager.disconnect(connection)
-
-        res = ('successfully created store item picture', False, return_data)
-        return res
-
-    except Exception as e:
-        cursor.close()
-        connection_manager.disconnect(connection)
-        res = (str(e), True, {})
-        return res
-
-
-def remove_store_items_picture(picture_id):
-    try:
-        connection = connection_manager.connect()
-        cursor = connection.cursor()
-
-        cursor.execute(
-            '''
-            DELETE FROM itempictures
-            WHERE picture_id=%s;
-            ''',
-            (picture_id,)
-        )
-
-        return_data = connection_manager.get_data(cursor)
-        cursor.close()
-        connection_manager.disconnect(connection)
-
-        res = ('successfully removed store items picture', False, return_data)
         return res
 
     except Exception as e:
@@ -204,21 +150,7 @@ def get_teams_store_items(team_id):
             types = connection_manager.get_data(
                 cursor, 'types')
 
-            cursor.execute(
-                '''
-                SELECT itempictures.picture_id, itempictures.image_url
-                FROM itempictures
-                INNER JOIN items
-                USING (item_id)
-                WHERE item_id=%s;
-                ''',
-                (row['item_id'],)
-            )
-            pictures = connection_manager.get_data(
-                cursor, 'pictures')
-
             row.update(types)
-            row.update(pictures)
             store_items.append(row)
 
         return_data = {
