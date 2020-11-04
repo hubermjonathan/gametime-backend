@@ -91,7 +91,9 @@ def startFundraiser():
     isTeam = body['isTeam']
 
     if isTeam == "True":
-        return db.start_teams_fundraiser(teamId, startTime, endTime, goal, description), 200
+        res = db.start_teams_fundraiser(teamId, startTime, endTime, goal, description)
+        print(res)
+        ret res, 200
     else:
         return db.start_users_fundraiser(current_user.user_id, teamId, startTime, endTime, goal, description), 200
 
