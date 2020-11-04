@@ -81,7 +81,6 @@ def getTeamFundraisingInfo(teamid):
 @login_required
 def startFundraiser():
     body = request.get_json()
-    print(body)
 
     teamId = body['teamId']
     startTime = body['startTime']
@@ -92,6 +91,7 @@ def startFundraiser():
     isTeam = body['isTeam']
 
     if isTeam == "True":
+        print(teamId)
         return db.start_teams_fundraiser(teamId, startTime, endTime, goal, description)[0], 200
     else:
         return db.start_users_fundraiser(current_user.user_id, teamId, startTime, endTime, goal, description)[0], 200
@@ -113,9 +113,9 @@ def editFundraisingInfo():
 
     # Verify user has permission for that team/userteam
     if isTeam == "True":
-        return db.edit_teams_fundraiser(teamId, goal, current, description)
+        return db.edit_teams_fundraiser(teamId, goal, current, description),200
     else:
-        return db.edit_users_fundraiser(current_user.user_id, team_id, goal, current, description)
+        return db.edit_users_fundraiser(current_user.user_id, team_id, goal, current, description), 200
 
 @fundraisingbp.route('/fundraising/template', methods=['GET','POST'])
 @login_required
