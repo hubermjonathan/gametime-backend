@@ -96,6 +96,8 @@ def startFundraiser():
     else:
         return db.start_users_fundraiser(current_user.user_id, teamId, startTime, endTime, goal, current, description)
 
+    #Note 404
+
 @fundraisingbp.route('/fundraising/edit', methods=['POST'])
 @login_required
 def editFundraisingInfo():

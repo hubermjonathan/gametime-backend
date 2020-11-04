@@ -218,7 +218,7 @@ def get_users_fundraiser(user_id, team_id):
         return res
 
 
-def start_teams_fundraiser(team_id, start_date, end_date, goal, current, description):
+def start_teams_fundraiser(team_id, start_date, end_date, goal, description):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
@@ -229,7 +229,7 @@ def start_teams_fundraiser(team_id, start_date, end_date, goal, current, descrip
             SET fund_start=%s, fund_end=%s, fund_goal=%s, fund_current=%s, fund_desc=%s
             WHERE team_id=%s;
             ''',
-            (start_date, end_date, goal, current, description, team_id)
+            (start_date, end_date, goal, 0, description, team_id)
         )
 
         return_data = connection_manager.get_data(cursor)
@@ -246,7 +246,7 @@ def start_teams_fundraiser(team_id, start_date, end_date, goal, current, descrip
         return res
 
 
-def start_users_fundraiser(user_id, team_id, start_date, end_date, goal, current, description):
+def start_users_fundraiser(user_id, team_id, start_date, end_date, goal, description):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
@@ -257,7 +257,7 @@ def start_users_fundraiser(user_id, team_id, start_date, end_date, goal, current
             SET fund_start=%s, fund_end=%s, fund_goal=%s, fund_current=%s, fund_desc=%s
             WHERE user_id=%s AND team_id=%s;
             ''',
-            (start_date, start_date, goal, current, description, user_id, team_id)
+            (start_date, start_date, goal, 0, description, user_id, team_id)
         )
 
         return_data = connection_manager.get_data(cursor)
