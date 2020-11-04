@@ -86,15 +86,14 @@ def startFundraiser():
     startTime = body['startTime']
     endTime = body['endTime']
     goal = body['goal']
-    current = body['current']
     description = body['description']
 
     isTeam = body['isTeam']
 
     if isTeam == "True":
-        return db.start_teams_fundraiser(teamId, startTime, endTime, goal, current, description)
+        return db.start_teams_fundraiser(teamId, startTime, endTime, goal, description)
     else:
-        return db.start_users_fundraiser(current_user.user_id, teamId, startTime, endTime, goal, current, description)
+        return db.start_users_fundraiser(current_user.user_id, teamId, startTime, endTime, goal, description)
 
     #Note 404
 
