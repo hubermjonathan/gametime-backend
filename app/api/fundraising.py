@@ -83,13 +83,18 @@ def startFundraiser():
     body = request.get_json()
 
     teamId = body['teamId']
+    startTime = body['startTime']
     endTime = body['endTime']
+    goal = body['goal']
+    current = body['current']
+    description = body['description']
+
     isTeam = body['isTeam']
 
     if isTeam == "True":
-        return db.start_teams_fundraiser(teamId, endTime)
+        return db.start_teams_fundraiser(teamId, startTime, endTime, goal, current, description)
     else:
-        return db.start_users_fundraiser(current_user.user_id, teamId, endTime)
+        return db.start_users_fundraiser(current_user.user_id, teamId, startTime, endTime, goal, current, description)
 
 @fundraisingbp.route('/fundraising/edit', methods=['POST'])
 @login_required
@@ -97,6 +102,7 @@ def editFundraisingInfo():
     body = request.get_json()
     
     teamId = body['teamId']
+    endTime = body['endTime']
     goal = body['goal']
     current = body['current']
     description = body['description']
