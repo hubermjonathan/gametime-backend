@@ -12,7 +12,9 @@ def test():
     res = db.print_all_team_fundraisers()
     db.print_all_user_fundraisers()
 
-    return res, 200
+    print(res)
+
+    return res[2], 200
 
 @fundraisingbp.route('/fundraising/user', methods=['GET'])
 def getUserFundId():
@@ -55,19 +57,25 @@ def getUserFundraisingInfo(teamid, userid):
 
 @fundraisingbp.route('/fundraising/id/<teamid>', methods=['GET'])
 def getTeamFundraisingInfo(teamid):
-    res = db.get_teams_fundraiser(teamid)
+    try:
+        res = db.get_teams_fundraiser(teamid)
 
-    data = res[2]
-    ret = {
-        "team_name": "TBD",
-        "donation_total": data.get('fund_current'),
-        "donation_goal": data.get('fund_goal'),
-        "description":  data.get('fund_desc'),
-        "start_timestamp":  data.get('fund_start'),
-        "end_timestamp":  data.get('fund_end')
-    }
+        print(res)
+        data = res[2]
+        print(data)
+        ret = {
+            "team_name": "TBD",
+            "donation_total": data.get('fund_current'),
+            "donation_goal": data.get('fund_goal'),
+            "description":  data.get('fund_desc'),
+            "start_timestamp":  data.get('fund_start'),
+            "end_timestamp":  data.get('fund_end')
+        }
 
-    return ret
+        return ret
+    except e as Exception:
+        print(e)
+        return "hi"
         
 @fundraisingbp.route('/fundraising/start', methods=['POST'])
 @login_required
@@ -78,31 +86,28 @@ def startFundraiser():
     endTime = body['endTime']
     isTeam = body['isTeam']
 
-    res = ""
-
-    if isTeam:
-        res = db.start_teams_fundraiser(fundId, endTime)
+    if isTeam == "True":
+        return db.start_teams_fundraiser(teamId, endTime)
     else:
-        res = db.start_users_fundraiser(fundId, endTime)
-
-    print(res)
-    return res
+        return db.start_users_fundraiser(current_user.user_id, teamId, endTime)
 
 @fundraisingbp.route('/fundraising/edit', methods=['POST'])
 @login_required
 def editFundraisingInfo():
     body = request.get_json()
     
-    teamId = body['fundId']
+    teamId = body['teamId']
     goal = body['goal']
     current = body['current']
     description = body['description']
 
+    isTeam = body['isTeam']
+
     # Verify user has permission for that team/userteam
-    try:
-        db.edit_teams_fundraiser(fundId, goal, current, description)
-    except:
-        db.edit_users_fundraiser(fundId, goal, current, description)
+    if isTeam == "True":
+        return db.edit_teams_fundraiser(teamId, goal, current, description)
+    else:
+        return db.edit_users_fundraiser(current_user.user_id, team_id, goal, current, description)
 
 @fundraisingbp.route('/fundraising/template', methods=['GET','POST'])
 @login_required

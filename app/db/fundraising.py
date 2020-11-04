@@ -65,7 +65,7 @@ def get_user_fund_id(user_id, team_id):
             WHERE user_id=%s
             AND team_id=%s;
             ''',
-            (user_id, team_id)
+            (user_id, team_id,)
         )
 
         return_data = connection_manager.get_data(cursor)
@@ -91,7 +91,7 @@ def get_team_fund_id(user_id, team_id):
             FROM teams
             WHERE team_id=%s;
             ''',
-            (team_id)
+            (team_id,)
         )
 
         return_data = connection_manager.get_data(cursor)
@@ -106,7 +106,7 @@ def get_team_fund_id(user_id, team_id):
         res = (str(e), True, {})
         return res
 
-def edit_teams_fundraiser(fund_id, goal, current, description):
+def edit_teams_fundraiser(team_id, goal, current, description):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
@@ -115,9 +115,9 @@ def edit_teams_fundraiser(fund_id, goal, current, description):
             '''
             UPDATE teams
             SET fund_goal=%s, fund_current=%s, fund_desc=%s
-            WHERE fund_id=%s;
+            WHERE team_id=%s;
             ''',
-            (goal, current, description, fund_id)
+            (goal, current, description, team_id,)
         )
 
         return_data = connection_manager.get_data(cursor)
@@ -133,7 +133,7 @@ def edit_teams_fundraiser(fund_id, goal, current, description):
         return res
 
 
-def edit_users_fundraiser(fund_id, goal, current, description):
+def edit_users_fundraiser(user_id, team_id, goal, current, description):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
@@ -142,9 +142,9 @@ def edit_users_fundraiser(fund_id, goal, current, description):
             '''
             UPDATE usersteams
             SET fund_goal=%s, fund_current=%s, fund_desc=%s
-            WHERE fund_id=%s;
+            WHERE user_id=%s AND team_id=%s;
             ''',
-            (goal, current, description, fund_id)
+            (goal, current, description, user_id, team_id,)
         )
 
         return_data = connection_manager.get_data(cursor)
@@ -163,6 +163,7 @@ def edit_users_fundraiser(fund_id, goal, current, description):
 
 def get_teams_fundraiser(team_id):
     try:
+        print(team_id)
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
@@ -172,7 +173,7 @@ def get_teams_fundraiser(team_id):
             FROM teams
             WHERE team_id=%s;
             ''',
-            (team_id)
+            (team_id,)
         )
 
         return_data = connection_manager.get_data(cursor)
@@ -217,7 +218,7 @@ def get_users_fundraiser(user_id, team_id):
         return res
 
 
-def start_teams_fundraiser(fund_id, end_date):
+def start_teams_fundraiser(team_id, end_date):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
@@ -226,9 +227,9 @@ def start_teams_fundraiser(fund_id, end_date):
             '''
             UPDATE teams
             SET fund_start=%s, fund_end=%s
-            WHERE fund_id=%s;
+            WHERE team_id=%s;
             ''',
-            (datetime.now(), datetime.fromtimestamp(end_date / 1000), fund_id)
+            (datetime.now(), datetime.fromtimestamp(end_date / 1000), team_id)
         )
 
         return_data = connection_manager.get_data(cursor)
@@ -245,7 +246,7 @@ def start_teams_fundraiser(fund_id, end_date):
         return res
 
 
-def start_users_fundraiser(fund_id, end_date):
+def start_users_fundraiser(user_id, team_id, end_date):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
@@ -254,9 +255,9 @@ def start_users_fundraiser(fund_id, end_date):
             '''
             UPDATE usersteams
             SET fund_start=%s, fund_end=%s
-            WHERE fund_id=%s;
+            WHERE user_id=%s AND team_id=%s;
             ''',
-            (datetime.now(), datetime.fromtimestamp(end_date / 1000), fund_id)
+            (datetime.now(), datetime.fromtimestamp(end_date / 1000), user_id, team_id)
         )
 
         return_data = connection_manager.get_data(cursor)
