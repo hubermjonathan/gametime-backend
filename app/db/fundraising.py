@@ -117,7 +117,7 @@ def edit_teams_fundraiser(team_id, goal, current, description, end_time):
             SET fund_goal=%s, fund_current=%s, fund_desc=%s, fund_end=%s
             WHERE team_id=%s;
             ''',
-            (goal, current, description, end_time, team_id,)
+            (goal, current, description, datetime.fromtimestamp(end_time), team_id,)
         )
 
         return_data = connection_manager.get_data(cursor)
@@ -144,7 +144,7 @@ def edit_users_fundraiser(user_id, team_id, goal, current, description, end_time
             SET fund_goal=%s, fund_current=%s, fund_desc=%s, fund_end=%s
             WHERE user_id=%s AND team_id=%s;
             ''',
-            (goal, current, description, end_time, user_id, team_id,)
+            (goal, current, description, datetime.fromtimestamp(end_time), user_id, team_id,)
         )
 
         return_data = connection_manager.get_data(cursor)
