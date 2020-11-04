@@ -229,7 +229,7 @@ def start_teams_fundraiser(team_id, start_date, end_date, goal, description):
             SET fund_start=%s, fund_end=%s, fund_goal=%s, fund_current=%s, fund_desc=%s
             WHERE team_id=%s;
             ''',
-            (start_date, end_date, goal, 0, description, team_id)
+            (datetime.fromtimestamp(start_date), datetime.fromtimestamp(end_date), goal, 0, description, team_id)
         )
 
         return_data = connection_manager.get_data(cursor)
@@ -257,7 +257,7 @@ def start_users_fundraiser(user_id, team_id, start_date, end_date, goal, descrip
             SET fund_start=%s, fund_end=%s, fund_goal=%s, fund_current=%s, fund_desc=%s
             WHERE user_id=%s AND team_id=%s;
             ''',
-            (start_date, start_date, goal, 0, description, user_id, team_id)
+            (datetime.fromtimestamp(start_date), datetime.fromtimestamp(end_date), goal, 0, description, user_id, team_id)
         )
 
         return_data = connection_manager.get_data(cursor)
