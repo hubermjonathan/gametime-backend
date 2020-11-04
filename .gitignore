@@ -4,4 +4,4 @@ __pycache__/
 app/.env
 app/.jsonKey
 nohup.out
-
+.venv
