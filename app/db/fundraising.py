@@ -106,7 +106,7 @@ def get_team_fund_id(user_id, team_id):
         res = (str(e), True, {})
         return res
 
-def edit_teams_fundraiser(team_id, goal, current, description):
+def edit_teams_fundraiser(team_id, goal, current, description, end_time):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
@@ -114,10 +114,10 @@ def edit_teams_fundraiser(team_id, goal, current, description):
         cursor.execute(
             '''
             UPDATE teams
-            SET fund_goal=%s, fund_current=%s, fund_desc=%s
+            SET fund_goal=%s, fund_current=%s, fund_desc=%s, fund_end=%s
             WHERE team_id=%s;
             ''',
-            (goal, current, description, team_id,)
+            (goal, current, description, end_time, team_id,)
         )
 
         return_data = connection_manager.get_data(cursor)
@@ -133,7 +133,7 @@ def edit_teams_fundraiser(team_id, goal, current, description):
         return res
 
 
-def edit_users_fundraiser(user_id, team_id, goal, current, description):
+def edit_users_fundraiser(user_id, team_id, goal, current, description, end_time):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
@@ -141,10 +141,10 @@ def edit_users_fundraiser(user_id, team_id, goal, current, description):
         cursor.execute(
             '''
             UPDATE usersteams
-            SET fund_goal=%s, fund_current=%s, fund_desc=%s
+            SET fund_goal=%s, fund_current=%s, fund_desc=%s, fund_end=%s
             WHERE user_id=%s AND team_id=%s;
             ''',
-            (goal, current, description, user_id, team_id,)
+            (goal, current, description, end_time, user_id, team_id,)
         )
 
         return_data = connection_manager.get_data(cursor)
