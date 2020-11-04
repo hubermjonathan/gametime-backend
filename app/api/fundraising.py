@@ -118,9 +118,9 @@ def editFundraisingInfo():
     # Verify user has permission for that team/userteam
     if isTeam == "True":
         print(teamId)
-        return db.edit_teams_fundraiser(teamId, goal, current, description)[0],200
+        return db.edit_teams_fundraiser(teamId, goal, current, description, endTime)[0],200
     else:
-        return db.edit_users_fundraiser(current_user.user_id, team_id, goal, current, description)[0], 200
+        return db.edit_users_fundraiser(current_user.user_id, team_id, goal, current, description, endTime)[0], 200
 
 @fundraisingbp.route('/fundraising/template', methods=['GET','POST'])
 @login_required
