@@ -91,11 +91,9 @@ def startFundraiser():
     isTeam = body['isTeam']
 
     if isTeam == "True":
-        res = db.start_teams_fundraiser(teamId, startTime, endTime, goal, description)
-        print(res)
-        return res, 200
+        return res = db.start_teams_fundraiser(teamId, startTime, endTime, goal, description)[0], 200
     else:
-        return db.start_users_fundraiser(current_user.user_id, teamId, startTime, endTime, goal, description), 200
+        return db.start_users_fundraiser(current_user.user_id, teamId, startTime, endTime, goal, description)[0], 200
 
     #Note 404
 
