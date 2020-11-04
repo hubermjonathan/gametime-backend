@@ -4,6 +4,7 @@ from . import schema
 import boto3
 from flask_login import login_required, current_user
 from os import environ
+from datetime import datetime
 
 fundraisingbp = Blueprint('fundraisingbp', __name__)
 
@@ -49,8 +50,8 @@ def getUserFundraisingInfo(teamid, userid):
         "donation_total": data.get('fund_current'),
         "donation_goal": data.get('fund_goal'),
         "description":  data.get('fund_desc'),
-        "start_timestamp":  data.get('fund_start'),
-        "end_timestamp":  data.get('fund_end')
+        "start_timestamp":  data.get('fund_start').timestamp(),
+        "end_timestamp":  data.get('fund_end').timestamp()
     }
 
     return ret, 200
@@ -68,8 +69,8 @@ def getTeamFundraisingInfo(teamid):
             "donation_total": data.get('fund_current'),
             "donation_goal": data.get('fund_goal'),
             "description":  data.get('fund_desc'),
-            "start_timestamp":  data.get('fund_start'),
-            "end_timestamp":  data.get('fund_end')
+            "start_timestamp":  data.get('fund_start').timestamp(),
+            "end_timestamp":  data.get('fund_end').timestamp()
         }
 
         return ret
@@ -89,7 +90,7 @@ def startFundraiser():
     description = body['description']
 
     isTeam = body['isTeam']
-
+    print(teamId)
     if isTeam == "True":
         print(teamId)
         return db.start_teams_fundraiser(teamId, startTime, endTime, goal, description)[0], 200
