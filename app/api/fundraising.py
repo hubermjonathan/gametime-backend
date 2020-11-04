@@ -73,6 +73,8 @@ def getTeamFundraisingInfo(teamid):
             "end_timestamp":  data.get('fund_end').timestamp()
         }
 
+        print(ret)
+
         return ret
     except e as Exception:
         print(e)
@@ -103,7 +105,8 @@ def startFundraiser():
 @login_required
 def editFundraisingInfo():
     body = request.get_json()
-    
+    print(body)
+
     teamId = body['teamId']
     endTime = body['endTime']
     goal = body['goal']
@@ -114,6 +117,7 @@ def editFundraisingInfo():
 
     # Verify user has permission for that team/userteam
     if isTeam == "True":
+        print(teamId)
         return db.edit_teams_fundraiser(teamId, goal, current, description)[0],200
     else:
         return db.edit_users_fundraiser(current_user.user_id, team_id, goal, current, description)[0], 200
