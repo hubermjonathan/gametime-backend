@@ -55,8 +55,6 @@ def create_item():
     if request.method == 'POST':
         body = request.get_json()
 
-        # TODO: implement permissions and auth
-
         try:
             validate(body, schema=schema.create_item_schema)
         except:
@@ -69,7 +67,7 @@ def create_item():
             return jsonify({'message': 'Invalid profile picture provided'}), 400
 
         # Check permissions
-        if not auth.isAdmin(current_user, team_id) and not auth.isOwner(current_user, team_id):
+        if not auth.isAdmin(current_user.user_id, team_id) and not auth.isOwner(current_user.user_id, team_id):
             return jsonify({'message': 'Unauthorized'}), 401
 
         # Call to register a transaction
@@ -97,8 +95,8 @@ def delete_item():
 
         # Check permissions
         if(
-                not auth.isAdmin(current_user, team_id) and
-                not auth.isOwner(current_user, team_id)):
+                not auth.isAdmin(current_user.user_id, team_id) and
+                not auth.isOwner(current_user.user_id, team_id)):
             return jsonify({'message': 'Unauthorized'}), 401
 
         # Call to archive and retire item
@@ -129,7 +127,7 @@ def edit_item():
             return jsonify({'message': 'Invalid profile picture provided'}), 400
 
         # Check permissions
-        if not auth.isAdmin(current_user, team_id) and not auth.isOwner(current_user, team_id):
+        if not auth.isAdmin(current_user.user_id, team_id) and not auth.isOwner(current_user.user_id, team_id):
             return jsonify({'message': 'Unauthorized'}), 401
 
         # Call to update item details
@@ -157,8 +155,8 @@ def orders():
 
         # Check permissions
         if(
-                not auth.isAdmin(current_user, team_id) and
-                not auth.isOwner(current_user, team_id)):
+                not auth.isAdmin(current.user_id, team_id) and
+                not auth.isOwner(current.user_id, team_id)):
             return jsonify({'message': 'Unauthorized'}), 401
 
         # Call to fetch items from DB
@@ -182,8 +180,8 @@ def orders():
 
         # Check permissions
         if(
-                not auth.isAdmin(current_user, team_id) and
-                not auth.isOwner(current_user, team_id)):
+                not auth.isAdmin(current_user.user_id, team_id) and
+                not auth.isOwner(current_user.user_id, team_id)):
             return jsonify({'message': 'Unauthorized'}), 401
 
         # Edit transactions in DB

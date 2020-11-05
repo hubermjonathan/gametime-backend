@@ -109,16 +109,18 @@ def startFundraiser():
     isTeam = body['isTeam']
 
     user = current_user.user_id
-    if not auth.isOwner(user, teamId):
-        return "is not owner of team", 401
 
     if goal.find(',') != -1:
         return "comma in goal value", 400
 
     ret = ""
     if isTeam == "True":
+        if not auth.isOwner(user, teamId):
+            return "is not owner of team", 401
         ret = db.start_teams_fundraiser(teamId, startTime, endTime, goal, description)[0], 200
     else:
+        if not auth.isPlayers(user, teamId):
+            return "is not player in team", 401
         ret = db.start_users_fundraiser(current_user.user_id, teamId, startTime, endTime, goal, description)[0], 200
 
     if ret[0].find("invalid") != -1:
