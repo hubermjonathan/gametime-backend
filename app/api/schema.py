@@ -122,14 +122,6 @@ create_item_schema = {
 delete_item_schema = {
     'type': 'object',
     'properties': {
-        'item_id': {'type': 'string'}
-    }
-}
-
-# Add item to store page
-add_item_schema = {
-    'type': 'object',
-    'properties': {
         'team_id': {'type': 'string'},
         'item_id': {'type': 'string'}
     }
