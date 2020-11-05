@@ -109,7 +109,7 @@ def startFundraiser():
     isTeam = body['isTeam']
 
     user = current_user.user_id
-    if not auth.isOwner(player, teamId):
+    if not auth.isOwner(user, teamId):
         return "is not owner of team", 401
 
     if goal.find(',') != -1:
@@ -142,7 +142,7 @@ def editFundraisingInfo():
     isTeam = body['isTeam']
 
     user = current_user.user_id
-    if not auth.isPlayer(player, teamId):
+    if not auth.isPlayer(user, teamId):
         return "is not player on team", 401
 
     ret = ""
