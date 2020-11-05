@@ -169,7 +169,7 @@ def get_teams_fundraiser(team_id):
 
         cursor.execute(
             '''
-            SELECT fund_id, fund_goal, fund_current, fund_desc, fund_start, fund_end
+            SELECT name, fund_id, fund_goal, fund_current, fund_desc, fund_start, fund_end
             FROM teams
             WHERE team_id=%s;
             ''',

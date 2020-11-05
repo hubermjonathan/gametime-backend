@@ -1,5 +1,7 @@
 from flask import Blueprint, jsonify, request, abort
 from ..db import fundraising as db
+from ..db import users as userdb
+from ..db import teams as teamdb
 from . import schema
 import boto3
 from flask_login import login_required, current_user
@@ -39,33 +41,38 @@ def getTeamFundId():
 def getUserFundraisingInfo(teamid, userid):
     # Check if res was valid because we do not know which table
     # this fundraiser is in
-    res = db.get_users_fundraiser(userid, teamid)
+    fund = db.get_users_fundraiser(userid, teamid)
+    user = userdb.get_user(userid)
+    team = teamdb.get_team(teamid)
 
-    data = res[2]
-    print(data)
-    ret = {
-        "first_name": "TBD",
-        "last_name": "TBD",
-        "team_name": "TBD",
-        "donation_total": data.get('fund_current'),
-        "donation_goal": data.get('fund_goal'),
-        "description":  data.get('fund_desc'),
-        "start_timestamp":  data.get('fund_start').timestamp(),
-        "end_timestamp":  data.get('fund_end').timestamp()
-    }
+    data = fund[2]
+    try:
+        ret = {
+            "first_name": user[2].get('first_name'),
+            "last_name": user[2].get('last_name'),
+            "team_name": team[2].get('name'),
+            "donation_total": data.get('fund_current'),
+            "donation_goal": data.get('fund_goal'),
+            "description":  data.get('fund_desc'),
+            "start_timestamp":  data.get('fund_start').timestamp(),
+            "end_timestamp":  data.get('fund_end').timestamp()
+        }
 
-    return ret, 200
+        return ret, 200
+    
+    except AttributeError:
+        return "fund does not exist", 404
+    except Exception:
+        return "Server error", 500
 
 @fundraisingbp.route('/fundraising/id/<teamid>', methods=['GET'])
 def getTeamFundraisingInfo(teamid):
-    try:
-        res = db.get_teams_fundraiser(teamid)
+    fund = db.get_teams_fundraiser(teamid)
 
-        print(res)
-        data = res[2]
-        print(data)
+    data = fund[2]
+    try:
         ret = {
-            "team_name": "TBD",
+            "team_name": data.get('name'),
             "donation_total": data.get('fund_current'),
             "donation_goal": data.get('fund_goal'),
             "description":  data.get('fund_desc'),
@@ -76,9 +83,10 @@ def getTeamFundraisingInfo(teamid):
         print(ret)
 
         return ret
-    except e as Exception:
-        print(e)
-        return "hi"
+    except AttributeError:
+        return "fund does not exist", 404
+    except Exception:
+        return "Server error", 500
         
 @fundraisingbp.route('/fundraising/start', methods=['POST'])
 @login_required
