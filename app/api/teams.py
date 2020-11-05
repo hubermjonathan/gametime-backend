@@ -67,16 +67,13 @@ def viewTeam():
     team = body['team']
     user = current_user.user_id
 
-    if not auth.isOwner(user, team):
-        print("Is not owner")
-        return "", 401
-
     message, error, data = db.get_team(team)
 
     if error:
         return "", 500
 
     return jsonify(data), 200
+
 
 @teamsbp.route('/team/view/all', methods=['GET'])
 def viewAllTeams():
