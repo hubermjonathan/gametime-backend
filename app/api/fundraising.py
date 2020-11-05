@@ -105,6 +105,9 @@ def startFundraiser():
     goal = body['goal']
     description = body['description']
 
+    if goal.find(',') != -1:
+        return "comma in goal value", 400
+
     isTeam = body['isTeam']
     print(teamId)
     if isTeam == "True":
