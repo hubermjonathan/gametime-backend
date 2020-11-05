@@ -155,8 +155,8 @@ def orders():
 
         # Check permissions
         if(
-                not auth.isAdmin(current.user_id, team_id) and
-                not auth.isOwner(current.user_id, team_id)):
+                not auth.isAdmin(current_user.user_id, team_id) and
+                not auth.isOwner(current_user.user_id, team_id)):
             return jsonify({'message': 'Unauthorized'}), 401
 
         # Call to fetch items from DB
