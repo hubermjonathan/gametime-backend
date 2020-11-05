@@ -1,57 +1,6 @@
 from ..db.connection_manager import connection_manager
 from datetime import datetime
 
-def print_all_team_fundraisers():
-    try:
-        connection = connection_manager.connect()
-        cursor = connection.cursor()
-
-        cursor.execute(
-            '''
-            SELECT *
-            FROM teams
-            ''',
-        )
-
-        return_data = connection_manager.get_data(cursor)
-        cursor.close()
-        connection_manager.disconnect(connection)
-
-        print(return_data)
-
-        res = ('successfully got user fund id', False, return_data)
-        return res
-    except Exception as e:
-        cursor.close()
-        connection_manager.disconnect(connection)
-        res = (str(e), True, {})
-        return res
-
-def print_all_user_fundraisers():
-    try:
-        connection = connection_manager.connect()
-        cursor = connection.cursor()
-
-        cursor.execute(
-            '''
-            SELECT *
-            FROM usersteams
-            ''',
-        )
-
-        return_data = connection_manager.get_data(cursor)
-        cursor.close()
-        connection_manager.disconnect(connection)
-
-        print(return_data)
-
-        res = ('successfully got user fund id', False, return_data)
-        return res
-    except Exception as e:
-        cursor.close()
-        connection_manager.disconnect(connection)
-        res = (str(e), True, {})
-        return res
 
 def get_user_fund_id(user_id, team_id):
     try:
@@ -65,7 +14,7 @@ def get_user_fund_id(user_id, team_id):
             WHERE user_id=%s
             AND team_id=%s;
             ''',
-            (user_id, team_id,)
+            (user_id, team_id)
         )
 
         return_data = connection_manager.get_data(cursor)
@@ -79,6 +28,7 @@ def get_user_fund_id(user_id, team_id):
         connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
+
 
 def get_team_fund_id(user_id, team_id):
     try:
@@ -106,6 +56,7 @@ def get_team_fund_id(user_id, team_id):
         res = (str(e), True, {})
         return res
 
+
 def edit_teams_fundraiser(team_id, goal, current, description, end_time):
     try:
         connection = connection_manager.connect()
@@ -117,7 +68,7 @@ def edit_teams_fundraiser(team_id, goal, current, description, end_time):
             SET fund_goal=%s, fund_current=%s, fund_desc=%s, fund_end=%s
             WHERE team_id=%s;
             ''',
-            (goal, current, description, datetime.fromtimestamp(end_time), team_id,)
+            (goal, current, description, datetime.fromtimestamp(end_time), team_id)
         )
 
         return_data = connection_manager.get_data(cursor)
@@ -144,7 +95,7 @@ def edit_users_fundraiser(user_id, team_id, goal, current, description, end_time
             SET fund_goal=%s, fund_current=%s, fund_desc=%s, fund_end=%s
             WHERE user_id=%s AND team_id=%s;
             ''',
-            (goal, current, description, datetime.fromtimestamp(end_time), user_id, team_id,)
+            (goal, current, description, datetime.fromtimestamp(end_time), user_id, team_id)
         )
 
         return_data = connection_manager.get_data(cursor)
