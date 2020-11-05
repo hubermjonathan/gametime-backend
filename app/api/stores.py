@@ -1,3 +1,4 @@
+import re
 from flask import Blueprint, jsonify, request, abort
 from jsonschema import validate
 from flask_login import login_required, current_user

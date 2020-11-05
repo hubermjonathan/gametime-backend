@@ -1,6 +1,7 @@
 from ..db.connection_manager import connection_manager
 import boto3
 from os import environ
+import base64
 
 
 AWS = boto3.resource(
@@ -18,17 +19,17 @@ def create_store_item(team_id, name, price, picture, active, types):
         cursor.execute(
             '''
             INSERT INTO items (team_id, name, price, picture, active, archived)
-            VALUES (%s, %s, %s, %s, %s, false)
+            VALUES (%s, %s, %s, '', %s, false)
             RETURNING item_id;
             ''',
-            (team_id, name, price, picture, active)
+            (team_id, name, price, active)
         )
         return_data = connection_manager.get_data(cursor)
 
-        profile_picture = profile_picture[23:]
-        obj = AWS.Object('gametime-file-storage', f'{return_data['item_id']}.jpeg')
-        obj.put(Body=base64.b64decode(profile_picture), ACL='public-read')
-        image_url = f'https://gametime-file-storage.s3-us-east-2.amazonaws.com/{return_data['item_id']}.jpeg'
+        picture = picture[23:]
+        obj = AWS.Object('gametime-file-storage', f'{return_data["item_id"]}.jpeg')
+        obj.put(Body=base64.b64decode(picture), ACL='public-read')
+        image_url = f'https://gametime-file-storage.s3-us-east-2.amazonaws.com/{return_data["item_id"]}.jpeg'
 
         cursor.execute(
             '''
@@ -36,7 +37,7 @@ def create_store_item(team_id, name, price, picture, active, types):
             SET picture=%s
             WHERE item_id=%s;
             ''',
-            (picture, return_data['item_id'])
+            (image_url, return_data['item_id'])
         )
 
         for t in types:
