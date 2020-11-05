@@ -6,8 +6,9 @@ from ..db import teams
 from ..db import groups
 from . import schema
 import boto3
-from flask_login import login_required
+from flask_login import login_required, current_user
 from os import environ
+from .. import auth
 
 
 AWS = boto3.client(
