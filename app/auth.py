@@ -29,13 +29,22 @@ def decodeJWT(access_token_enc):
     return jwt.decode(access_token_enc, public_keys[kid], algorithms='RS256')
 
 def isPlayer(username, team_id):
-    permLevel = db.get_users_permission_level_for_team(username, team_id)[2]["permission_level"]
-    return permLevel >= 0
+    try:
+        permLevel = db.get_users_permission_level_for_team(username, team_id)[2]["permission_level"]
+        return permLevel >= 0
+    except: 
+        return False
 
 def isAdmin(username, team_id):
-    permLevel = db.get_users_permission_level_for_team(username, team_id)[2]["permission_level"]
-    return permLevel >= 1
+    try:
+        permLevel = db.get_users_permission_level_for_team(username, team_id)[2]["permission_level"]
+        return permLevel >= 1
+    except: 
+        return False
 
 def isOwner(username, team_id):
-    permLevel = db.get_users_permission_level_for_team(username, team_id)[2]["permission_level"]
-    return permLevel >= 2
+    try:
+        permLevel = db.get_users_permission_level_for_team(username, team_id)[2]["permission_level"]
+        return permLevel >= 2
+    except: 
+        return False
