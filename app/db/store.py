@@ -116,7 +116,7 @@ def edit_store_item(item_id, name, price, picture, active, types):
                 SET name=%s, price=%s, picture=%s, active=%s
                 WHERE item_id=%s;
                 ''',
-                (name, price, picture, active, item_id)
+                (name, price, image_url, active, item_id)
             )
 
         cursor.execute(
