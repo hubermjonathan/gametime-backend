@@ -56,7 +56,6 @@ def create_app(test_config=None):
             access_token = request.headers["Authorization"]
             cognito = Cognito(
                 environ.get('COGNITO_REGION'), environ.get('COGNITO_ACCESS'), access_token=access_token, user_pool_region='us-east-2')
-
             username = cognito.get_user()._metadata.get("username")
             if username is None:
                 return None

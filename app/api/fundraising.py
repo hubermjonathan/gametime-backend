@@ -41,12 +41,15 @@ def getTeamFundId():
 def getUserFundraisingInfo(teamid, userid):
     # Check if res was valid because we do not know which table
     # this fundraiser is in
-    fund = db.get_users_fundraiser(userid, teamid)
-    user = userdb.get_user(userid)
-    team = teamdb.get_team(teamid)
-
-    data = fund[2]
     try:
+        fund = db.get_users_fundraiser(userid, teamid)
+        user = userdb.get_user(userid)
+        team = teamdb.get_team(teamid)
+
+        data = fund[2]
+        if not bool(data):
+            return "fund does not exist", 404
+
         ret = {
             "first_name": user[2].get('first_name'),
             "last_name": user[2].get('last_name'),
@@ -67,10 +70,13 @@ def getUserFundraisingInfo(teamid, userid):
 
 @fundraisingbp.route('/fundraising/id/<teamid>', methods=['GET'])
 def getTeamFundraisingInfo(teamid):
-    fund = db.get_teams_fundraiser(teamid)
-
-    data = fund[2]
     try:
+        fund = db.get_teams_fundraiser(teamid)
+
+        data = fund[2]
+        if not bool(data):
+            return "fund does not exist", 404
+
         ret = {
             "team_name": data.get('name'),
             "donation_total": data.get('fund_current'),
