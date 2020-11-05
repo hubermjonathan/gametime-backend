@@ -1,3 +1,4 @@
+import re
 from flask import Blueprint, jsonify, request, abort
 from jsonschema import validate
 from flask_login import login_required, current_user
@@ -64,10 +65,11 @@ def create_item():
         team_id, name, types, picture, price, active = body['team_id'], body[
             'name'], body['types'], body['picture'], body['price'], body['active']
 
+        if re.search(r'^data:image\/jpeg;base64,(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$', picture) is None:
+            return jsonify({'message': 'Invalid profile picture provided'}), 400
+
         # Check permissions
-        if(
-                not auth.isAdmin(current_user, team_id) and
-                not auth.isOwner(current_user, team_id)):
+        if not auth.isAdmin(current_user, team_id) and not auth.isOwner(current_user, team_id):
             return jsonify({'message': 'Unauthorized'}), 401
 
         # Call to register a transaction
@@ -123,10 +125,11 @@ def edit_item():
         team_id, item_id, name, types, picture, price, active = body['team_id'], body['item_id'], body[
             'name'], body['types'], body['picture'], body['price'], body['active']
 
+        if re.search(r'^data:image\/jpeg;base64,(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$', picture) is None:
+            return jsonify({'message': 'Invalid profile picture provided'}), 400
+
         # Check permissions
-        if(
-                not auth.isAdmin(current_user, team_id) and
-                not auth.isOwner(current_user, team_id)):
+        if not auth.isAdmin(current_user, team_id) and not auth.isOwner(current_user, team_id):
             return jsonify({'message': 'Unauthorized'}), 401
 
         # Call to update item details

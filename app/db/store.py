@@ -1,4 +1,14 @@
 from ..db.connection_manager import connection_manager
+import boto3
+from os import environ
+import base64
+
+
+AWS = boto3.resource(
+    's3',
+    aws_access_key_id=environ.get('AWS_ACCESS_KEY'),
+    aws_secret_access_key=environ.get('AWS_SECRET_ACCESS_KEY')
+)
 
 
 def create_store_item(team_id, name, price, picture, active, types):
@@ -9,12 +19,26 @@ def create_store_item(team_id, name, price, picture, active, types):
         cursor.execute(
             '''
             INSERT INTO items (team_id, name, price, picture, active, archived)
-            VALUES (%s, %s, %s, %s, %s, false)
+            VALUES (%s, %s, %s, '', %s, false)
             RETURNING item_id;
             ''',
-            (team_id, name, price, picture, active)
+            (team_id, name, price, active)
         )
         return_data = connection_manager.get_data(cursor)
+
+        picture = picture[23:]
+        obj = AWS.Object('gametime-file-storage', f'{return_data["item_id"]}.jpeg')
+        obj.put(Body=base64.b64decode(picture), ACL='public-read')
+        image_url = f'https://gametime-file-storage.s3-us-east-2.amazonaws.com/{return_data["item_id"]}.jpeg'
+
+        cursor.execute(
+            '''
+            UPDATE items
+            SET picture=%s
+            WHERE item_id=%s;
+            ''',
+            (image_url, return_data['item_id'])
+        )
 
         for t in types:
             cursor.execute(
@@ -81,13 +105,18 @@ def edit_store_item(item_id, name, price, picture, active, types):
                 (name, price, active, item_id)
             )
         else:
+            picture = picture[23:]
+            obj = AWS.Object('gametime-file-storage', f'{item_id}.jpeg')
+            obj.put(Body=base64.b64decode(picture), ACL='public-read')
+            image_url = f'https://gametime-file-storage.s3-us-east-2.amazonaws.com/{item_id}.jpeg'
+
             cursor.execute(
                 '''
                 UPDATE items
                 SET name=%s, price=%s, picture=%s, active=%s
                 WHERE item_id=%s;
                 ''',
-                (name, price, picture, active, item_id)
+                (name, price, image_url, active, item_id)
             )
 
         cursor.execute(
