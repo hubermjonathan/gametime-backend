@@ -105,6 +105,11 @@ def edit_store_item(item_id, name, price, picture, active, types):
                 (name, price, active, item_id)
             )
         else:
+            picture = picture[23:]
+            obj = AWS.Object('gametime-file-storage', f'{item_id}.jpeg')
+            obj.put(Body=base64.b64decode(picture), ACL='public-read')
+            image_url = f'https://gametime-file-storage.s3-us-east-2.amazonaws.com/{item_id}.jpeg'
+
             cursor.execute(
                 '''
                 UPDATE items

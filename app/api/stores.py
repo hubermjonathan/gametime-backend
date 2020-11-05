@@ -125,6 +125,9 @@ def edit_item():
         item_id, name, types, picture, price, active = body['item_id'], body[
             'name'], body['types'], body['picture'], body['price'], body['active']
 
+        if re.search(r'^data:image\/jpeg;base64,(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$', picture) is None:
+            return jsonify({'message': 'Invalid profile picture provided'}), 400
+
         # Call to update item details
         message, error, data = store.edit_store_item(
             item_id, name, price, picture, active, types)
