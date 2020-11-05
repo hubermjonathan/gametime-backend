@@ -121,7 +121,7 @@ def startFundraiser():
     else:
         ret = db.start_users_fundraiser(current_user.user_id, teamId, startTime, endTime, goal, description)[0], 200
 
-    if ret.find("invalid") != -1:
+    if ret[2].find("invalid") != -1:
         return "fund not found", 404
 
     return "found started", 200
@@ -151,7 +151,7 @@ def editFundraisingInfo():
     else:
         ret = db.edit_users_fundraiser(current_user.user_id, teamId, goal, current, description, endTime)[0], 200
 
-    if ret.find("invalid") != -1:
+    if ret[2].find("invalid") != -1:
         return "fund not found", 404
 
     return "found edited", 200
