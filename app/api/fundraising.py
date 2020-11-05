@@ -1,9 +1,12 @@
 from flask import Blueprint, jsonify, request, abort
 from ..db import fundraising as db
+from ..db import users as userdb
+from ..db import teams as teamdb
 from . import schema
 import boto3
 from flask_login import login_required, current_user
 from os import environ
+from datetime import datetime
 
 fundraisingbp = Blueprint('fundraisingbp', __name__)
 
@@ -12,7 +15,9 @@ def test():
     res = db.print_all_team_fundraisers()
     db.print_all_user_fundraisers()
 
-    return res, 200
+    print(res)
+
+    return res[2], 200
 
 @fundraisingbp.route('/fundraising/user', methods=['GET'])
 def getUserFundId():
@@ -36,38 +41,52 @@ def getTeamFundId():
 def getUserFundraisingInfo(teamid, userid):
     # Check if res was valid because we do not know which table
     # this fundraiser is in
-    res = db.get_users_fundraiser(userid, teamid)
+    fund = db.get_users_fundraiser(userid, teamid)
+    user = userdb.get_user(userid)
+    team = teamdb.get_team(teamid)
 
-    data = res[2]
-    print(data)
-    ret = {
-        "first_name": "TBD",
-        "last_name": "TBD",
-        "team_name": "TBD",
-        "donation_total": data.get('fund_current'),
-        "donation_goal": data.get('fund_goal'),
-        "description":  data.get('fund_desc'),
-        "start_timestamp":  data.get('fund_start'),
-        "end_timestamp":  data.get('fund_end')
-    }
+    data = fund[2]
+    try:
+        ret = {
+            "first_name": user[2].get('first_name'),
+            "last_name": user[2].get('last_name'),
+            "team_name": team[2].get('name'),
+            "donation_total": data.get('fund_current'),
+            "donation_goal": data.get('fund_goal'),
+            "description":  data.get('fund_desc'),
+            "start_timestamp":  data.get('fund_start').timestamp(),
+            "end_timestamp":  data.get('fund_end').timestamp()
+        }
 
-    return ret, 200
+        return ret, 200
+    
+    except AttributeError:
+        return "fund does not exist", 404
+    except Exception:
+        return "Server error", 500
 
 @fundraisingbp.route('/fundraising/id/<teamid>', methods=['GET'])
 def getTeamFundraisingInfo(teamid):
-    res = db.get_teams_fundraiser(teamid)
+    fund = db.get_teams_fundraiser(teamid)
 
-    data = res[2]
-    ret = {
-        "team_name": "TBD",
-        "donation_total": data.get('fund_current'),
-        "donation_goal": data.get('fund_goal'),
-        "description":  data.get('fund_desc'),
-        "start_timestamp":  data.get('fund_start'),
-        "end_timestamp":  data.get('fund_end')
-    }
+    data = fund[2]
+    try:
+        ret = {
+            "team_name": data.get('name'),
+            "donation_total": data.get('fund_current'),
+            "donation_goal": data.get('fund_goal'),
+            "description":  data.get('fund_desc'),
+            "start_timestamp":  data.get('fund_start').timestamp(),
+            "end_timestamp":  data.get('fund_end').timestamp()
+        }
 
-    return ret
+        print(ret)
+
+        return ret
+    except AttributeError:
+        return "fund does not exist", 404
+    except Exception:
+        return "Server error", 500
         
 @fundraisingbp.route('/fundraising/start', methods=['POST'])
 @login_required
@@ -75,34 +94,41 @@ def startFundraiser():
     body = request.get_json()
 
     teamId = body['teamId']
+    startTime = body['startTime']
     endTime = body['endTime']
+    goal = body['goal']
+    description = body['description']
+
     isTeam = body['isTeam']
-
-    res = ""
-
-    if isTeam:
-        res = db.start_teams_fundraiser(fundId, endTime)
+    print(teamId)
+    if isTeam == "True":
+        print(teamId)
+        return db.start_teams_fundraiser(teamId, startTime, endTime, goal, description)[0], 200
     else:
-        res = db.start_users_fundraiser(fundId, endTime)
+        return db.start_users_fundraiser(current_user.user_id, teamId, startTime, endTime, goal, description)[0], 200
 
-    print(res)
-    return res
+    #Note 404
 
 @fundraisingbp.route('/fundraising/edit', methods=['POST'])
 @login_required
 def editFundraisingInfo():
     body = request.get_json()
-    
-    teamId = body['fundId']
+    print(body)
+
+    teamId = body['teamId']
+    endTime = body['endTime']
     goal = body['goal']
     current = body['current']
     description = body['description']
 
+    isTeam = body['isTeam']
+
     # Verify user has permission for that team/userteam
-    try:
-        db.edit_teams_fundraiser(fundId, goal, current, description)
-    except:
-        db.edit_users_fundraiser(fundId, goal, current, description)
+    if isTeam == "True":
+        print(teamId)
+        return db.edit_teams_fundraiser(teamId, goal, current, description, endTime)[0],200
+    else:
+        return db.edit_users_fundraiser(current_user.user_id, teamId, goal, current, description, endTime)[0], 200
 
 @fundraisingbp.route('/fundraising/template', methods=['GET','POST'])
 @login_required
