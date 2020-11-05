@@ -65,9 +65,9 @@ def viewTeam():
     body = request.get_json()
 
     team = body['team']
-    player = body['player']
+    user = current_user.user_id
 
-    if not auth.isOwner(player, team):
+    if not auth.isOwner(user, team):
         print("Is not owner")
         return "", 401
 

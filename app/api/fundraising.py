@@ -5,6 +5,7 @@ from ..db import teams as teamdb
 from . import schema
 import boto3
 from flask_login import login_required, current_user
+from .. import auth
 from os import environ
 from datetime import datetime
 
@@ -105,17 +106,25 @@ def startFundraiser():
     goal = body['goal']
     description = body['description']
 
+    isTeam = body['isTeam']
+
+    user = current_user.user_id
+    if not auth.isOwner(player, teamId):
+        return "is not owner of team", 401
+
     if goal.find(',') != -1:
         return "comma in goal value", 400
 
-    isTeam = body['isTeam']
-    print(teamId)
+    ret = ""
     if isTeam == "True":
-        print(teamId)
-        return db.start_teams_fundraiser(teamId, startTime, endTime, goal, description)[0], 200
+        ret = db.start_teams_fundraiser(teamId, startTime, endTime, goal, description)[0], 200
     else:
-        return db.start_users_fundraiser(current_user.user_id, teamId, startTime, endTime, goal, description)[0], 200
+        ret = db.start_users_fundraiser(current_user.user_id, teamId, startTime, endTime, goal, description)[0], 200
 
+    if ret.find("invalid") != -1:
+        return "fund not found", 404
+
+    return "found started", 200
     #Note 404
 
 @fundraisingbp.route('/fundraising/edit', methods=['POST'])
@@ -132,12 +141,20 @@ def editFundraisingInfo():
 
     isTeam = body['isTeam']
 
-    # Verify user has permission for that team/userteam
+    user = current_user.user_id
+    if not auth.isPlayer(player, teamId):
+        return "is not player on team", 401
+
+    ret = ""
     if isTeam == "True":
-        print(teamId)
-        return db.edit_teams_fundraiser(teamId, goal, current, description, endTime)[0],200
+        ret = db.edit_teams_fundraiser(teamId, goal, current, description, endTime)[0],200
     else:
-        return db.edit_users_fundraiser(current_user.user_id, teamId, goal, current, description, endTime)[0], 200
+        ret = db.edit_users_fundraiser(current_user.user_id, teamId, goal, current, description, endTime)[0], 200
+
+    if ret.find("invalid") != -1:
+        return "fund not found", 404
+
+    return "found edited", 200
 
 @fundraisingbp.route('/fundraising/template', methods=['GET','POST'])
 @login_required
