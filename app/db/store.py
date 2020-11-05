@@ -1,4 +1,13 @@
 from ..db.connection_manager import connection_manager
+import boto3
+from os import environ
+
+
+AWS = boto3.resource(
+    's3',
+    aws_access_key_id=environ.get('AWS_ACCESS_KEY'),
+    aws_secret_access_key=environ.get('AWS_SECRET_ACCESS_KEY')
+)
 
 
 def create_store_item(team_id, name, price, picture, active, types):
@@ -15,6 +24,20 @@ def create_store_item(team_id, name, price, picture, active, types):
             (team_id, name, price, picture, active)
         )
         return_data = connection_manager.get_data(cursor)
+
+        profile_picture = profile_picture[23:]
+        obj = AWS.Object('gametime-file-storage', f'{return_data['item_id']}.jpeg')
+        obj.put(Body=base64.b64decode(profile_picture), ACL='public-read')
+        image_url = f'https://gametime-file-storage.s3-us-east-2.amazonaws.com/{return_data['item_id']}.jpeg'
+
+        cursor.execute(
+            '''
+            UPDATE items
+            SET picture=%s
+            WHERE item_id=%s;
+            ''',
+            (picture, return_data['item_id'])
+        )
 
         for t in types:
             cursor.execute(
