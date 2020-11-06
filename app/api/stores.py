@@ -19,6 +19,9 @@ def get_items():
         # Call to fetch items from DB
         message, error, data = store.get_teams_store_items(team_id)
 
+        if message.find("invalid") != -1:
+            return jsonify({'message': 'Not found'}), 404
+
         if error:
             return jsonify({'message': 'Failed to fetch items'}), 400
 
@@ -45,11 +48,11 @@ def place_order():
         if error:
             return jsonify({'message': 'Failed to place order'}), 400
 
-        return jsonify({'message': 'Succesfully placed order'}), 200
+        return jsonify({'message': 'Successfully placed order', 'transaction_id': data['transaction_id']}), 200
 
 
 @storesbp.route('/store/create', methods=['POST'])
-# @login_required
+@login_required
 def create_item():
     # POST, create an item
     if request.method == 'POST':
@@ -76,11 +79,11 @@ def create_item():
         if error:
             return jsonify({'message': 'Failed to create item'}), 400
 
-        return jsonify({'message': 'Succesfully created item'}), 200
+        return jsonify({'message': 'Successfully created item', 'item_id': data['item_id']}), 200
 
 
 @storesbp.route('/store/delete', methods=['DELETE'])
-# @login_required
+@login_required
 def delete_item():
     # DELETE, remove an item
     if request.method == 'DELETE':
@@ -101,11 +104,14 @@ def delete_item():
 
         # Call to archive and retire item
         message, error, data = store.remove_store_item(item_id)
+
+        if message.find("invalid") != -1:
+            return jsonify({'message': 'Not found'}), 404
+
         if error:
-            print(message)
             return jsonify({'message': 'Failed to delete item'}), 400
 
-        return jsonify({'message': 'Succesfully deleted item'}), 200
+        return jsonify({'message': 'Successfully deleted item'}), 200
 
 
 @storesbp.route('/store/update', methods=['PUT'])
@@ -136,7 +142,7 @@ def edit_item():
         if error:
             return jsonify({'message': 'Failed to update item'}), 400
 
-        return jsonify({'message': 'Succesfully updated item'}), 200
+        return jsonify({'message': 'Successfully updated item'}), 200
 
 
 @storesbp.route('/store/status', methods=['POST', 'PUT'])
@@ -161,6 +167,9 @@ def orders():
 
         # Call to fetch items from DB
         message, error, data = order.get_teams_transactions(team_id)
+
+        if message.find("invalid") != -1:
+            return jsonify({'message': 'Store not found'}), 404
 
         if error:
             return jsonify({'message': 'Failed to fetch orders'}), 400
@@ -187,7 +196,10 @@ def orders():
         # Edit transactions in DB
         message, error, data = order.edit_transactions_status(order_id, status)
 
+        if message.find("invalid") != -1:
+            return jsonify({'message': 'Not found'}), 404
+
         if error:
             return jsonify({'message': 'Failed to update order status'}), 400
 
-        return jsonify({'message': 'Succesfully updated order status'}), 200
+        return jsonify({'message': 'Successfully updated order status'}), 200
