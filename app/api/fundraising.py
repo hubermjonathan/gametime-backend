@@ -140,12 +140,12 @@ def startFundraiser():
 @login_required
 def editFundraisingInfo():
     body = request.get_json()
-    
+
     try:
         teamId = body['teamId']
+        startTime = body['startTime']
         endTime = body['endTime']
         goal = body['goal']
-        current = body['current']
         description = body['description']
 
         isTeam = body['isTeam']
@@ -153,13 +153,22 @@ def editFundraisingInfo():
         return "missing field", 400
 
     user = current_user.user_id
-    if not auth.isPlayer(user, teamId):
-        return "is not player on team", 401
+
+    try:
+        int(goal)
+        float(startTime)
+        float(endTime)
+    except:
+        return "number value incorrect", 400
 
     ret = ""
     if isTeam == "True":
+        if not auth.isOwner(user, teamId):
+            return "is not owner of team", 401
         ret = db.edit_teams_fundraiser(teamId, goal, current, description, endTime)[0],200
     else:
+        if not auth.isPlayer(user, teamId):
+            return "is not player in team", 401
         ret = db.edit_users_fundraiser(current_user.user_id, teamId, goal, current, description, endTime)[0], 200
 
     if ret[0].find("invalid") != -1:
