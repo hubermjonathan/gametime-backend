@@ -143,7 +143,6 @@ def editFundraisingInfo():
 
     try:
         teamId = body['teamId']
-        startTime = body['startTime']
         endTime = body['endTime']
         goal = body['goal']
         description = body['description']
@@ -158,7 +157,6 @@ def editFundraisingInfo():
 
     try:
         int(goal)
-        float(startTime)
         float(endTime)
     except:
         return "number value incorrect", 400
