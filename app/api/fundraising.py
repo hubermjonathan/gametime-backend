@@ -150,7 +150,8 @@ def editFundraisingInfo():
         current = body['current']
 
         isTeam = body['isTeam']
-    except:
+    except Exception as e:
+        print(e)
         return "missing field", 400
 
     user = current_user.user_id
