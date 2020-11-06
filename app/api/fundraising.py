@@ -193,33 +193,42 @@ def emailInfo():
 def sendEmail():
     body = request.get_json()
 
-    recipient = body['recipient']
-    subject = body['subject']
-    emailBody = body['body']
+    try:
+        recipient = body['recipient']
+        subject = body['subject']
+        emailBody = body['body']
+    except:
+        return "missing field", 400
 
-    client = boto3.client('ses',
-        aws_access_key_id=environ.get('AWS_ACCESS_KEY'),
-        aws_secret_access_key=environ.get('AWS_SECRET_ACCESS_KEY'),
-        region_name='us-east-1')
-    
-    response = client.send_email(
-    Source='gametimefundraising@gmail.com',
-    Destination={
-        'ToAddresses': [
-            recipient,
-        ]
-    },
-    Message={
-        'Subject': {
-            'Data': subject,
-            'Charset': 'utf-8'
+    try:
+        client = boto3.client('ses',
+            aws_access_key_id=environ.get('AWS_ACCESS_KEY'),
+            aws_secret_access_key=environ.get('AWS_SECRET_ACCESS_KEY'),
+            region_name='us-east-1')
+    except:
+        return "cannot access cloud", 500
+
+    try:
+        response = client.send_email(
+        Source='gametimefundraising@gmail.com',
+        Destination={
+            'ToAddresses': [
+                recipient,
+            ]
         },
-        'Body': {
-            'Text': {
-                'Data': emailBody,
+        Message={
+            'Subject': {
+                'Data': subject,
                 'Charset': 'utf-8'
+            },
+            'Body': {
+                'Text': {
+                    'Data': emailBody,
+                    'Charset': 'utf-8'
+                }
             }
-        }
-    })
+        })
+    except:
+        return "invalid fields in body", 400
 
-    return "Email sent"
+    return "Email sent", 200
