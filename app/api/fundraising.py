@@ -113,8 +113,12 @@ def startFundraiser():
 
     user = current_user.user_id
 
-    if goal.find(',') != -1:
-        return "comma in goal value", 400
+    try:
+        int(goal)
+        float(startTime)
+        float(endTime)
+    except:
+        return "number value incorrect", 400
 
     ret = ""
     if isTeam == "True":
@@ -129,8 +133,8 @@ def startFundraiser():
     if ret[0].find("invalid") != -1:
         return "fund not found", 404
 
-    return "found started", 200
-    #Note 404
+    return "fund started", 200
+
 
 @fundraisingbp.route('/fundraising/edit', methods=['POST'])
 @login_required
