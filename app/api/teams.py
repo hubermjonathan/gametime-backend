@@ -15,10 +15,10 @@ teamsbp = Blueprint('teamsbp', __name__)
 def createTeam():
     # POST, Creates a new team
     body = request.get_json()
+    name = body['name']
+    user = current_user.user_id
 
-    name, owner = body['name'], body['owner']
-
-    message, error, data = db.create_team(name, owner)
+    message, error, data = db.create_team(name, user)
 
     if error:
         return "", 500
