@@ -59,13 +59,11 @@ def removeFromTeam():
 
 
 @teamsbp.route('/team/view/data', methods=['POST'])
-@login_required
 def viewTeam():
     # POST, gets Attributes of Team (TODO make GET)
     body = request.get_json()
 
     team = body['team']
-    user = current_user.user_id
 
     message, error, data = db.get_team(team)
 
