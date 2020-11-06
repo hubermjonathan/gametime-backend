@@ -147,6 +147,7 @@ def editFundraisingInfo():
         endTime = body['endTime']
         goal = body['goal']
         description = body['description']
+        current = body['current']
 
         isTeam = body['isTeam']
     except:
