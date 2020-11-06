@@ -119,7 +119,7 @@ def startFundraiser():
             return "is not owner of team", 401
         ret = db.start_teams_fundraiser(teamId, startTime, endTime, goal, description)[0], 200
     else:
-        if not auth.isPlayers(user, teamId):
+        if not auth.isPlayer(user, teamId):
             return "is not player in team", 401
         ret = db.start_users_fundraiser(current_user.user_id, teamId, startTime, endTime, goal, description)[0], 200
 
