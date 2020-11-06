@@ -100,13 +100,16 @@ def getTeamFundraisingInfo(teamid):
 def startFundraiser():
     body = request.get_json()
 
-    teamId = body['teamId']
-    startTime = body['startTime']
-    endTime = body['endTime']
-    goal = body['goal']
-    description = body['description']
+    try:
+        teamId = body['teamId']
+        startTime = body['startTime']
+        endTime = body['endTime']
+        goal = body['goal']
+        description = body['description']
 
-    isTeam = body['isTeam']
+        isTeam = body['isTeam']
+    except:
+        return "missing field", 400
 
     user = current_user.user_id
 
@@ -133,15 +136,17 @@ def startFundraiser():
 @login_required
 def editFundraisingInfo():
     body = request.get_json()
-    print(body)
+    
+    try:
+        teamId = body['teamId']
+        endTime = body['endTime']
+        goal = body['goal']
+        current = body['current']
+        description = body['description']
 
-    teamId = body['teamId']
-    endTime = body['endTime']
-    goal = body['goal']
-    current = body['current']
-    description = body['description']
-
-    isTeam = body['isTeam']
+        isTeam = body['isTeam']
+    except:
+        return "missing field", 400
 
     user = current_user.user_id
     if not auth.isPlayer(user, teamId):
