@@ -20,7 +20,7 @@ sponsorsbp = Blueprint('sponsorsbp', __name__)
 
 
 @sponsorsbp.route('/sponsors', methods=['GET'])
-def sponsorsGet():
+def sponsors_get():
     if request.method == 'GET':
         team_id = request.args.get('team_id')
 
