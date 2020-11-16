@@ -1,18 +1,18 @@
 from ..db.connection_manager import connection_manager
 
 
-def create_promotion(team_id, name, description, image_url, start_time, end_time):
+def create_promotion(team_id, name, description, picture, start_time, end_time):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            INSERT INTO promotions (team_id, name, description, image_url, start_time, end_time)
+            INSERT INTO promotions (team_id, name, description, picture, start_time, end_time)
             VALUES (%s, %s, %s, %s, %s, %s)
             RETURNING promotion_id;
             ''',
-            (team_id, name, description, image_url, start_time, end_time)
+            (team_id, name, description, picture, start_time, end_time)
         )
         return_data = connection_manager.get_data(cursor)
 
@@ -61,7 +61,7 @@ def get_promotions_for_team(team_id):
 
         cursor.execute(
             '''
-            SELECT promotion_id, name, description, image_url, start_time, end_time
+            SELECT promotion_id, name, description, picture, start_time, end_time
             FROM promotions
             WHERE team_id=%s;
             ''',

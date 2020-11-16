@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS public.groups CASCADE;
 DROP TABLE IF EXISTS public.groupmessages CASCADE;
 DROP TABLE IF EXISTS public.messages CASCADE;
 DROP TABLE IF EXISTS public.sponsors CASCADE;
+DROP TABLE IF EXISTS public.promotions CASCADE;
 DROP TABLE IF EXISTS public.usersgroups CASCADE;
 DROP TABLE IF EXISTS public.usersteams CASCADE;
 DROP TABLE IF EXISTS public.transactionsitems CASCADE;
@@ -154,8 +155,8 @@ CREATE TABLE public.files
     file_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     user_id uuid NOT NULL DEFAULT uuid_generate_v4(),
-    image_url text COLLATE pg_catalog."default",
-    is_document boolean NOT NULL,
+    url text COLLATE pg_catalog."default",
+    active boolean,
     CONSTRAINT file_id PRIMARY KEY (file_id),
     CONSTRAINT team_id FOREIGN KEY (team_id)
         REFERENCES public.teams (team_id) MATCH SIMPLE
@@ -331,10 +332,14 @@ GRANT ALL ON TABLE public.messages TO prod;
 CREATE TABLE public.sponsors
 (
     sponsor_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     name text COLLATE pg_catalog."default" NOT NULL,
-    image_url text COLLATE pg_catalog."default" NOT NULL,
-    active boolean NOT NULL,
-    CONSTRAINT sponsor_id PRIMARY KEY (sponsor_id)
+    picture text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT sponsor_id PRIMARY KEY (sponsor_id),
+    CONSTRAINT team_id FOREIGN KEY (team_id)
+        REFERENCES public.teams (team_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
 )
 
 TABLESPACE pg_default;
@@ -343,6 +348,32 @@ ALTER TABLE public.sponsors
     OWNER to prod;
 
 GRANT ALL ON TABLE public.sponsors TO prod;
+
+
+-- Table: public.promotions
+
+CREATE TABLE public.promotions
+(
+    promotion_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    name text COLLATE pg_catalog."default" NOT NULL,
+    description text COLLATE pg_catalog."default" NOT NULL,
+    picture text COLLATE pg_catalog."default" NOT NULL,
+    start_time timestamp without time zone NOT NULL,
+    end_time timestamp without time zone NOT NULL,
+    CONSTRAINT promotion_id PRIMARY KEY (promotion_id),
+    CONSTRAINT team_id FOREIGN KEY (team_id)
+        REFERENCES public.teams (team_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.promotions
+    OWNER to prod;
+
+GRANT ALL ON TABLE public.promotions TO prod;
 
 
 -- Table: public.usersgroups

@@ -8,11 +8,11 @@ def create_sponsor(team_id, name, active, picture):
 
         cursor.execute(
             '''
-            INSERT INTO sponsors (team_id, name, image_url, active)
+            INSERT INTO sponsors (team_id, name, picture, active)
             VALUES (%s, %s, %s, %s)
             RETURNING sponsor_id;
             ''',
-            (team_id, name, image_url, active)
+            (team_id, name, picture, active)
         )
         return_data = connection_manager.get_data(cursor)
 
@@ -61,7 +61,7 @@ def get_sponsors_for_team(team_id):
 
         cursor.execute(
             '''
-            SELECT sponsor_id, name, image_url, active
+            SELECT sponsor_id, name, picture, active
             FROM sponsors
             WHERE team_id=%s;
             ''',
