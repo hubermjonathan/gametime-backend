@@ -92,9 +92,9 @@ def get_promotions_for_team(team_id):
             '''
             SELECT promotion_id, name, description, picture, start_time, end_time
             FROM promotions
-            WHERE team_id=%s AND CURRENT_TIMESTAMP BETWEEN start_time AND end_time;
+            WHERE team_id=%s AND %s BETWEEN start_time AND end_time;
             ''',
-            (team_id,)
+            (team_id, datetime.now())
         )
         return_data = connection_manager.get_data(cursor, 'promotions')
 
