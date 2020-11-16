@@ -160,20 +160,6 @@ update_order_schema = {
 }
 
 # files schemas
-files_get_schema = {
-    'type': 'object',
-    'properties': {
-        'team_id': {'type': 'string'}
-    }
-}
-
-photos_get_schema = {
-    'type': 'object',
-    'properties': {
-        'team_id': {'type': 'string'}
-    }
-}
-
 files_post_schema = {
     'type': 'object',
     'properties': {
@@ -204,5 +190,23 @@ photos_put_schema = {
         'team_id': {'type': 'string'},
         'file_id': {'type': 'string'},
         'active': {'type': 'boolean'}
+    }
+}
+
+# sponsors schemas
+sponsors_post_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'string'},
+        'name': {'type': 'string'},
+        'picture': {'type': 'string'}
+    }
+}
+
+sponsors_delete_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'string'},
+        'sponsor_id': {'type': 'string'}
     }
 }

@@ -25,13 +25,7 @@ filesbp = Blueprint('filesbp', __name__)
 @login_required
 def photos():
     if request.method == 'GET':
-        try:
-            body = request.get_json()
-            validate(body, schema=schema.photos_get_schema)
-
-            team_id = body['team_id']
-        except Exception:
-            return jsonify({'message': 'invalid body provided'}), 400
+        team_id = request.args.get('team_id')
 
         message, error, data = db.get_photos_for_user(
             team_id, current_user.user_id)
@@ -89,13 +83,7 @@ def photos():
 @login_required
 def photos_all():
     if request.method == 'GET':
-        try:
-            body = request.get_json()
-            validate(body, schema=schema.photos_get_schema)
-
-            team_id = body['team_id']
-        except Exception:
-            return jsonify({'message': 'invalid body provided'}), 400
+        team_id = request.args.get('team_id')
 
         message, error, data = db.get_photos_for_team(team_id)
 
@@ -111,13 +99,7 @@ def photos_all():
 @login_required
 def files():
     if request.method == 'GET':
-        try:
-            body = request.get_json()
-            validate(body, schema=schema.files_get_schema)
-
-            team_id = body['team_id']
-        except Exception:
-            return jsonify({'message': 'invalid body provided'}), 400
+        team_id = request.args.get('team_id')
 
         message, error, data = db.get_files_for_user(
             team_id, current_user.user_id)
@@ -174,13 +156,7 @@ def files():
 @login_required
 def files_all():
     if request.method == 'GET':
-        try:
-            body = request.get_json()
-            validate(body, schema=schema.files_get_schema)
-
-            team_id = body['team_id']
-        except Exception:
-            return jsonify({'message': 'invalid body provided'}), 400
+        team_id = request.args.get('team_id')
 
         if not auth.isAdmin(current_user.user_id, team_id):
             return jsonify({'message': 'invalid permissions'}), 400

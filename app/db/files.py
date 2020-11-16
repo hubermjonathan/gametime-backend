@@ -82,7 +82,7 @@ def create_photo(team_id, user_id, picture, active):
             UPDATE files
             SET url=%s
             WHERE file_id=%s
-            RETURNING file_id, url;
+            RETURNING file_id, url, active;
             ''',
             (url, file_id['file_id'])
         )
