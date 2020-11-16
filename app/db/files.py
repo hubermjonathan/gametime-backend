@@ -1,18 +1,50 @@
 from ..db.connection_manager import connection_manager
+import boto3
+from os import environ
+import base64
 
 
-def create_file(team_id, user_id, url):
+AWS = boto3.resource(
+    's3',
+    aws_access_key_id=environ.get('AWS_ACCESS_KEY'),
+    aws_secret_access_key=environ.get('AWS_SECRET_ACCESS_KEY')
+)
+
+
+def upload_file(file, name, is_photo):
+    file_base64 = file[23:] if is_photo else file[28:]
+    file_name = f'{name}.jpeg' if is_photo else f'{name}.pdf'
+    obj = AWS.Object('gametime-file-storage', file_name)
+    obj.put(Body=base64.b64decode(file_base64), ACL='public-read')
+    url = f'https://gametime-file-storage.s3-us-east-2.amazonaws.com/{file_name}'
+    return url
+
+
+def create_file(team_id, user_id, file):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            INSERT INTO files (team_id, user_id, url)
-            VALUES (%s, %s, %s)
+            INSERT INTO files (team_id, user_id)
+            VALUES (%s, %s)
             RETURNING file_id;
             ''',
-            (team_id, user_id, url)
+            (team_id, user_id)
+        )
+        file_id = connection_manager.get_data(cursor)
+
+        url = upload_file(file, file_id['file_id'], False)
+
+        cursor.execute(
+            '''
+            UPDATE files
+            SET url=%s
+            WHERE file_id=%s
+            RETURNING file_id, url;
+            ''',
+            (url, file_id['file_id'])
         )
         return_data = connection_manager.get_data(cursor)
 
@@ -28,18 +60,31 @@ def create_file(team_id, user_id, url):
         return res
 
 
-def create_photo(team_id, user_id, url, active):
+def create_photo(team_id, user_id, picture, active):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            INSERT INTO files (team_id, user_id, url, active)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO files (team_id, user_id, active)
+            VALUES (%s, %s, %s)
             RETURNING file_id;
             ''',
-            (team_id, user_id, url, active)
+            (team_id, user_id, active)
+        )
+        file_id = connection_manager.get_data(cursor)
+
+        url = upload_file(picture, file_id['file_id'], True)
+
+        cursor.execute(
+            '''
+            UPDATE files
+            SET url=%s
+            WHERE file_id=%s
+            RETURNING file_id, url;
+            ''',
+            (url, file_id['file_id'])
         )
         return_data = connection_manager.get_data(cursor)
 
@@ -62,7 +107,7 @@ def remove_file(file_id):
 
         cursor.execute(
             '''
-            REMOVE FROM files
+            DELETE FROM files
             WHERE file_id=%s;
             ''',
             (file_id,)
