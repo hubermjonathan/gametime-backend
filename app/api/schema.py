@@ -158,3 +158,26 @@ update_order_schema = {
         'status': {'type': 'number'}
     }
 }
+
+# files schemas
+files_get_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'string'}
+    }
+}
+
+files_post_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'string'},
+        'file': {'type': 'string'}
+    }
+}
+
+files_delete_schema = {
+    'type': 'object',
+    'properties': {
+        'file_id': {'type': 'string'}
+    }
+}

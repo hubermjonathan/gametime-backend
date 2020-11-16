@@ -3,6 +3,7 @@ from app.api.messages import messagesbp
 from app.api.teams import teamsbp
 from app.api.groups import groupsbp
 from app.api.fundraising import fundraisingbp
+from app.api.files import filesbp
 from app.api.stores import storesbp
 from app.api.test import testbp
 import os
@@ -76,6 +77,7 @@ def create_app(test_config=None):
     app.register_blueprint(messagesbp)
     app.register_blueprint(usersbp)
     app.register_blueprint(fundraisingbp)
+    app.register_blueprint(filesbp)
     app.register_blueprint(storesbp)
 
     return app
