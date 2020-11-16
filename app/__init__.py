@@ -6,6 +6,7 @@ from app.api.fundraising import fundraisingbp
 from app.api.files import filesbp
 from app.api.stores import storesbp
 from app.api.test import testbp
+from app.api.sponsors import sponsorsbp
 import os
 import sys
 from flask import Flask
@@ -79,5 +80,6 @@ def create_app(test_config=None):
     app.register_blueprint(fundraisingbp)
     app.register_blueprint(filesbp)
     app.register_blueprint(storesbp)
+    app.register_blueprint(sponsorsbp)
 
     return app
