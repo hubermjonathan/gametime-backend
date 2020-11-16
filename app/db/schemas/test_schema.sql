@@ -155,8 +155,8 @@ CREATE TABLE public.files
     file_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     user_id uuid NOT NULL DEFAULT uuid_generate_v4(),
-    image_url text COLLATE pg_catalog."default",
-    is_document boolean NOT NULL,
+    url text COLLATE pg_catalog."default",
+    active boolean,
     CONSTRAINT file_id PRIMARY KEY (file_id),
     CONSTRAINT team_id FOREIGN KEY (team_id)
         REFERENCES public.teams (team_id) MATCH SIMPLE
