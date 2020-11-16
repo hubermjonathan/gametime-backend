@@ -11,7 +11,6 @@ DROP TABLE IF EXISTS public.messages CASCADE;
 DROP TABLE IF EXISTS public.sponsors CASCADE;
 DROP TABLE IF EXISTS public.usersgroups CASCADE;
 DROP TABLE IF EXISTS public.usersteams CASCADE;
-DROP TABLE IF EXISTS public.teamssponsors CASCADE;
 DROP TABLE IF EXISTS public.transactionsitems CASCADE;
 
 
@@ -334,6 +333,7 @@ CREATE TABLE public.sponsors
     sponsor_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     name text COLLATE pg_catalog."default" NOT NULL,
     image_url text COLLATE pg_catalog."default" NOT NULL,
+    active boolean NOT NULL,
     CONSTRAINT sponsor_id PRIMARY KEY (sponsor_id)
 )
 
@@ -398,31 +398,6 @@ ALTER TABLE public.usersteams
     OWNER to prod;
 
 GRANT ALL ON TABLE public.usersteams TO prod;
-
-
--- Table: public.teamssponsors
-
-CREATE TABLE public.teamssponsors
-(
-    team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
-    sponsor_id uuid NOT NULL DEFAULT uuid_generate_v4(),
-    active boolean NOT NULL,
-    CONSTRAINT sponsor_id FOREIGN KEY (sponsor_id)
-        REFERENCES public.sponsors (sponsor_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT team_id FOREIGN KEY (team_id)
-        REFERENCES public.teams (team_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE public.teamssponsors
-    OWNER to prod;
-
-GRANT ALL ON TABLE public.teamssponsors TO prod;
 
 
 -- Table: public.transactionsitems
