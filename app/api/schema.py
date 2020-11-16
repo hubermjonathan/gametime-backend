@@ -158,3 +158,76 @@ update_order_schema = {
         'status': {'type': 'number'}
     }
 }
+
+# files schemas
+files_post_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'string'},
+        'file': {'type': 'string'}
+    }
+}
+
+photos_post_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'string'},
+        'picture': {'type': 'string'},
+        'active': {'type': 'boolean'}
+    }
+}
+
+files_delete_schema = {
+    'type': 'object',
+    'properties': {
+        'file_id': {'type': 'string'}
+    }
+}
+
+photos_put_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'string'},
+        'file_id': {'type': 'string'},
+        'active': {'type': 'boolean'}
+    }
+}
+
+# sponsors schemas
+sponsors_post_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'string'},
+        'name': {'type': 'string'},
+        'picture': {'type': 'string'}
+    }
+}
+
+sponsors_delete_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'string'},
+        'sponsor_id': {'type': 'string'}
+    }
+}
+
+# promotions schemas
+promotions_post_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'string'},
+        'name': {'type': 'string'},
+        'description': {'type': 'string'},
+        'picture': {'type': 'string'},
+        'start_time': {'type': 'number'},
+        'end_time': {'type': 'number'}
+    }
+}
+
+promotions_delete_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'string'},
+        'promotion_id': {'type': 'string'}
+    }
+}
