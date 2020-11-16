@@ -63,7 +63,7 @@ def get_promotions_for_team(team_id):
             '''
             SELECT promotion_id, name, description, picture, start_time, end_time
             FROM promotions
-            WHERE team_id=%s;
+            WHERE team_id=%s AND CURRENT_TIMESTAMP BETWEEN start_time AND end_time;
             ''',
             (team_id,)
         )
