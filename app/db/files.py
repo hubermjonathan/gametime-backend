@@ -216,7 +216,7 @@ def get_photos_for_team(team_id):
             '''
             SELECT file_id, url, active
             FROM files
-            WHERE team_id=%s AND active IS NULL;
+            WHERE team_id=%s AND active IS NOT NULL;
             ''',
             (team_id,)
         )

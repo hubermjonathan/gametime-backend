@@ -85,6 +85,28 @@ def photos():
         return jsonify({'message': 'method not allowed'}), 405
 
 
+@filesbp.route('/photos/all', methods=['GET'])
+@login_required
+def photos_all():
+    if request.method == 'GET':
+        try:
+            body = request.get_json()
+            validate(body, schema=schema.photos_get_schema)
+
+            team_id = body['team_id']
+        except Exception:
+            return jsonify({'message': 'invalid body provided'}), 400
+
+        message, error, data = db.get_photos_for_team(team_id)
+
+        if error:
+            return jsonify({'message': message}), 500
+
+        return jsonify(data), 200
+    else:
+        return jsonify({'message': 'method not allowed'}), 405
+
+
 @filesbp.route('/files', methods=['GET', 'POST', 'DELETE'])
 @login_required
 def files():
@@ -139,6 +161,31 @@ def files():
         )
 
         message, error, data = db.remove_file(file_id)
+
+        if error:
+            return jsonify({'message': message}), 500
+
+        return jsonify(data), 200
+    else:
+        return jsonify({'message': 'method not allowed'}), 405
+
+
+@filesbp.route('/files/all', methods=['GET'])
+@login_required
+def files_all():
+    if request.method == 'GET':
+        try:
+            body = request.get_json()
+            validate(body, schema=schema.files_get_schema)
+
+            team_id = body['team_id']
+        except Exception:
+            return jsonify({'message': 'invalid body provided'}), 400
+
+        if not auth.isAdmin(current_user.user_id, team_id):
+            return jsonify({'message': 'invalid permissions'}), 400
+
+        message, error, data = db.get_files_for_team(team_id)
 
         if error:
             return jsonify({'message': message}), 500
