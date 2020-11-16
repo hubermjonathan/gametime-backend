@@ -334,7 +334,7 @@ CREATE TABLE public.sponsors
     sponsor_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     name text COLLATE pg_catalog."default" NOT NULL,
-    picture text COLLATE pg_catalog."default" NOT NULL,
+    picture text COLLATE pg_catalog."default",
     CONSTRAINT sponsor_id PRIMARY KEY (sponsor_id),
     CONSTRAINT team_id FOREIGN KEY (team_id)
         REFERENCES public.teams (team_id) MATCH SIMPLE
@@ -358,7 +358,7 @@ CREATE TABLE public.promotions
     team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     name text COLLATE pg_catalog."default" NOT NULL,
     description text COLLATE pg_catalog."default" NOT NULL,
-    picture text COLLATE pg_catalog."default" NOT NULL,
+    picture text COLLATE pg_catalog."default",
     start_time timestamp without time zone NOT NULL,
     end_time timestamp without time zone NOT NULL,
     CONSTRAINT promotion_id PRIMARY KEY (promotion_id),
