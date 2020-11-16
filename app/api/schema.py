@@ -167,6 +167,13 @@ files_get_schema = {
     }
 }
 
+photos_get_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'string'}
+    }
+}
+
 files_post_schema = {
     'type': 'object',
     'properties': {
@@ -175,9 +182,27 @@ files_post_schema = {
     }
 }
 
+photos_post_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'string'},
+        'picture': {'type': 'string'},
+        'active': {'type': 'boolean'}
+    }
+}
+
 files_delete_schema = {
     'type': 'object',
     'properties': {
         'file_id': {'type': 'string'}
+    }
+}
+
+photos_put_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'string'},
+        'file_id': {'type': 'string'},
+        'active': {'type': 'boolean'}
     }
 }
