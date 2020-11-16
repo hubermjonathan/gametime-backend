@@ -210,3 +210,24 @@ sponsors_delete_schema = {
         'sponsor_id': {'type': 'string'}
     }
 }
+
+# promotions schemas
+promotions_post_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'string'},
+        'name': {'type': 'string'},
+        'description': {'type': 'string'},
+        'picture': {'type': 'string'},
+        'start_time': {'type': 'number'},
+        'end_time': {'type': 'number'}
+    }
+}
+
+promotions_delete_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'string'},
+        'promotion_id': {'type': 'string'}
+    }
+}
