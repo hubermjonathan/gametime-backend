@@ -211,6 +211,15 @@ sponsors_delete_schema = {
     }
 }
 
+sponsors_contact_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'string'},
+        'subject': {'type': 'string'},
+        'body': {'type': 'string'}
+    }
+}
+
 # promotions schemas
 promotions_post_schema = {
     'type': 'object',

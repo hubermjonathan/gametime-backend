@@ -333,3 +333,32 @@ def get_teams_groups(team_id):
         connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
+
+
+def get_teams_coach(team_id):
+    try:
+        connection = connection_manager.connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT users.email
+            FROM teams
+            INNER JOIN users
+            ON users.user_id=teams.owner
+            WHERE team_id=%s;
+            ''',
+            (team_id,)
+        )
+
+        return_data = connection_manager.get_data(cursor)
+        cursor.close()
+        connection_manager.disconnect(connection)
+
+        res = ('successfully retrieved teams coach', False, return_data)
+        return res
+    except Exception as e:
+        cursor.close()
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
