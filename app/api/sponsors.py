@@ -111,7 +111,6 @@ def sponsors_contact():
             return jsonify({'message': 'invalid body provided'}), 400
 
         message, error, data = db.teams.get_teams_coach(team_id)
-        print(data)
 
         if error:
             return jsonify({'message': message}), 500
