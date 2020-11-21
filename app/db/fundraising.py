@@ -114,7 +114,6 @@ def edit_users_fundraiser(user_id, team_id, goal, current, description, end_time
 
 def get_teams_fundraiser(team_id):
     try:
-        print(team_id)
         connection = connection_manager.connect()
         cursor = connection.cursor()
 

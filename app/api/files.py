@@ -41,6 +41,7 @@ def photos():
 
             team_id = body['team_id']
             picture = body['picture']
+            name = body['name']
             active = body['active']
         except Exception:
             return jsonify({'message': 'invalid body provided'}), 400
@@ -115,6 +116,7 @@ def files():
 
             team_id = body['team_id']
             file = body['file']
+            name = body['name']
         except Exception:
             return jsonify({'message': 'invalid body provided'}), 400
 

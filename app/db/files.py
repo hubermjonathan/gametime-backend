@@ -20,18 +20,18 @@ def upload_file(file, name, is_photo):
     return url
 
 
-def create_file(team_id, user_id, file):
+def create_file(team_id, user_id, file, name):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            INSERT INTO files (team_id, user_id)
-            VALUES (%s, %s)
+            INSERT INTO files (team_id, user_id, name)
+            VALUES (%s, %s, %s)
             RETURNING file_id;
             ''',
-            (team_id, user_id)
+            (team_id, user_id, name)
         )
         file_id = connection_manager.get_data(cursor)
 
@@ -60,18 +60,18 @@ def create_file(team_id, user_id, file):
         return res
 
 
-def create_photo(team_id, user_id, picture, active):
+def create_photo(team_id, user_id, picture, name, active):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            INSERT INTO files (team_id, user_id, active)
-            VALUES (%s, %s, %s)
+            INSERT INTO files (team_id, user_id, name, active)
+            VALUES (%s, %s, %s, %s)
             RETURNING file_id;
             ''',
-            (team_id, user_id, active)
+            (team_id, user_id, name, active)
         )
         file_id = connection_manager.get_data(cursor)
 
@@ -160,7 +160,7 @@ def get_files_for_team(team_id):
 
         cursor.execute(
             '''
-            SELECT file_id, url
+            SELECT file_id, url, name
             FROM files
             WHERE team_id=%s AND active IS NULL;
             ''',
@@ -187,7 +187,7 @@ def get_files_for_user(team_id, user_id):
 
         cursor.execute(
             '''
-            SELECT file_id, url
+            SELECT file_id, url, name
             FROM files
             WHERE team_id=%s AND user_id=%s AND active IS NULL;
             ''',
@@ -214,7 +214,7 @@ def get_photos_for_team(team_id):
 
         cursor.execute(
             '''
-            SELECT file_id, url, active
+            SELECT file_id, url, name, active
             FROM files
             WHERE team_id=%s AND active IS NOT NULL;
             ''',
@@ -241,7 +241,7 @@ def get_photos_for_user(team_id, user_id):
 
         cursor.execute(
             '''
-            SELECT file_id, url, active
+            SELECT file_id, url, name, active
             FROM files
             WHERE team_id=%s AND user_id=%s;
             ''',

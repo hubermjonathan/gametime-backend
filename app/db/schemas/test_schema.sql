@@ -156,6 +156,7 @@ CREATE TABLE public.files
     team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     user_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     url text COLLATE pg_catalog."default",
+    name text COLLATE pg_catalog."default" NOT NULL,
     active boolean,
     CONSTRAINT file_id PRIMARY KEY (file_id),
     CONSTRAINT team_id FOREIGN KEY (team_id)
