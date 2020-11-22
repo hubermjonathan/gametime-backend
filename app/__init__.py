@@ -8,6 +8,7 @@ from app.api.stores import storesbp
 from app.api.test import testbp
 from app.api.sponsors import sponsorsbp
 from app.api.promotions import promotionsbp
+from app.api.payment import paymentsbp
 import os
 import sys
 from flask import Flask
@@ -83,5 +84,6 @@ def create_app(test_config=None):
     app.register_blueprint(storesbp)
     app.register_blueprint(sponsorsbp)
     app.register_blueprint(promotionsbp)
+    app.register_blueprint(paymentsbp)
 
     return app
