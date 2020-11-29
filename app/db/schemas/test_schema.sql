@@ -129,8 +129,8 @@ CREATE TABLE public.teams
     fund_goal integer,
     fund_current integer,
     fund_desc text COLLATE pg_catalog."default",
-    account_number integer,
-    routing_number integer,
+    account_id text COLLATE pg_catalog."default",
+    bank_id text COLLATE pg_catalog."default",
     owner uuid NOT NULL DEFAULT uuid_generate_v4(),
     CONSTRAINT team_id PRIMARY KEY (team_id),
     CONSTRAINT owner FOREIGN KEY (owner)
