@@ -50,7 +50,7 @@ def photos():
             return jsonify({'message': 'invalid picture provided'}), 400
 
         message, error, data = db.create_photo(
-            team_id, current_user.user_id, picture, active)
+            team_id, current_user.user_id, picture, name, active)
 
         if error:
             return jsonify({'message': message}), 500
