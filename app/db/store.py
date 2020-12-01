@@ -150,6 +150,33 @@ def edit_store_item(item_id, name, price, picture, active, types):
         return res
 
 
+def get_item(item_id):
+    try:
+        connection = connection_manager.connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT *
+            FROM items
+            WHERE item_id=%s AND archived=false;
+            ''',
+            (item_id,)
+        )
+
+
+        return_data = connection_manager.get_data(cursor)
+        cursor.close()
+        connection_manager.disconnect(connection)
+
+        res = ('successfully retrieved store items', False, return_data)
+        return res
+    except Exception as e:
+        cursor.close()
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
+
 def get_teams_store_items(team_id):
     try:
         connection = connection_manager.connect()

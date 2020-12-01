@@ -5,10 +5,13 @@ from ..db import teams as db
 from . import schema
 from .. import auth
 
+from os import environ
 import json
+import stripe
 
 teamsbp = Blueprint('teamsbp', __name__)
 
+stripe.api_key = environ.get('STRIPE_PRIVATE_KEY')
 
 @teamsbp.route('/team/create', methods=['POST'])
 @login_required
@@ -38,6 +41,40 @@ def editTeam():
 
     if error:
         return "", 500
+
+    return jsonify(""), 200
+
+@teamsbp.route('/team/updateBank', methods=['POST'])
+@login_required
+def updateBank():
+    # POST, Edits team attributes
+    body = request.get_json()
+
+    try:
+        teamId = body['team_id']
+        bankId = body['bank_id']
+
+        if not auth.isOwner(current_user.user_id, team_id):
+            return "Not team owner", 401
+
+    except KeyError:
+        return "missing field", 400
+    except Exception:
+        return "Server error", 500
+
+    message, error, data = db.get_team_account(team_id)
+
+    if error:
+        return "Team account not found", 500
+
+    stripe.Account.create_external_account(
+        data,
+        external_account=bankId,
+    )   
+
+    message, error, data = db.update_bank_account(team_id, bank_id)
+    if error:
+        return "Account not successfully updated", 500
 
     return jsonify(""), 200
 

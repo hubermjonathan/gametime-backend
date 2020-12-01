@@ -124,7 +124,7 @@ def files():
             return jsonify({'message': 'invalid file provided'}), 400
 
         message, error, data = db.create_file(
-            team_id, current_user.user_id, file)
+            team_id, current_user.user_id, file, name)
 
         if error:
             return jsonify({'message': message}), 500
