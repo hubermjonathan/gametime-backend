@@ -54,7 +54,7 @@ def create_checkout_session():
       payment_method_types=['card'],
       line_items=line_items,
       mode='payment',
-      success_url=body['success_url'] + "?id=" + data,
+      success_url=body['success_url'] + "?id=" + data['transaction_id'],
       cancel_url=body['cancel_url'],
       customer_email=body['email']
     )
@@ -93,7 +93,7 @@ def create_donation_session():
           'quantity': 1,
         }],
       mode='payment',
-      success_url=body['success_url'] + "?id=" + data,
+      success_url=body['success_url'] + "?id=" + data['transaction_id'],
       cancel_url=body['cancel_url'],
       customer_email=body['email']
     )
