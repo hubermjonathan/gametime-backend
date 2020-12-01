@@ -74,6 +74,11 @@ def create_donation_session():
     message, error, data = order.create_transaction(
         body['team_id'], body['email'], "", "Donation")
 
+    print(data)
+
+    if error:
+        return error, 500
+
     session = stripe.checkout.Session.create(
       payment_method_types=['card'],
       line_items=[{
