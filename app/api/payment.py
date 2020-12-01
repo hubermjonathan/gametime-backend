@@ -14,7 +14,7 @@ paymentsbp = Blueprint('paymentsbp', __name__)
 stripe.api_key = environ.get('STRIPE_PRIVATE_KEY')
 
 
-@paymentsbp.route('/create-checkout-session', methods=['POST'])
+@paymentsbp.route('/createCheckoutSession', methods=['POST'])
 def create_checkout_session():
   body = request.get_json()
 
@@ -62,7 +62,7 @@ def create_checkout_session():
   except Exception as e:
     return str(e), 500
 
-@paymentsbp.route('/create-donation-session', methods=['POST'])
+@paymentsbp.route('/createDonationSession', methods=['POST'])
 def create_donation_session():
   body = request.get_json()
 

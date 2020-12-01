@@ -21,7 +21,7 @@ def createTeam():
     name = body['name']
     user = current_user.user_id
 
-    message, error, data = db.create_team(name, user, account.id)
+    message, error, data = db.create_team(name, user)
 
     if error:
         return "", 500
