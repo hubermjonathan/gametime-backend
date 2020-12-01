@@ -8,11 +8,11 @@ def create_team(name, owner_user_id):
 
         cursor.execute(
             '''
-            INSERT INTO teams (name, owner)
-            VALUES (%s, %s)
+            INSERT INTO teams (name, owner, account_id)
+            VALUES (%s, %s, %s)
             RETURNING team_id;
             ''',
-            (name, owner_user_id)
+            (name, owner_user_id, account_id)
         )
         return_data = connection_manager.get_data(cursor)
 
@@ -227,6 +227,56 @@ def get_team(team_id):
         connection_manager.disconnect(connection)
 
         res = ('successfully retrieved team', False, return_data)
+        return res
+    except Exception as e:
+        cursor.close()
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
+
+def get_team_account(team_id):
+    try:
+        connection = connection_manager.connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT account_id
+            FROM teams
+            WHERE team_id=%s;
+            ''',
+            (team_id,)
+        )
+        return_data = connection_manager.get_data(cursor)
+        cursor.close()
+        connection_manager.disconnect(connection)
+
+        res = ('successfully retrieved team', False, return_data)
+        return res
+    except Exception as e:
+        cursor.close()
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
+
+def update_bank_account(team_id, bank_id):
+    try:
+        connection = connection_manager.connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            UPDATE teams
+            SET bank_id=%s
+            WHERE team_id=%s;
+            ''',
+            (bank_id, team_id,)
+        )
+        return_data = connection_manager.get_data(cursor)
+        cursor.close()
+        connection_manager.disconnect(connection)
+
+        res = ('successfully updated bank account', False, return_data)
         return res
     except Exception as e:
         cursor.close()
