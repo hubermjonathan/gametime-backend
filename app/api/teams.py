@@ -51,8 +51,8 @@ def updateBank():
     body = request.get_json()
 
     try:
-        teamId = body['team_id']
-        bankId = body['bank_id']
+        team_id = body['team_id']
+        bank_id = body['bank_id']
 
         if not auth.isOwner(current_user.user_id, team_id):
             return "Not team owner", 401
@@ -69,8 +69,8 @@ def updateBank():
 
     stripe.Account.create_external_account(
         data,
-        external_account=bankId,
-    )   
+        external_account=bank_id,
+    )
 
     message, error, data = db.update_bank_account(team_id, bank_id)
     if error:
