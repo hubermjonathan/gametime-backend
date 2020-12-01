@@ -20,16 +20,14 @@ def create_checkout_session():
   body = request.get_json()
 
   try:
-    item_list = body['item_ids']
+    item_list = body['items']
   
     totalPrice = 0
 
     line_items = []
     for item in item_list:
-      itemId = item[0]
-      itemQ = item[1]
+      itemData = store.get_item(item['item_id'])[2]
 
-      itemData = store.get_item(itemId)[2]
       line_items.append(
         {
           'price_data': {
@@ -39,7 +37,7 @@ def create_checkout_session():
             },
             'unit_amount_decimal': (int)(itemData['price']*100), #convert to cents
           },
-          'quantity': itemQ,
+          'quantity': item['quantity'],
         })
 
       totalPrice += (int)(itemData['price']*100)
