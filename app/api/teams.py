@@ -69,10 +69,10 @@ def updateBank():
 
     stripe.Account.create_external_account(
         data['account_id'],
-        external_account=bank_id,
+        external_account=bank_id['id'],
     )
 
-    message, error, data = db.update_bank_account(team_id, bank_id)
+    message, error, data = db.update_bank_account(team_id, bank_id['id'])
     if error:
         return "Account not successfully updated", 500
 
