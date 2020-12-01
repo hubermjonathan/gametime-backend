@@ -87,15 +87,16 @@ def create_donation_session():
           'quantity': 1,
         }],
       mode='payment',
-      success_url='https://example.com/success' + "?id=" + data,
-      cancel_url='https://example.com/cancel',
+      success_url=body['success_url'] + "?id=" + data,
+      cancel_url=body['cancel_url'],
       customer_email=body['email']
     )
 
     return jsonify(id=session.id), 200
   except stripe.error.InvalidRequestError as e:
     return ' '.join(str(e).split(' ')[2:]), 400
-  except KeyError:
+  except KeyError as e:
+    print(e)
     return "missing field in body", 400
   except Exception as e:
     return str(e), 500
