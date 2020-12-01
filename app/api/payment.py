@@ -42,7 +42,7 @@ def create_checkout_session():
           'quantity': itemQ,
         })
 
-        totalPrice +=  (int)(itemData['price']*100)
+      totalPrice += (int)(itemData['price']*100)
   except KeyError:
     return "missing field in body", 400
   except Exception as e:
