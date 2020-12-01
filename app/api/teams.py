@@ -68,7 +68,7 @@ def updateBank():
         return "Team account not found", 500
 
     stripe.Account.create_external_account(
-        data,
+        data['account_id'],
         external_account=bank_id,
     )
 
