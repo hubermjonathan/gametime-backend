@@ -4,6 +4,7 @@ from flask_login import login_required, current_user
 from .. import auth
 from os import environ
 
+from ..db import transactions as order
 from ..db import store as store
 
 import boto3
@@ -45,11 +46,14 @@ def create_checkout_session():
     return str(e), 500
 
   try:
+    message, error, data = order.create_transaction(
+            body['team_id'], body['email'], body['buyer_address'], body['items'])
+
     session = stripe.checkout.Session.create(
       payment_method_types=['card'],
       line_items=line_items,
       mode='payment',
-      success_url=body['success_url'],
+      success_url=body['success_url'] + "?id=" + data,
       cancel_url=body['cancel_url'],
       customer_email=body['email']
     )
@@ -67,6 +71,9 @@ def create_donation_session():
   body = request.get_json()
 
   try:
+    message, error, data = order.create_transaction(
+        body['team_id'], body['email'], "", "Donation")
+
     session = stripe.checkout.Session.create(
       payment_method_types=['card'],
       line_items=[{
@@ -80,7 +87,7 @@ def create_donation_session():
           'quantity': 1,
         }],
       mode='payment',
-      success_url='https://example.com/success',
+      success_url='https://example.com/success' + "?id=" + data,
       cancel_url='https://example.com/cancel',
       customer_email=body['email']
     )
@@ -107,3 +114,19 @@ def change_bank_account():
 
   if not auth.isOwner(current_user.user_id, teamId):
     return "Not owner of team", 401
+
+@paymentsbp.route('/confirmTransaction', methods=['POST'])
+def confirmTransaction():
+  body = request.get_json()
+  
+  try:
+    order_id = body['order_id']
+  except:
+      return "missing field", 400
+
+  message, error, data = order.edit_transactions_status(order_id, status)
+
+  if error:
+    return "database error", 500
+
+  return "success", 200
