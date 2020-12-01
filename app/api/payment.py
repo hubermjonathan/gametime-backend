@@ -22,6 +22,7 @@ def create_checkout_session():
   try:
     item_list = body['item_ids']
   
+    totalPrice = 0
 
     line_items = []
     for item in item_list:
@@ -40,6 +41,8 @@ def create_checkout_session():
           },
           'quantity': itemQ,
         })
+
+        totalPrice +=  (int)(itemData['price']*100)
   except KeyError:
     return "missing field in body", 400
   except Exception as e:
@@ -47,7 +50,7 @@ def create_checkout_session():
 
   try:
     message, error, data = order.create_transaction(
-            body['team_id'], body['email'], body['buyer_address'], body['items'])
+            body['team_id'], body['email'], body['buyer_address'], body['items'], totalPrice)
 
     session = stripe.checkout.Session.create(
       payment_method_types=['card'],
@@ -72,7 +75,7 @@ def create_donation_session():
 
   try:
     message, error, data = order.create_transaction(
-        body['team_id'], body['email'], "", "Donation")
+        body['team_id'], body['email'], "", [], (int)(body['donation_amount'] * 100))
 
     print(data)
 
@@ -87,7 +90,7 @@ def create_donation_session():
             'product_data': {
               'name': 'Donation',
             },
-            'unit_amount_decimal': (int)(body['donation_amount']), #convert to cents
+            'unit_amount_decimal': (int)(body['donation_amount'] * 100), #convert to cents
           },
           'quantity': 1,
         }],
