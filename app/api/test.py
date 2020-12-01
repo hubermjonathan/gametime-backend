@@ -229,7 +229,7 @@ def create_test_data():
             'quantity': 2,
             'label': None
         }
-    ])
+    ], 20)
     db.transactions.create_transaction(team2, test_email, 'test-address', [
         {
             'item_id': item3,
@@ -241,7 +241,7 @@ def create_test_data():
             'quantity': 2,
             'label': None
         }
-    ])
+    ], 20)
 
     db.files.create_file(team1, player1, test_file, 'test-file1')
     db.files.create_file(team2, player1, test_file, 'test-file2')

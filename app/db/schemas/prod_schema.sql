@@ -184,6 +184,7 @@ CREATE TABLE public.transactions
     transaction_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     status integer NOT NULL,
+    amount double precision NOT NULL,
     buyer_email text COLLATE pg_catalog."default" NOT NULL,
     buyer_address text COLLATE pg_catalog."default" NOT NULL,
     time_purchased timestamp without time zone NOT NULL,
