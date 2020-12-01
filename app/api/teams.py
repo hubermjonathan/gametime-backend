@@ -21,19 +21,6 @@ def createTeam():
     name = body['name']
     user = current_user.user_id
 
-    account = stripe.Account.create(
-        country='US',
-        type='custom',
-        capabilities={
-            'card_payments': {
-            'requested': True,
-            },
-            'transfers': {
-            'requested': True,
-            },
-        },
-    )
-
     message, error, data = db.create_team(name, user, account.id)
 
     if error:

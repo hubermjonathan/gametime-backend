@@ -1,10 +1,27 @@
 from ..db.connection_manager import connection_manager
 
+import stripe
+from os import environ
+
+stripe.api_key = environ.get('STRIPE_PRIVATE_KEY')
 
 def create_team(name, owner_user_id):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
+
+        account = stripe.Account.create(
+            country='US',
+            type='custom',
+            capabilities={
+                'card_payments': {
+                'requested': True,
+                },
+                'transfers': {
+                'requested': True,
+                },
+            },
+        )
 
         cursor.execute(
             '''
@@ -12,7 +29,7 @@ def create_team(name, owner_user_id):
             VALUES (%s, %s, %s)
             RETURNING team_id;
             ''',
-            (name, owner_user_id, account_id)
+            (name, owner_user_id, account.id)
         )
         return_data = connection_manager.get_data(cursor)
 
