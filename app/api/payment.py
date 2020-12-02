@@ -40,7 +40,7 @@ def create_checkout_session():
           'quantity': item['quantity'],
         })
 
-      totalPrice += (int)(itemData['price']*100)
+      totalPrice += itemData['price']
   except KeyError:
     return "missing field in body", 400
   except Exception as e:
@@ -73,7 +73,7 @@ def create_donation_session():
 
   try:
     message, error, data = order.create_transaction(
-        body['team_id'], body['email'], "", [], (int)(body['donation_amount'] * 100))
+        body['team_id'], body['email'], "", [], body['donation_amount'])
 
     print(data)
 
