@@ -35,7 +35,7 @@ def create_checkout_session():
             'product_data': {
               'name': itemData['name'],
             },
-            'unit_amount_decimal': (int)(itemData['price']*100), #convert to cents
+            'unit_amount_decimal': (int)(itemData['price'])*100, #convert to cents
           },
           'quantity': item['quantity'],
         })
@@ -88,7 +88,7 @@ def create_donation_session():
             'product_data': {
               'name': 'Donation',
             },
-            'unit_amount_decimal': (int)(body['donation_amount'] * 100), #convert to cents
+            'unit_amount_decimal': (int)(body['donation_amount']) * 100, #convert to cents
           },
           'quantity': 1,
         }],
