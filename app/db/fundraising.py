@@ -222,3 +222,54 @@ def start_users_fundraiser(user_id, team_id, start_date, end_date, goal, descrip
         connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
+
+
+def get_teams_fundraiser_report(team_id):
+    try:
+        connection = connection_manager.connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT name, fund_id, fund_goal, fund_current, fund_desc, fund_start, fund_end
+            FROM teams
+            WHERE team_id=%s;
+            ''',
+            (team_id,)
+        )
+        return_data = connection_manager.get_data(cursor)
+
+        cursor.execute(
+            '''
+            SELECT users.first_name, users.last_name, usersteams.fund_id, usersteams.fund_goal, usersteams.fund_current, usersteams.fund_desc, usersteams.fund_start, usersteams.fund_end
+            FROM usersteams
+            INNER JOIN users
+            USING (user_id)
+            WHERE usersteams.team_id=%s;
+            ''',
+            (team_id,)
+        )
+        player_data = connection_manager.get_data(cursor, 'player_data')
+        return_data.update(player_data)
+
+        cursor.execute(
+            '''
+            SELECT transaction_id, amount, buyer_email, time_purchased
+            FROM transactions
+            WHERE team_id=%s;
+            ''',
+            (team_id,)
+        )
+        transactions = connection_manager.get_data(cursor, 'transactions')
+        return_data.update(transactions)
+
+        cursor.close()
+        connection_manager.disconnect(connection)
+
+        res = ('successfully retrieved teams fundraiser report', False, return_data)
+        return res
+    except Exception as e:
+        cursor.close()
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
