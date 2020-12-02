@@ -240,3 +240,11 @@ promotions_delete_schema = {
         'promotion_id': {'type': 'string'}
     }
 }
+
+# Fundraising schemas
+generate_report_schema = {
+    'type': 'object',
+    'properties': {
+        'team_id': {'type': 'string'},
+    }
+}
