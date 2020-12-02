@@ -81,7 +81,6 @@ def photos():
 
 
 @filesbp.route('/photos/all', methods=['GET'])
-@login_required
 def photos_all():
     if request.method == 'GET':
         team_id = request.args.get('team_id')
