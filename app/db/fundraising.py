@@ -256,7 +256,7 @@ def get_teams_fundraiser_report(team_id):
             '''
             SELECT transaction_id, amount, buyer_email, time_purchased
             FROM transactions
-            WHERE team_id=%s;
+            WHERE team_id=%s AND buyer_address IS NULL;
             ''',
             (team_id,)
         )

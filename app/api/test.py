@@ -87,8 +87,7 @@ def create_user(first_name, last_name):
 @testbp.route('/test')
 def test():
     fundraiser = db.fundraising.get_teams_fundraiser_report('423aab85-3f67-4845-bfe6-a59f3986640a')
-    print(fundraiser)
-    return '', 200
+    return fundraiser[2]
 
 
 @testbp.route('/create_data')
