@@ -73,7 +73,7 @@ def create_donation_session():
 
   try:
     message, error, data = order.create_transaction(
-        body['team_id'], body['email'], "", [], body['donation_amount'])
+        body['team_id'], body['email'], None, [], body['donation_amount'])
 
     print(data)
 

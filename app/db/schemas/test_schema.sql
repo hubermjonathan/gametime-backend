@@ -186,7 +186,7 @@ CREATE TABLE public.transactions
     status integer NOT NULL,
     amount double precision NOT NULL,
     buyer_email text COLLATE pg_catalog."default" NOT NULL,
-    buyer_address text COLLATE pg_catalog."default" NOT NULL,
+    buyer_address text COLLATE pg_catalog."default",
     time_purchased timestamp without time zone NOT NULL,
     CONSTRAINT transaction_id PRIMARY KEY (transaction_id),
     CONSTRAINT team_id FOREIGN KEY (team_id)
