@@ -249,7 +249,7 @@ def sendEmail():
     return "Email sent", 200
 
 
-@fundraisingbp.route('/fundraising/report/', methods=['POST'])
+@fundraisingbp.route('/fundraising/report', methods=['POST'])
 @login_required
 def generate_report():
     # POST, create an item
