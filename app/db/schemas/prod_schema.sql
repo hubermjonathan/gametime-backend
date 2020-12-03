@@ -183,6 +183,7 @@ CREATE TABLE public.transactions
 (
     transaction_id uuid NOT NULL DEFAULT uuid_generate_v4(),
     team_id uuid NOT NULL DEFAULT uuid_generate_v4(),
+    player_id uuid,
     status integer NOT NULL,
     amount double precision NOT NULL,
     buyer_email text COLLATE pg_catalog."default" NOT NULL,
