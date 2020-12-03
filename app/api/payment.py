@@ -127,11 +127,11 @@ def confirmTransaction():
   body = request.get_json()
   
   try:
-    order_id = body['order_id']
+    transaction_id = body['transaction_id']
   except:
       return "missing field", 400
 
-  message, error, data = order.edit_transactions_status(order_id, status)
+  message, error, data = order.edit_transactions_status(transaction_id, 1)
 
   if error:
     return "database error", 500
