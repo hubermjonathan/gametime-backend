@@ -253,7 +253,7 @@ def sendEmail():
 @login_required
 def generate_report():
     # POST, create an item
-    if request.method == 'GET':
+    if request.method == 'POST':
         body = request.get_json()
 
         try:
@@ -264,8 +264,8 @@ def generate_report():
         team_id = body['team_id']
 
         # Check permissions
-        if not auth.isAdmin(current_user.user_id, team_id) and not auth.isOwner(current_user.user_id, team_id):
-            return jsonify({'message': 'Unauthorized'}), 401
+        # if not auth.isAdmin(current_user.user_id, team_id) and not auth.isOwner(current_user.user_id, team_id):
+        #     return jsonify({'message': 'Unauthorized'}), 401
 
         message, error, data = db.get_teams_fundraiser_report(team_id)
         if error:
