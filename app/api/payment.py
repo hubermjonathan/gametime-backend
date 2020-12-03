@@ -7,6 +7,7 @@ from os import environ
 from ..db import transactions as order
 from ..db import store as store
 from ..db import teams as team
+from ..db import fundraising as fund
 
 import boto3
 import stripe
@@ -149,6 +150,15 @@ def confirmTransaction():
     method='instant',
     destination=teamData.bank_id,
   )
+
+  if data.player_id and data.address is None:
+    message, error, data = fund.donate_to_user(data.team_id, data.player_id, data.amount)
+    if error:
+      return "database error", 500  
+  elif data.address is None:
+    message, error, data = fund.donate_to_team(data.team_id, data.amount)
+    if error:
+      return "database error", 500
 
   message, error, data = order.edit_transactions_status(transaction_id, 1)
 
