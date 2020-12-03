@@ -144,8 +144,31 @@ def create_test_data():
 
     team1 = db.teams.create_team('purdue football', coach1)
     team1 = team1[2]['team_id']
+    account1 = db.teams.get_team_account(team1)
+    account1 = account1[2]['account_id']
+    stripe.Account.create_external_account(
+        account1,
+        external_account={
+            object: 'bank_account',
+            country: 'US',
+            currency: 'usd',
+            account_number: '000123456789'
+        },
+    )
+
     team2 = db.teams.create_team('purdue basketball', coach2)
     team2 = team2[2]['team_id']
+    account2 = db.teams.get_team_account(team2)
+    account2 = account2[2]['account_id']
+    stripe.Account.create_external_account(
+        account2,
+        external_account={
+            object: 'bank_account',
+            country: 'US',
+            currency: 'usd',
+            account_number: '000123456789'
+        },
+    )
 
     db.teams.add_user_to_team(player1, team1)
     db.teams.add_user_to_team(player2, team1)
