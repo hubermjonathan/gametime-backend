@@ -6,6 +6,7 @@ from os import environ
 
 from ..db import transactions as order
 from ..db import store as store
+from ..db import teams as team
 
 import boto3
 import stripe
@@ -129,7 +130,24 @@ def confirmTransaction():
   try:
     transaction_id = body['transaction_id']
   except:
-      return "missing field", 400
+    return "missing field", 400
+
+  message, error, data = order.get_transaction(transaction_id)
+
+  if error:
+    return "database error", 500
+
+  message, Error, teamData = team.get_team_account(data.team_id)
+
+  if error:
+    return "database error", 500
+
+  payout = stripe.Payout.create(
+    amount=data.amount,
+    currency='usd',
+    method='instant',
+    destination=teamData.bank_id,
+  )
 
   message, error, data = order.edit_transactions_status(transaction_id, 1)
 

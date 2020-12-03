@@ -108,7 +108,7 @@ def get_teams_transactions(team_id):
         res = (str(e), True, {})
         return res
 
-def get_teams_transactions(transaction_id):
+def get_transaction(transaction_id):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
