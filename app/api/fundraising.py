@@ -263,7 +263,7 @@ def generate_report():
 
         team_id = body['team_id']
 
-        Check permissions
+        # Check permissions
         if not auth.isAdmin(current_user.user_id, team_id) and not auth.isOwner(current_user.user_id, team_id):
             return jsonify({'message': 'Unauthorized'}), 401
 
