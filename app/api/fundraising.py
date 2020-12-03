@@ -253,7 +253,7 @@ def sendEmail():
 @login_required
 def generate_report():
     # POST, create an item
-    if request.method == 'GET':
+    if request.method == 'POST':
         body = request.get_json()
 
         try:
