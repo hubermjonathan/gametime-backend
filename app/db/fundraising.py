@@ -273,3 +273,66 @@ def get_teams_fundraiser_report(team_id):
         connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
+
+
+def donate_to_team(team_id, amount):
+    try:
+        connection = connection_manager.connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            UPDATE teams
+            SET fund_current = fund_current + %s
+            WHERE team_id=%s;
+            ''',
+            (amount, team_id)
+        )
+
+        return_data = connection_manager.get_data(cursor)
+        cursor.close()
+        connection_manager.disconnect(connection)
+
+        res = ('successfully donated to team', False, return_data)
+        return res
+    except Exception as e:
+        cursor.close()
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
+
+
+def donate_to_user(team_id, user_id, amount):
+    try:
+        connection = connection_manager.connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            UPDATE usersteams
+            SET fund_current = fund_current + %s
+            WHERE team_id=%s AND user_id=%s;
+            ''',
+            (amount, team_id, user_id)
+        )
+
+        cursor.execute(
+            '''
+            UPDATE teams
+            SET fund_current = fund_current + %s
+            WHERE team_id=%s;
+            ''',
+            (amount, team_id)
+        )
+
+        return_data = connection_manager.get_data(cursor)
+        cursor.close()
+        connection_manager.disconnect(connection)
+
+        res = ('successfully donated to user', False, return_data)
+        return res
+    except Exception as e:
+        cursor.close()
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
