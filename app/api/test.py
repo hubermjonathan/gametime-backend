@@ -157,7 +157,7 @@ def create_test_data():
             'routing_number': '110000000'
         },
     )
-    db.teams.update_bank_account(team_id, bank1['id'])
+    db.teams.update_bank_account(team1, bank1['id'])
 
     team2 = db.teams.create_team('purdue basketball', coach2)
     team2 = team2[2]['team_id']
@@ -172,7 +172,7 @@ def create_test_data():
             account_number: '000123456789'
         },
     )
-    db.teams.update_bank_account(team_id, bank2['id'])
+    db.teams.update_bank_account(team2, bank2['id'])
 
     db.teams.add_user_to_team(player1, team1)
     db.teams.add_user_to_team(player2, team1)
