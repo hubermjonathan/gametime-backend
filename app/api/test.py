@@ -87,7 +87,7 @@ def create_user(first_name, last_name):
 
 @testbp.route('/test')
 def test():
-    fundraiser = db.fundraising.get_teams_fundraiser_report('423aab85-3f67-4845-bfe6-a59f3986640a')
+    fundraiser = db.fundraising.get_teams_fundraiser_report('f25abd91-5ce9-4a04-a7ca-5f416e063923')
     return fundraiser[2]
 
 
