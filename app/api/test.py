@@ -271,12 +271,12 @@ def create_test_data():
         }
     ], 20, None)
 
-    db.files.create_file(team1, player1, test_file, 'test-file1')
-    db.files.create_file(team2, player1, test_file, 'test-file2')
-    db.files.create_photo(team1, player1, test_picture, 'test-photo1', False)
-    db.files.create_photo(team1, player1, test_picture, 'test-photo2', True)
-    db.files.create_photo(team2, player1, test_picture, 'test-photo3', False)
-    db.files.create_photo(team2, player1, test_picture, 'test-photo4', True)
+    db.files.create_file(team1, player2, test_file, 'test-file1')
+    db.files.create_file(team2, player2, test_file, 'test-file2')
+    db.files.create_photo(team1, player2, test_picture, 'test-photo1', False)
+    db.files.create_photo(team1, player2, test_picture, 'test-photo2', True)
+    db.files.create_photo(team2, player2, test_picture, 'test-photo3', False)
+    db.files.create_photo(team2, player2, test_picture, 'test-photo4', True)
 
     db.sponsors.create_sponsor(team1, 'test-sponsor1', test_picture)
     db.sponsors.create_sponsor(team1, 'test-sponsor2', test_picture)
