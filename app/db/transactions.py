@@ -107,3 +107,29 @@ def get_teams_transactions(team_id):
         connection_manager.disconnect(connection)
         res = (str(e), True, {})
         return res
+
+def get_teams_transactions(transaction_id):
+    try:
+        connection = connection_manager.connect()
+        cursor = connection.cursor()
+
+        cursor.execute(
+            '''
+            SELECT *
+            FROM transactions
+            WHERE transaction_id=%s;
+            ''',
+            (transaction_id,)
+        )
+
+        return_data = connection_manager.get_data(cursor, 'transactions')
+        cursor.close()
+        connection_manager.disconnect(connection)
+
+        res = ('successfully retrieved transaction', False, return_data)
+        return res
+    except Exception as e:
+        cursor.close()
+        connection_manager.disconnect(connection)
+        res = (str(e), True, {})
+        return res
