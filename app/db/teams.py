@@ -258,7 +258,7 @@ def get_team_account(team_id):
 
         cursor.execute(
             '''
-            SELECT account_id
+            SELECT account_id, bank_id
             FROM teams
             WHERE team_id=%s;
             ''',
