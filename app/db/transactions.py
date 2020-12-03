@@ -122,7 +122,7 @@ def get_transaction(transaction_id):
             (transaction_id,)
         )
 
-        return_data = connection_manager.get_data(cursor, 'transactions')
+        return_data = connection_manager.get_data(cursor)
         cursor.close()
         connection_manager.disconnect(connection)
 
