@@ -267,7 +267,7 @@ def generate_report():
         # if not auth.isAdmin(current_user.user_id, team_id) and not auth.isOwner(current_user.user_id, team_id):
         #     return jsonify({'message': 'Unauthorized'}), 401
 
-        team_id = request.args.get('teamid')
+        team_id = request.args.get('team_id')
 
         message, error, data = db.get_teams_fundraiser_report(team_id)
         if error:

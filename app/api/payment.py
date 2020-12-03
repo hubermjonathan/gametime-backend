@@ -143,18 +143,19 @@ def confirmTransaction():
   if error:
     return "database error", 500
 
-  payout = stripe.Payout.create(
-    amount=(int)(data['amount']) * 100,
-    currency='usd',
-    method='instant',
-    destination=teamData['bank_id'],
-  )
+  # payout = stripe.Payout.create(
+    # amount=(int)(data['amount']) * 100,
+    # currency='usd',
+    # destination=teamData['bank_id'],
+    # source_type='bank_account',
+    # method='standard'
+  # )
 
-  if data['player_id'] and data['address'] is None:
+  if data['player_id'] and data['buyer_address'] is None:
     message, error, data = fund.donate_to_user(data['team_id'], data['player_id'], data['amount'])
     if error:
       return "database error", 500  
-  elif data['address'] is None:
+  elif data['buyer_address'] is None:
     message, error, data = fund.donate_to_team(data['team_id'], data['amount'])
     if error:
       return "database error", 500
