@@ -2,18 +2,18 @@ from ..db.connection_manager import connection_manager
 from datetime import datetime
 
 
-def create_transaction(team_id, buyer_email, buyer_address, items, amount):
+def create_transaction(team_id, buyer_email, buyer_address, items, amount, player_id):
     try:
         connection = connection_manager.connect()
         cursor = connection.cursor()
 
         cursor.execute(
             '''
-            INSERT INTO transactions (team_id, status, amount, buyer_email, buyer_address, time_purchased)
-            VALUES (%s, 0, %s, %s, %s, %s)
+            INSERT INTO transactions (team_id, player_id, status, amount, buyer_email, buyer_address, time_purchased)
+            VALUES (%s, %s, 0, %s, %s, %s, %s)
             RETURNING transaction_id;
             ''',
-            (team_id, amount, buyer_email, buyer_address, datetime.now())
+            (team_id, player_id, amount, buyer_email, buyer_address, datetime.now())
         )
         transaction_info = connection_manager.get_data(cursor)
 

@@ -49,7 +49,7 @@ def create_checkout_session():
 
   try:
     message, error, data = order.create_transaction(
-            body['team_id'], body['email'], body['buyer_address'], body['items'], totalPrice)
+            body['team_id'], body['email'], body['buyer_address'], body['items'], totalPrice, None)
 
     session = stripe.checkout.Session.create(
       payment_method_types=['card'],
@@ -73,8 +73,9 @@ def create_donation_session():
   body = request.get_json()
 
   try:
+    player_id = body['player_id'] if 'player_id' in body else None
     message, error, data = order.create_transaction(
-        body['team_id'], body['email'], None, [], body['donation_amount'])
+        body['team_id'], body['email'], None, [], body['donation_amount'], player_id)
 
     print(data)
 

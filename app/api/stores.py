@@ -28,29 +28,6 @@ def get_items():
         return jsonify(data), 200
 
 
-@storesbp.route('/store/order', methods=['POST'])
-def place_order():
-    # POST, make an order
-    if request.method == 'POST':
-        body = request.get_json()
-
-        try:
-            validate(body, schema=schema.place_order_schema)
-        except:
-            return jsonify({'message': 'Bad Request'}), 400
-
-        team_id, buyer_email, buyer_address, items = body['team_id'], body[
-            'buyer_email'], body['buyer_address'], body['items']
-
-        # Call to register a transaction
-        message, error, data = order.create_transaction(
-            team_id, buyer_email, buyer_address, items)
-        if error:
-            return jsonify({'message': 'Failed to place order'}), 400
-
-        return jsonify({'message': 'Successfully placed order', 'transaction_id': data['transaction_id']}), 200
-
-
 @storesbp.route('/store/create', methods=['POST'])
 @login_required
 def create_item():
