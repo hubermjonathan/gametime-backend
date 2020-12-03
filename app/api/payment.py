@@ -144,7 +144,7 @@ def confirmTransaction():
     return "database error", 500
 
   payout = stripe.Payout.create(
-    amount=data['amount'],
+    amount=(int)(data['amount']) * 100,
     currency='usd',
     method='instant',
     destination=teamData['bank_id'],
