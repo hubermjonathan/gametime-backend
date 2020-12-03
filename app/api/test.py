@@ -150,10 +150,10 @@ def create_test_data():
     bank1 = stripe.Account.create_external_account(
         account1,
         external_account={
-            object: 'bank_account',
-            country: 'US',
-            currency: 'usd',
-            account_number: '000123456789'
+            'object': 'bank_account',
+            'country': 'US',
+            'currency': 'usd',
+            'account_number': '000123456789'
         },
     )
     db.teams.update_bank_account(team_id, bank1['id'])
