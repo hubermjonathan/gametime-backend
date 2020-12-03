@@ -153,7 +153,8 @@ def create_test_data():
             'object': 'bank_account',
             'country': 'US',
             'currency': 'usd',
-            'account_number': '000123456789'
+            'account_number': '000123456789',
+            'routing_number': '110000000'
         },
     )
     db.teams.update_bank_account(team_id, bank1['id'])
