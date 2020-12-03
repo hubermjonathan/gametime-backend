@@ -56,7 +56,7 @@ def create_checkout_session():
       payment_method_types=['card'],
       line_items=line_items,
       mode='payment',
-      success_url=body['success_url'] + "?id=" + data['transaction_id'],
+      success_url=body['success_url'] + data['transaction_id'],
       cancel_url=body['cancel_url'],
       customer_email=body['email']
     )
@@ -95,7 +95,7 @@ def create_donation_session():
           'quantity': 1,
         }],
       mode='payment',
-      success_url=body['success_url'] + "?id=" + data['transaction_id'],
+      success_url=body['success_url'] + data['transaction_id'],
       cancel_url=body['cancel_url'],
       customer_email=body['email']
     )
@@ -138,24 +138,24 @@ def confirmTransaction():
   if error:
     return "database error", 500
 
-  message, Error, teamData = team.get_team_account(data.team_id)
+  message, Error, teamData = team.get_team_account(data['team_id'])
 
   if error:
     return "database error", 500
 
   payout = stripe.Payout.create(
-    amount=data.amount,
+    amount=data['amount'],
     currency='usd',
     method='instant',
-    destination=teamData.bank_id,
+    destination=teamData['bank_id'],
   )
 
-  if data.player_id and data.address is None:
-    message, error, data = fund.donate_to_user(data.team_id, data.player_id, data.amount)
+  if data['player_id'] and data['address'] is None:
+    message, error, data = fund.donate_to_user(data['team_id'], data['player_id'], data['amount'])
     if error:
       return "database error", 500  
-  elif data.address is None:
-    message, error, data = fund.donate_to_team(data.team_id, data.amount)
+  elif data['address'] is None:
+    message, error, data = fund.donate_to_team(data['team_id'], data['amount'])
     if error:
       return "database error", 500
 
