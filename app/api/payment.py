@@ -74,9 +74,8 @@ def create_donation_session():
   body = request.get_json()
 
   try:
-    player_id = body['player_id'] if 'player_id' in body else None
     message, error, data = order.create_transaction(
-        body['team_id'], body['email'], None, [], body['donation_amount'], player_id)
+        body['team_id'], body['email'], None, [], body['donation_amount'], body['player_id'])
 
     print(data)
 
