@@ -271,7 +271,7 @@ def generate_report():
 
         message, error, data = db.get_teams_fundraiser_report(team_id)
         if error:
-            return jsonify({'message': 'Failed to create item'}), 400
+            return jsonify({'message': 'Error fetching report'}), 400
 
         csv_file = StringIO()
         fieldnames = ['buyer_email', 'amount',
